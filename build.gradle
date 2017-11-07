@@ -1,0 +1,67 @@
+group 'tanvd'
+version '0.1-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.1.51'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDirs 'src/main'
+        }
+    }
+    test {
+        kotlin {
+            srcDirs 'src/test'
+        }
+    }
+
+}
+
+test {
+    systemProperty "ClickhouseUrl", System.getProperty("ClickhouseUrl")
+    useTestNG()
+}
+
+task AormJar(type: Jar) {
+    baseName = 'Aorm'
+    from sourceSets.main.output
+}
+
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "ru.yandex.clickhouse:clickhouse-jdbc:0.1.33"
+    compile "org.slf4j:slf4j-api:1.7.25"
+    compile "ch.qos.logback:logback-classic:1.2.2"
+    compile "com.google.guava:guava:19.0"
+    compile "joda-time:joda-time:2.9.9"
+    testCompile "org.testng:testng:6.11"
+    testCompile "org.mockito:mockito-all:1.10.19"
+    //need it for kotlin object mocking purposes (mocking static members)
+    testCompile group: 'org.powermock', name: 'powermock-mockito-release-full', version: '1.6.4'
+}
+
+
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "log4j", module: "log4j"
+}
