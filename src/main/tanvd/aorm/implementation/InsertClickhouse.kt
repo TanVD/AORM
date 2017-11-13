@@ -14,7 +14,7 @@ object InsertClickhouse {
     private fun Connection.constructInsert(insert: InsertExpression) : PreparedStatement {
         val sql = "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
                 insert.values.joinToString { "(${insert.columns.joinToString { "?" }})" }
-        return prepareStatement(sql).use {
+        return prepareStatement(sql).let {
             var index = 1
             for (row in insert.values) {
                 for (column in insert.columns) {
