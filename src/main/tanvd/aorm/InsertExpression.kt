@@ -26,5 +26,5 @@ infix fun <E: Any, T: DbType<E>>Table.insertWithColumns(columns: List<Column<E, 
 
 infix fun InsertExpression.values(values: List<Row>) {
     this.values.addAll(values)
-    this.table.insert(this)
+    table.insert(this)
 }

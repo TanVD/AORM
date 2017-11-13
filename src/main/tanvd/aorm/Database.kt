@@ -17,10 +17,29 @@ abstract class Database {
     abstract val sslCertPath: String
     abstract val sslVerifyMode: String
 
+    open val maxTotal = 1000
+    open val maxPerRoute = 500
+
+    open val socketTimeout = 30000
+    open val connectionTimeout = 10000
+
+    open val keepAliveTimeout = 30000
+    open val timeToLiveMillis = 60000
+
+    open val dataTransferTimeout = 20000
+
+
     private val dataSource: DataSource by lazy {
         val properties = ClickHouseProperties()
         properties.user = user
         properties.password = password
+        properties.maxTotal = maxTotal
+        properties.defaultMaxPerRoute = maxPerRoute
+        properties.socketTimeout = socketTimeout
+        properties.connectionTimeout = connectionTimeout
+        properties.keepAliveTimeout = keepAliveTimeout
+        properties.timeToLiveMillis = timeToLiveMillis
+        properties.dataTransferTimeout = dataTransferTimeout
         ClickHouseDataSource(url, properties)
     }
 
