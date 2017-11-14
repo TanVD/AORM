@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package tanvd.aorm.query
 
 import tanvd.aorm.Column
@@ -8,6 +10,7 @@ abstract class QueryFunction(val innerColumn: Column<Any, DbType<Any>>, val resu
     abstract fun toSql(): String
 }
 
+@Suppress("UNCHECKED_CAST")
 class SimpleColumn<E: Any, out T: DbType<E>>(val column: Column<E, T>)
     : QueryFunction(column as Column<Any, DbType<Any>>, column as Column<Any, DbType<Any>>) {
     override fun toSql(): String {

@@ -14,6 +14,7 @@ import utils.TestDatabase
 import utils.getDate
 import utils.getDateTime
 
+@Suppress("UNCHECKED_CAST")
 class TypesTest {
 
     @BeforeMethod

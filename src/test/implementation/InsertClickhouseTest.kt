@@ -14,12 +14,14 @@ import tanvd.aorm.query.eq
 import tanvd.aorm.query.where
 import utils.getDate
 
+@Suppress("UNCHECKED_CAST")
 class InsertClickhouseTest: AormTestBase() {
     @Test
     fun insert_tableExistsRowValid_rowInserted() {
         ExampleTable.create()
         val row = Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
-                ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>)
+                ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
+                as Map<Column<Any, DbType<Any>>, Any>)
 
         InsertClickhouse.insert(InsertExpression(ExampleTable, row))
 
@@ -30,7 +32,8 @@ class InsertClickhouseTest: AormTestBase() {
     @Test
     fun insert_tableNotExistsRowValid_basicDbException() {
         val row = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
-                ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>)
+                ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
+                as Map<Column<Any, DbType<Any>>, Any>)
 
         try {
             InsertClickhouse.insert(InsertExpression(ExampleTable, row))
@@ -51,7 +54,8 @@ class InsertClickhouseTest: AormTestBase() {
 
         val select = ExampleTable.select() where (ExampleTable.id eq 1L)
         val rowGot = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
-                ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>)
+                ExampleTable.date to getDate("2000-01-01"),
+                ExampleTable.arrayValue to listOf("array1", "array2")) as Map<Column<Any, DbType<Any>>, Any>)
         Assert.assertEquals(select.toResult().single(), rowGot)
     }
 
@@ -60,9 +64,11 @@ class InsertClickhouseTest: AormTestBase() {
         ExampleTable.create()
         val rows = arrayListOf(
                 Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
-                ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>),
+                ExampleTable.date to getDate("2000-01-01"),
+                        ExampleTable.arrayValue to listOf("array1", "array2")) as Map<Column<Any, DbType<Any>>, Any>),
                 Row(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
-                        ExampleTable.date to getDate("2000-02-02")) as Map<Column<Any, DbType<Any>>, Any>)
+                        ExampleTable.date to getDate("2000-02-02"),
+                        ExampleTable.arrayValue to listOf("array3", "array4")) as Map<Column<Any, DbType<Any>>, Any>)
         )
 
         InsertClickhouse.insert(InsertExpression(ExampleTable, ExampleTable.columns, rows))
@@ -85,9 +91,11 @@ class InsertClickhouseTest: AormTestBase() {
 
         val gotRows = arrayListOf(
                 Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value1",
-                        ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>),
+                        ExampleTable.date to getDate("2000-01-01"),
+                        ExampleTable.arrayValue to listOf("array1", "array2")) as Map<Column<Any, DbType<Any>>, Any>),
                 Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value2",
-                        ExampleTable.date to getDate("2000-02-02")) as Map<Column<Any, DbType<Any>>, Any>)
+                        ExampleTable.date to getDate("2000-02-02"),
+                        ExampleTable.arrayValue to listOf("array1", "array2")) as Map<Column<Any, DbType<Any>>, Any>)
         )
         val select = ExampleTable.select() where (ExampleTable.id eq 1L)
         Assert.assertEquals(select.toResult().toSet(), gotRows.toSet())
@@ -101,7 +109,7 @@ class InsertClickhouseTest: AormTestBase() {
 
         val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, row))
 
-        Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value) VALUES ('2000-02-02', 3, 'value');")
+        Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-02-02', 3, 'value', ['array1', 'array2']);")
     }
 
     @Test
@@ -116,7 +124,6 @@ class InsertClickhouseTest: AormTestBase() {
 
         val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
-        Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value) VALUES ('2000-01-01', 2, 'value')," +
-                " ('2000-02-02', 3, 'value');")
+        Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-01-01', 2, 'value', ['array1', 'array2']), ('2000-02-02', 3, 'value', ['array1', 'array2']);")
     }
 }

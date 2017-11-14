@@ -1,14 +1,5 @@
 out
-**/*.vpp.bak*
-**/*.vpp.lck*
 .gradle
-/build/
-*.txt
-classes*
-
-# Cause we follow NDA
-**/jetprofile/**/*
-**/Kara/**/*
 
 # Cause we now use gradle
 .idea
@@ -16,6 +7,3 @@ classes*
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-
-# Cache of project
-.gradletasknamecache

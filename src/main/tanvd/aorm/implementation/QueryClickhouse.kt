@@ -58,7 +58,7 @@ object QueryClickhouse {
             sql += "ORDER BY ${query.orderBySection!!.map.toList().joinToString { "${it.first.name} ${it.second}" }} "
         }
         if (query.limitSection != null) {
-            sql += "LIMIT ${query.limitSection!!.offset} ${query.limitSection!!.limit} "
+            sql += "LIMIT ${query.limitSection!!.offset}, ${query.limitSection!!.limit} "
         }
         sql += ";"
         return PreparedSqlResult(sql, valuesToSet)

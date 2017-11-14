@@ -2,6 +2,7 @@ package tanvd.aorm
 
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 import ru.yandex.clickhouse.ClickHouseUtil
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import java.math.BigInteger
@@ -74,7 +75,7 @@ class DbDate : DbPrimitiveType<Date>() {
 
 class DbDateTime: DbPrimitiveType<DateTime>() {
     companion object {
-        val dateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
+        val dateTimeFormat: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
     }
 
     override fun toSqlName(): String {
@@ -200,6 +201,7 @@ class DbArrayDate: DbArrayType<Date>() {
         return "Array(Date)"
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getValue(name: String, result: ResultSet): List<Date> {
         return (result.getArray(name).array as Array<Date>).toList()
     }
@@ -282,6 +284,7 @@ class DbArrayULong: DbArrayType<Long>() {
         return "Array(UInt64)"
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getValue(name: String, result: ResultSet): List<Long> {
         return (result.getArray(name).array as Array<BigInteger>).map { it.toLong() }.toList()
     }
@@ -330,6 +333,7 @@ class DbArrayString: DbArrayType<String>() {
         return "Array(String)"
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getValue(name: String, result: ResultSet): List<String> {
         return (result.getArray(name).array as Array<String>).toList()
     }

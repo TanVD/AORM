@@ -19,6 +19,7 @@ abstract class Table(val name: String, var db: Database) {
     val columnsWithDefaults
         get() = columns.filter { it.defaultFunction != null }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T, E: DbType<T>>registerColumn(column: Column<T, E>): Column<T, E> {
         columns.add(column as Column<Any, DbType<Any>>)
         return column
@@ -60,6 +61,7 @@ abstract class Table(val name: String, var db: Database) {
         TableClickhouse.drop(this)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <E: Any, T: DbType<E>>addColumn(column: Column<E, T>) = ddlRequest {
         if (!columns.contains(column as Column<Any, DbType<Any>>)) {
             TableClickhouse.addColumn(this, column)
@@ -67,6 +69,7 @@ abstract class Table(val name: String, var db: Database) {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <E: Any, T: DbType<E>>dropColumn(column: Column<E, T>, useDDL : Boolean = true) = ddlRequest {
         if (columns.contains(column as Column<Any, DbType<Any>>)) {
             if (useDDL) {
@@ -90,9 +93,24 @@ abstract class Table(val name: String, var db: Database) {
         MetadataClickhouse.syncScheme(this)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun insert(body: (MutableMap<Column<*, DbType<*>>, Any>) -> Unit) {
+        val rowMap = HashMap<Column<*, DbType<*>>, Any>()
+        body(rowMap)
+        InsertClickhouse.insert(InsertExpression(this, Row(rowMap as Map<Column<Any, DbType<Any>>, Any>)))
+    }
 
-    fun insert(expression: InsertExpression) {
-        InsertClickhouse.insert(expression)
+    @Suppress("UNCHECKED_CAST")
+    fun <T: Any>batchInsert(list: Iterable<T>, columns: List<Column<*, DbType<*>>> = this.columns,
+                            body: (MutableMap<Column<*, DbType<*>>, Any>, T) -> Unit) {
+        val rows = ArrayList<Row>()
+        list.forEach {
+            val rowMap = HashMap<Column<*, DbType<*>>, Any>()
+            body(rowMap, it)
+            rows.add(Row(rowMap as Map<Column<Any, DbType<Any>>, Any>))
+        }
+        InsertClickhouse.insert(InsertExpression(this, columns as List<Column<Any, DbType<Any>>>, rows))
+
     }
 
     private fun ddlRequest(body: () -> Unit) {

@@ -5,8 +5,19 @@ import org.testng.annotations.BeforeMethod
 abstract class AormTestBase {
     @BeforeMethod
     fun resetDb() {
-        try {
+        ignoringExceptions {
             ExampleTable.resetTable()
-        } catch (e : Exception) {}
+        }
+        executeBeforeMethod()
     }
+
+    open fun executeBeforeMethod() {
+
+    }
+}
+
+fun ignoringExceptions(body: () -> Unit) {
+    try {
+        body()
+    } catch (e: Exception) {}
 }

@@ -7,6 +7,7 @@ data class Row(val values: Map<Column<Any, DbType<Any>>, Any>) {
 
     constructor(result: ResultSet, columns: List<Column<Any, DbType<Any>>>) : this(columns.map { it to it.getValue(result) }.toMap())
 
+    @Suppress("UNCHECKED_CAST")
     operator fun <E : Any, T: DbType<E>>get(column: Column<E, T>) : E? {
         return values[column as Column<Any, DbType<Any>>] as E?
     }

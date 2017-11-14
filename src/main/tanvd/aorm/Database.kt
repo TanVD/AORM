@@ -8,6 +8,7 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import ru.yandex.clickhouse.ClickHouseDataSource
 import ru.yandex.clickhouse.settings.ClickHouseProperties
 import tanvd.aorm.exceptions.BasicDbException
+import java.io.Closeable
 import java.sql.Connection
 
 abstract class DatabaseProperties {
@@ -38,7 +39,7 @@ abstract class DatabaseProperties {
     open val timeBetweenEvictionRunsMillis = 30000L
 }
 
-abstract class Database(val properties: DatabaseProperties) {
+abstract class Database(val properties: DatabaseProperties) : Closeable {
 
     open val objectPoolConfig by lazy {
         val config = GenericObjectPoolConfig()
@@ -88,6 +89,10 @@ abstract class Database(val properties: DatabaseProperties) {
                 it.execute()
             }
         }
+    }
+
+    override fun close() {
+        pooledDataSource.close()
     }
 }
 

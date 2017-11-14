@@ -79,6 +79,7 @@ class RegexExpression(column: Column<String, DbPrimitiveType<String>>, value: St
 
 //Lists
 class InListExpression<T: Any>(val column: Column<T, DbPrimitiveType<T>>, val value: List<T>) : QueryExpression() {
+    @Suppress("UNCHECKED_CAST")
     override fun toSqlPreparedDef(): PreparedSqlResult {
         return PreparedSqlResult("(${column.name} in (${value.joinToString { "?" }}))",
                 value.map { (column.type to it) as Pair<DbType<Any>, Any> })
