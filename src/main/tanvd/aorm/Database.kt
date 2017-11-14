@@ -57,6 +57,11 @@ abstract class Database(val properties: DatabaseProperties) : Closeable {
         val chProperties = ClickHouseProperties()
         chProperties.user = properties.user
         chProperties.password = properties.password
+
+        chProperties.ssl = properties.useSsl
+        chProperties.sslRootCertificate = properties.sslCertPath
+        chProperties.sslMode = properties.sslVerifyMode
+
         chProperties.maxTotal = properties.maxTotalHttpThreads
         chProperties.defaultMaxPerRoute = properties.maxPerRouteHttpThreads
         chProperties.socketTimeout = properties.socketTimeout

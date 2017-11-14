@@ -9,7 +9,7 @@ import tanvd.aorm.query.SimpleColumn
 import java.util.*
 
 
-abstract class Table(val name: String, var db: Database) {
+abstract class Table(var name: String, var db: Database) {
     open val useDDL: Boolean = true
 
     abstract val engine: Engine
@@ -62,17 +62,19 @@ abstract class Table(val name: String, var db: Database) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <E: Any, T: DbType<E>>addColumn(column: Column<E, T>) = ddlRequest {
+    fun <E: Any, T: DbType<E>>addColumn(column: Column<E, T>) {
         if (!columns.contains(column as Column<Any, DbType<Any>>)) {
-            TableClickhouse.addColumn(this, column)
+            ddlRequest {
+                TableClickhouse.addColumn(this, column)
+            }
             columns.add(column)
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <E: Any, T: DbType<E>>dropColumn(column: Column<E, T>, useDDL : Boolean = true) = ddlRequest {
+    fun <E: Any, T: DbType<E>>dropColumn(column: Column<E, T>) = ddlRequest {
         if (columns.contains(column as Column<Any, DbType<Any>>)) {
-            if (useDDL) {
+            ddlRequest {
                 TableClickhouse.dropColumn(this, column)
             }
             columns.remove(column)
@@ -110,7 +112,6 @@ abstract class Table(val name: String, var db: Database) {
             rows.add(Row(rowMap as Map<Column<Any, DbType<Any>>, Any>))
         }
         InsertClickhouse.insert(InsertExpression(this, columns as List<Column<Any, DbType<Any>>>, rows))
-
     }
 
     private fun ddlRequest(body: () -> Unit) {

@@ -1,5 +1,6 @@
 out
 .gradle
+build
 
 # Cause we now use gradle
 .idea

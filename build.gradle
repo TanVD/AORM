@@ -44,6 +44,11 @@ task AormJar(type: Jar) {
     from sourceSets.main.output
 }
 
+task AormSourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
