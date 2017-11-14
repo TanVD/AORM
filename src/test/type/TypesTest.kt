@@ -100,8 +100,7 @@ class TypesTest {
     }
 }
 
-object AllTypesTable : Table("all_types_table"){
-    override var db: Database = TestDatabase
+object AllTypesTable : Table("all_types_table", TestDatabase) {
 
     val dateCol = date("date_col")
     val dateTimeCol = datetime("datetime_col")

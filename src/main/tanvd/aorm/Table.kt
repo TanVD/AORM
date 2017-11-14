@@ -8,8 +8,9 @@ import tanvd.aorm.query.QueryFunction
 import tanvd.aorm.query.SimpleColumn
 import java.util.*
 
-abstract class Table(val name: String) {
-    abstract var db: Database
+
+abstract class Table(val name: String, var db: Database) {
+    open val useDDL: Boolean = true
 
     abstract val engine: Engine
 
@@ -51,24 +52,22 @@ abstract class Table(val name: String) {
 
 
     //Table functions
-    fun create() {
+    fun create() = ddlRequest {
         TableClickhouse.create(this)
     }
 
-    fun drop() {
+    fun drop() = ddlRequest {
         TableClickhouse.drop(this)
     }
 
-    fun <E: Any, T: DbType<E>>addColumn(column: Column<E, T>, useDDL : Boolean = true) {
+    fun <E: Any, T: DbType<E>>addColumn(column: Column<E, T>) = ddlRequest {
         if (!columns.contains(column as Column<Any, DbType<Any>>)) {
-            if (useDDL) {
-                TableClickhouse.addColumn(this, column)
-            }
+            TableClickhouse.addColumn(this, column)
             columns.add(column)
         }
     }
 
-    fun <E: Any, T: DbType<E>>dropColumn(column: Column<E, T>, useDDL : Boolean = true) {
+    fun <E: Any, T: DbType<E>>dropColumn(column: Column<E, T>, useDDL : Boolean = true) = ddlRequest {
         if (columns.contains(column as Column<Any, DbType<Any>>)) {
             if (useDDL) {
                 TableClickhouse.dropColumn(this, column)
@@ -87,12 +86,18 @@ abstract class Table(val name: String) {
     }
 
 
-    fun syncScheme() {
+    fun syncScheme() = ddlRequest{
         MetadataClickhouse.syncScheme(this)
     }
 
 
     fun insert(expression: InsertExpression) {
         InsertClickhouse.insert(expression)
+    }
+
+    private fun ddlRequest(body: () -> Unit) {
+        if (useDDL) {
+            body()
+        }
     }
 }

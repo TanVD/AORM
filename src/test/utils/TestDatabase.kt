@@ -1,15 +1,18 @@
 package utils
 
 import tanvd.aorm.Database
+import tanvd.aorm.DatabaseProperties
 
-object TestDatabase : Database() {
+object TestDatabaseProperties : DatabaseProperties() {
     override val name: String = "default"
 
-    override fun url(): String = System.getProperty("ClickhouseUrl")?.trim('"') ?: "jdbc:clickhouse://localhost:8123"
-    override fun password(): String = ""
-    override fun user(): String = "default"
+    override val url: String = System.getProperty("ClickhouseUrl")?.trim('"') ?: "jdbc:clickhouse://localhost:8123"
+    override val password: String = ""
+    override val user: String = "default"
 
-    override fun useSsl(): Boolean = false
-    override fun sslCertPath(): String = ""
-    override fun sslVerifyMode(): String = ""
+    override val useSsl: Boolean = false
+    override val sslCertPath: String = ""
+    override val sslVerifyMode: String = ""
 }
+
+object TestDatabase : Database(TestDatabaseProperties)

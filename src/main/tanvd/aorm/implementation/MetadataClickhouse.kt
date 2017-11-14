@@ -23,8 +23,8 @@ object MetadataClickhouse {
 
     fun existsTable(table: Table) : Boolean {
         return table.db.withConnection {
-            val metadata = ClickHouseDatabaseMetadata(table.db.url(), this.unwrap(ClickHouseConnection::class.java))
-            metadata.getTables(null, table.db.name, table.name, null).use {
+            val metadata = ClickHouseDatabaseMetadata(table.db.properties.url, this.unwrap(ClickHouseConnection::class.java))
+            metadata.getTables(null, table.db.properties.name, table.name, null).use {
                 it.next()
             }
         }
@@ -36,8 +36,8 @@ object MetadataClickhouse {
      */
     fun columnsOfTable(table: Table) : Map<String, String> {
         return table.db.withConnection {
-            val metadata = ClickHouseDatabaseMetadata(table.db.url(), this.unwrap(ClickHouseConnection::class.java))
-            metadata.getColumns(null, table.db.name, table.name, null).use {
+            val metadata = ClickHouseDatabaseMetadata(table.db.properties.url, this.unwrap(ClickHouseConnection::class.java))
+            metadata.getColumns(null, table.db.properties.name, table.name, null).use {
                 val tableColumns = HashMap<String, String>()
                 while (it.next()) {
                     tableColumns.put(it.getString("COLUMN_NAME"), it.getString("TYPE_NAME"))

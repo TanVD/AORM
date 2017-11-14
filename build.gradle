@@ -40,7 +40,7 @@ test {
 }
 
 task AormJar(type: Jar) {
-    baseName = 'Aorm'
+    baseName = 'AORM'
     from sourceSets.main.output
 }
 

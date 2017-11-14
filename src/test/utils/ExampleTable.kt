@@ -2,9 +2,7 @@ package utils
 
 import tanvd.aorm.*
 
-object ExampleTable: Table("ExampleTable") {
-    override var db: Database = TestDatabase
-
+object ExampleTable: Table("ExampleTable", TestDatabase) {
     val date = date("date")
 
     val id = long("id").default { 1L }
