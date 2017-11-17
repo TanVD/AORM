@@ -51,26 +51,15 @@ class DbDate : DbPrimitiveType<Date>() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
     }
 
-
-    override fun toSqlName(): String {
-        return "Date"
-    }
-
-    override fun getValue(name: String, result: ResultSet): Date {
-        return result.getDate(name)
-    }
-
+    override fun toSqlName(): String = "Date"
+    override fun getValue(name: String, result: ResultSet): Date = result.getDate(name)
     override fun setValue(index: Int, statement: PreparedStatement, value: Date) {
         statement.setDate(index, java.sql.Date(value.time))
     }
 
-    override fun toStringValue(value: Date): String {
-        return "'${dateFormat.format(value)}'"
-    }
+    override fun toStringValue(value: Date): String = "'${dateFormat.format(value)}'"
 
-    override fun toArray(): DbArrayType<Date> {
-        return DbArrayDate()
-    }
+    override fun toArray(): DbArrayType<Date> = DbArrayDate()
 }
 
 class DbDateTime: DbPrimitiveType<DateTime>() {

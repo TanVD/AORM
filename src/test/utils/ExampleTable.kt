@@ -12,7 +12,7 @@ object ExampleTable: Table("ExampleTable", TestDatabase) {
 
     val arrayValue = arrayString("string_array").default { listOf("array1", "array2") }
 
-    override val engine: Engine = MergeTree(date, listOf(id), 8192)
+    override val engine = Engine.MergeTree(date, listOf(id), 8192)
 
     @TestOnly
     fun resetTable() {

@@ -10,9 +10,9 @@ import java.util.*
 
 
 abstract class Table(var name: String, var db: Database) {
-    open val useDDL: Boolean = true
+    open val useDDL: Boolean = true // TO REMOVE
 
-    abstract val engine: Engine
+    abstract val engine: Engine // why not in constructor?  is it optional?
 
     val columns: MutableList<Column<Any, DbType<Any>>> = ArrayList()
 

@@ -43,6 +43,8 @@ sealed class InfixConditionQueryExpression<E: Any, out T : DbType<E>, Y : Any>(v
     }
 }
 
+
+// How to implement substring/concat?
 sealed class PrefixConditionQueryExpression<E: Any, out T : DbType<E>, Y : Any>(val column: Column<E, T>, val value: Y,
                                                                                 val type: DbType<Y>, val op: String) : QueryExpression() {
     override fun toSqlPreparedDef(): PreparedSqlResult {

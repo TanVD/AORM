@@ -16,6 +16,7 @@ enum class Order {
 fun Query.orderBy(vararg orderByMap: Pair<Column<*, DbType<*>>, Order>) : Query {
     return this orderBy OrderByExpression(orderByMap.toMap())
 }
+
 fun orderBy(vararg orderByMap: Pair<Column<*, DbType<*>>, Order>): OrderByExpression {
     return OrderByExpression(orderByMap.toMap())
 }

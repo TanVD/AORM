@@ -9,6 +9,7 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 
 object QueryClickhouse {
+    // Table? -> DB
     fun getResult(table: Table, query: Query) : List<Row> {
         val rows = ArrayList<Row>()
         table.db.withConnection {
@@ -42,22 +43,23 @@ object QueryClickhouse {
     }
 
     private fun preconstructQuery(query: Query): PreparedSqlResult {
+        // sql -> buildString ???
         var sql = "SELECT ${query.columns.joinToString { it.toSql() }} FROM ${query.table.name} "
         val valuesToSet = ArrayList<Pair<DbType<Any>, Any>>()
-        if (query.prewhereSection != null) {
+        if (query.prewhereSection != null) { // ?.let { sec ->
             val result = query.prewhereSection!!.toSqlPreparedDef()
             sql += "PREWHERE ${result.sql} "
             valuesToSet += result.data
         }
-        if (query.whereSection != null) {
+        if (query.whereSection != null) {  // ?.let {
             val result = query.whereSection!!.toSqlPreparedDef()
             sql += "WHERE ${result.sql} "
             valuesToSet += result.data
         }
-        if (query.orderBySection != null) {
+        if (query.orderBySection != null) {  // ?.let {
             sql += "ORDER BY ${query.orderBySection!!.map.toList().joinToString { "${it.first.name} ${it.second}" }} "
         }
-        if (query.limitSection != null) {
+        if (query.limitSection != null) {  // ?.let {
             sql += "LIMIT ${query.limitSection!!.offset}, ${query.limitSection!!.limit} "
         }
         sql += ";"

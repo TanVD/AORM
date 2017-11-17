@@ -22,6 +22,8 @@ class Column<E, out T : DbType<E>>(val name: String, val type: T, default: (() -
         return "$name ${type.toSqlName()}"
     }
 
+
+    // Columns from different tables are equals?
     //Equals by name
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

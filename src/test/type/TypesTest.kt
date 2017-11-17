@@ -117,5 +117,5 @@ object AllTypesTable : Table("all_types_table", TestDatabase) {
     val arrayBoolCol = arrayBoolean("arrayBoolean_col")
     val arrayStringCol = arrayString("arrayString_col")
 
-    override val engine: Engine = MergeTree(dateCol, listOf(dateCol))
+    override val engine: Engine = Engine.MergeTree(dateCol, listOf(dateCol))
 }

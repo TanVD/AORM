@@ -11,6 +11,8 @@ object TableClickhouse {
                 "ENGINE = ${table.engine.toSqlDef()};")
     }
 
+    // fun table exists ??
+
     fun drop(table: Table) {
         table.db.execute("DROP TABLE ${table.name};")
     }

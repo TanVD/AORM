@@ -11,6 +11,8 @@ import tanvd.aorm.exceptions.BasicDbException
 import java.io.Closeable
 import java.sql.Connection
 
+
+// ????
 abstract class DatabaseProperties {
     abstract val name: String
 
