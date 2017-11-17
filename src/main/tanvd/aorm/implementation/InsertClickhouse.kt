@@ -11,7 +11,7 @@ object InsertClickhouse {
         }
     }
 
-    private fun Connection.constructInsert(insert: InsertExpression) : PreparedStatement {
+    private fun Connection.constructInsert(insert: InsertExpression): PreparedStatement {
         val sql = "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
                 insert.values.joinToString { "(${insert.columns.joinToString { "?" }})" }
         return prepareStatement(sql).let {
@@ -31,7 +31,7 @@ object InsertClickhouse {
     }
 
     fun constructInsert(insert: InsertExpression): String {
-        return  "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
+        return "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
                 "${insert.values.joinToString { row ->
                     insert.columns.joinToString(prefix = "(", postfix = ")") {
                         if (row[it] != null) {

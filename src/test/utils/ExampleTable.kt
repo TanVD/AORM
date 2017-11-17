@@ -2,6 +2,8 @@ package utils
 
 import org.jetbrains.annotations.TestOnly
 import tanvd.aorm.*
+import tanvd.aorm.expression.Column
+import tanvd.aorm.expression.default
 
 @Suppress("UNCHECKED_CAST")
 object ExampleTable: Table("ExampleTable", TestDatabase) {

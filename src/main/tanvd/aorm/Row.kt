@@ -1,18 +1,17 @@
 package tanvd.aorm
 
+import tanvd.aorm.expression.Column
+import tanvd.aorm.expression.Expression
 import java.sql.ResultSet
 
-data class Row(val values: Map<Column<Any, DbType<Any>>, Any>) {
+data class Row<T : Expression<*, DbType<*>>>(val values: Map<T, Any>) {
     val columns = values.map { it.key }
 
-    constructor(result: ResultSet, columns: List<Column<Any, DbType<Any>>>) : this(columns.map { it to it.getValue(result) }.toMap())
+    constructor(result: ResultSet, expressions: List<T>) : this(expressions.withIndex().map { (index, expr) ->
+        expr to expr.getValue(result, index + 1)!!
+    }.toMap())
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <E : Any, T: DbType<E>>get(column: Column<E, T>) : E? {
-        return values[column as Column<Any, DbType<Any>>] as E?
-    }
-
-    operator fun get(name: String) : Any? {
-        return values.filterKeys { it.name == name }.values.firstOrNull()
-    }
+    operator fun <E : Any, Y : DbType<E>> get(column: Column<E, Y>): E? =
+            values[column as? T] as? E?
 }

@@ -2,7 +2,7 @@ group 'tanvd'
 version '0.1-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.1.60'
 
     repositories {
         mavenCentral()
@@ -59,7 +59,6 @@ dependencies {
     compile "ch.qos.logback:logback-classic:1.2.2"
     compile "com.google.guava:guava:19.0"
     compile "joda-time:joda-time:2.9.9"
-    compile "org.apache.commons:commons-dbcp2:2.1.1"
     testCompile "org.testng:testng:6.11"
     testCompile "org.mockito:mockito-all:1.10.19"
     //need it for kotlin object mocking purposes (mocking static members)

@@ -4,6 +4,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import tanvd.aorm.*
+import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.QueryClickhouse
@@ -50,7 +51,7 @@ class TypesTest {
                 AllTypesTable.arrayStringCol to listOf("string1", "string2")
         ) as Map<Column<Any, DbType<Any>>, Any>)
 
-        InsertClickhouse.insert(InsertExpression(AllTypesTable, row))
+        InsertClickhouse.insert(InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
 
         val gotRow = (AllTypesTable.select() where ((AllTypesTable.dateCol eq getDate("2000-01-01")) and
                 (AllTypesTable.dateTimeCol eq getDateTime("2000-01-01 12:00:00")) and
@@ -81,7 +82,7 @@ class TypesTest {
                 AllTypesTable.arrayStringCol to listOf("string1", "string2")
         ) as Map<Column<Any, DbType<Any>>, Any>)
 
-        val sql = InsertClickhouse.constructInsert(InsertExpression(AllTypesTable, row))
+        val sql = InsertClickhouse.constructInsert(InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
         Assert.assertEquals(sql, "INSERT INTO all_types_table (date_col, datetime_col, ulong_col, long_col, bool_col, string_col, arrayDate_col, arrayULong_col, arrayLong_col, arrayBoolean_col, arrayString_col) VALUES ('2000-01-01', '2000-01-01 12:00:00', 1, 2, 1, 'string', ['2001-01-01', '2002-02-02'], [3, 4], [5, 6], [1, 0], ['string1', 'string2']);")
     }
 

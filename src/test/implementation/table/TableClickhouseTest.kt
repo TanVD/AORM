@@ -5,7 +5,7 @@ import utils.AssertDb
 import utils.ExampleTable
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.Column
+import tanvd.aorm.expression.Column
 import tanvd.aorm.DbLong
 import tanvd.aorm.exceptions.BasicDbException
 import tanvd.aorm.implementation.MetadataClickhouse
@@ -57,7 +57,7 @@ class TableClickhouseTest : AormTestBase() {
     fun addColumn_tableExists_columnAddedInMetadata() {
         TableClickhouse.create(ExampleTable)
 
-        TableClickhouse.addColumn(ExampleTable, Column("new_column", DbLong()))
+        TableClickhouse.addColumn(ExampleTable, Column("new_column", DbLong(), ExampleTable))
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(ExampleTable)
         Assert.assertEquals(metadataColumns["new_column"]?.toLowerCase(), DbLong().toSqlName().toLowerCase())
@@ -66,7 +66,7 @@ class TableClickhouseTest : AormTestBase() {
     @Test
     fun addColumn_tableNotExists_gotBasicDbException() {
         try {
-            TableClickhouse.addColumn(ExampleTable, Column("new_column", DbLong()))
+            TableClickhouse.addColumn(ExampleTable, Column("new_column", DbLong(), ExampleTable))
         } catch (e : BasicDbException) {
             return
         }

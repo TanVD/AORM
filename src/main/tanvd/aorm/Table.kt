@@ -1,99 +1,87 @@
 package tanvd.aorm
 
+import tanvd.aorm.expression.Column
+import tanvd.aorm.expression.Expression
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.TableClickhouse
 import tanvd.aorm.query.Query
-import tanvd.aorm.query.QueryFunction
-import tanvd.aorm.query.SimpleColumn
 import java.util.*
 
 
 abstract class Table(var name: String, var db: Database) {
-    open val useDDL: Boolean = true // TO REMOVE
-
-    abstract val engine: Engine // why not in constructor?  is it optional?
-
     val columns: MutableList<Column<Any, DbType<Any>>> = ArrayList()
+
+    abstract val engine: Engine
 
     val columnsWithDefaults
         get() = columns.filter { it.defaultFunction != null }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T, E: DbType<T>>registerColumn(column: Column<T, E>): Column<T, E> {
+    private fun <T, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
         columns.add(column as Column<Any, DbType<Any>>)
         return column
     }
 
-    fun date(name: String) = registerColumn(Column(name, DbDate()))
+    fun date(name: String) = registerColumn(Column(name, DbDate(), this))
 
-    fun datetime(name: String) = registerColumn(Column(name, DbDateTime()))
+    fun datetime(name: String) = registerColumn(Column(name, DbDateTime(), this))
 
-    fun ulong(name: String) = registerColumn(Column(name, DbULong()))
+    fun ulong(name: String) = registerColumn(Column(name, DbULong(), this))
 
-    fun long(name: String) = registerColumn(Column(name, DbLong()))
+    fun long(name: String) = registerColumn(Column(name, DbLong(), this))
 
-    fun boolean(name: String) = registerColumn(Column(name, DbBoolean()))
+    fun boolean(name: String) = registerColumn(Column(name, DbBoolean(), this))
 
-    fun string(name: String) = registerColumn(Column(name, DbString()))
+    fun string(name: String) = registerColumn(Column(name, DbString(), this))
 
 
-    fun arrayDate(name: String) = registerColumn(Column(name, DbArrayDate()))
+    fun arrayDate(name: String) = registerColumn(Column(name, DbArrayDate(), this))
 
 //    fun arrayDateTime(name: String) = registerColumn(Column(name, DbArrayDateTime()))
 
-    fun arrayULong(name: String) = registerColumn(Column(name, DbArrayULong()))
+    fun arrayULong(name: String) = registerColumn(Column(name, DbArrayULong(), this))
 
-    fun arrayLong(name: String) = registerColumn(Column(name, DbArrayLong()))
+    fun arrayLong(name: String) = registerColumn(Column(name, DbArrayLong(), this))
 
-    fun arrayBoolean(name: String) = registerColumn(Column(name, DbArrayBoolean()))
+    fun arrayBoolean(name: String) = registerColumn(Column(name, DbArrayBoolean(), this))
 
-    fun arrayString(name: String) = registerColumn(Column(name, DbArrayString()))
-
+    fun arrayString(name: String) = registerColumn(Column(name, DbArrayString(), this))
 
 
     //Table functions
-    fun create() = ddlRequest {
-        TableClickhouse.create(this)
-    }
+    fun create() = TableClickhouse.create(this)
 
-    fun drop() = ddlRequest {
-        TableClickhouse.drop(this)
-    }
+    fun drop() = TableClickhouse.drop(this)
+
+    fun exists(): Boolean = TableClickhouse.exists(this)
 
     @Suppress("UNCHECKED_CAST")
-    fun <E: Any, T: DbType<E>>addColumn(column: Column<E, T>) {
+    fun <E : Any, T : DbType<E>> addColumn(column: Column<E, T>) {
         if (!columns.contains(column as Column<Any, DbType<Any>>)) {
-            ddlRequest {
-                TableClickhouse.addColumn(this, column)
-            }
+            TableClickhouse.addColumn(this, column)
             columns.add(column)
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <E: Any, T: DbType<E>>dropColumn(column: Column<E, T>) = ddlRequest {
+    fun <E : Any, T : DbType<E>> dropColumn(column: Column<E, T>) {
         if (columns.contains(column as Column<Any, DbType<Any>>)) {
-            ddlRequest {
-                TableClickhouse.dropColumn(this, column)
-            }
+            TableClickhouse.dropColumn(this, column)
             columns.remove(column)
         }
     }
 
     fun select(): Query {
         @Suppress("UNCHECKED_CAST")
-        return Query(this, columns.map { SimpleColumn(it) })
+        return Query(this, columns)
     }
 
-    fun select(vararg functions: QueryFunction) : Query {
-        return Query(this, functions.toList())
-    }
+    @Suppress("UNCHECKED_CAST")
+    fun select(vararg functions: Expression<*, DbType<*>>): Query = Query(this, functions.toList() as List<Expression<Any, DbType<Any>>>)
 
 
-    fun syncScheme() = ddlRequest{
-        MetadataClickhouse.syncScheme(this)
-    }
+    fun syncScheme() = MetadataClickhouse.syncScheme(this)
 
     @Suppress("UNCHECKED_CAST")
     fun insert(body: (MutableMap<Column<*, DbType<*>>, Any>) -> Unit) {
@@ -103,20 +91,14 @@ abstract class Table(var name: String, var db: Database) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T: Any>batchInsert(list: Iterable<T>, columns: List<Column<*, DbType<*>>> = this.columns,
-                            body: (MutableMap<Column<*, DbType<*>>, Any>, T) -> Unit) {
-        val rows = ArrayList<Row>()
+    fun <T : Any> batchInsert(list: Iterable<T>, columns: List<Column<*, DbType<*>>> = this.columns,
+                              body: (MutableMap<Column<*, DbType<*>>, Any>, T) -> Unit) {
+        val rows = ArrayList<Row<Column<Any, DbType<Any>>>>()
         list.forEach {
             val rowMap = HashMap<Column<*, DbType<*>>, Any>()
             body(rowMap, it)
             rows.add(Row(rowMap as Map<Column<Any, DbType<Any>>, Any>))
         }
         InsertClickhouse.insert(InsertExpression(this, columns as List<Column<Any, DbType<Any>>>, rows))
-    }
-
-    private fun ddlRequest(body: () -> Unit) {
-        if (useDDL) {
-            body()
-        }
     }
 }

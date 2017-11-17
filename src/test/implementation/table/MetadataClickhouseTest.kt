@@ -5,7 +5,7 @@ import utils.AssertDb
 import utils.ExampleTable
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.Column
+import tanvd.aorm.expression.Column
 import tanvd.aorm.DbLong
 import tanvd.aorm.DbType
 import tanvd.aorm.implementation.MetadataClickhouse
@@ -48,7 +48,7 @@ class MetadataClickhouseTest : AormTestBase() {
     @Test
     fun syncScheme_tableExistsNewColumn_columnAdded() {
         TableClickhouse.create(ExampleTable)
-        val newColumn = Column("new_column", DbLong())
+        val newColumn = Column("new_column", DbLong(), ExampleTable)
         ExampleTable.columns.add(newColumn as Column<Any, DbType<Any>>)
 
         MetadataClickhouse.syncScheme(ExampleTable)

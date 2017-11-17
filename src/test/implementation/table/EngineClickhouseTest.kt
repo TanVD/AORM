@@ -4,7 +4,7 @@ import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import tanvd.aorm.Engine
 import tanvd.aorm.Table
-import tanvd.aorm.default
+import tanvd.aorm.expression.default
 import tanvd.aorm.implementation.TableClickhouse
 import utils.AssertDb
 import utils.TestDatabase

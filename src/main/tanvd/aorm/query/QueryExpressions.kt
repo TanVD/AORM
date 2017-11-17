@@ -1,9 +1,15 @@
 package tanvd.aorm.query
 
-import tanvd.aorm.*
+import tanvd.aorm.DbArrayType
+import tanvd.aorm.DbPrimitiveType
+import tanvd.aorm.DbString
+import tanvd.aorm.DbType
+import tanvd.aorm.expression.Column
+import tanvd.aorm.expression.Expression
+import tanvd.aorm.expression.ValueExpression
 
 sealed class QueryExpression {
-    abstract fun toSqlPreparedDef() : PreparedSqlResult
+    abstract fun toSqlPreparedDef(): PreparedSqlResult
 }
 
 /** CONTRACT: All sql's generated on every level should be in brackets. Inner sql should not be in brackets.**/
@@ -21,7 +27,6 @@ class AndQueryExpression(left: QueryExpression, right: QueryExpression) : Binary
 class OrQueryExpression(left: QueryExpression, right: QueryExpression) : BinaryQueryExpression(left, right, "OR")
 
 
-
 //Unary logic expressions
 sealed class UnaryQueryExpression(val expression: QueryExpression, val op: String) : QueryExpression() {
     override fun toSqlPreparedDef(): PreparedSqlResult {
@@ -30,76 +35,78 @@ sealed class UnaryQueryExpression(val expression: QueryExpression, val op: Strin
     }
 }
 
-class NotQueryExpression(expression: QueryExpression): UnaryQueryExpression(expression, "NOT")
+class NotQueryExpression(expression: QueryExpression) : UnaryQueryExpression(expression, "NOT")
 
 
 //CONDITIONS
 
-sealed class InfixConditionQueryExpression<E: Any, out T : DbType<E>, Y : Any>(val column: Column<E, T>, val value: Y,
-                                                                               val type: DbType<Y>, val op: String) : QueryExpression() {
+sealed class InfixConditionQueryExpression<E : Any, out T : DbType<E>, Y : Any>(val expression: Expression<E, T>, val value: Y,
+                                                                                val type: DbType<Y>, val op: String) : QueryExpression() {
     override fun toSqlPreparedDef(): PreparedSqlResult {
         @Suppress("UNCHECKED_CAST")
-        return PreparedSqlResult("(${column.name} $op ?)", listOf((type to value) as Pair<DbType<Any>, Any>))
+        return PreparedSqlResult("(${expression.toSql()} $op ?)", listOf((type to value) as Pair<DbType<Any>, Any>))
     }
 }
 
 
-// How to implement substring/concat?
-sealed class PrefixConditionQueryExpression<E: Any, out T : DbType<E>, Y : Any>(val column: Column<E, T>, val value: Y,
-                                                                                val type: DbType<Y>, val op: String) : QueryExpression() {
+sealed class PrefixConditionQueryExpression<E : Any, out T : DbType<E>>(val expression: Expression<E, T>,
+                                                                        val op: String,
+                                                                        val typeToValue: List<Pair<DbType<*>, *>>) : QueryExpression() {
+    constructor(expression: Expression<E, T>, op: String, vararg typeToValue: Pair<DbType<*>, *>) : this(expression, op, typeToValue.toList())
+
     override fun toSqlPreparedDef(): PreparedSqlResult {
         @Suppress("UNCHECKED_CAST")
-        return PreparedSqlResult("($op(${column.name}, ?))", listOf((type to value) as Pair<DbType<Any>, Any>))
+        return PreparedSqlResult("($op(${expression.toSql()}, ?))", typeToValue as List<Pair<DbType<Any>, Any>>)
     }
 }
 
 //VALUES
 
 //Equality
-class EqExpression<E : Any, out T : DbPrimitiveType<E>>(column: Column<E, T>, value: E) :
-        InfixConditionQueryExpression<E, T, E>(column, value, column.type, "=")
+class EqExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression<E, T>, value: E) :
+        InfixConditionQueryExpression<E, T, E>(expression, value, expression.type, "=")
 
 //LessOrMore
-class LessExpression<E : Any, out T : DbPrimitiveType<E>>(column: Column<E, T>, value: E) :
-        InfixConditionQueryExpression<E, T, E>(column, value, column.type, "<")
+class LessExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression<E, T>, value: E) :
+        InfixConditionQueryExpression<E, T, E>(expression, value, expression.type, "<")
 
-class LessOrEqualExpression<E : Any, out T : DbPrimitiveType<E>>(column: Column<E, T>, value: E) :
-        InfixConditionQueryExpression<E, T, E>(column, value, column.type, "<=")
+class LessOrEqualExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression<E, T>, value: E) :
+        InfixConditionQueryExpression<E, T, E>(expression, value, expression.type, "<=")
 
-class MoreExpression<E : Any, out T : DbPrimitiveType<E>>(column: Column<E, T>, value: E) :
-        InfixConditionQueryExpression<E, T, E>(column, value, column.type, ">")
+class MoreExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression<E, T>, value: E) :
+        InfixConditionQueryExpression<E, T, E>(expression, value, expression.type, ">")
 
-class MoreOrEqualExpression<E : Any, out T : DbPrimitiveType<E>>(column: Column<E, T>, value: E) :
-        InfixConditionQueryExpression<E, T, E>(column, value, column.type, ">=")
+class MoreOrEqualExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression<E, T>, value: E) :
+        InfixConditionQueryExpression<E, T, E>(expression, value, expression.type, ">=")
 
 //Like
-class LikeExpression(column: Column<String, DbPrimitiveType<String>>, value: String) :
-        InfixConditionQueryExpression<String, DbPrimitiveType<String>, String>(column, value, DbString(), "LIKE")
+class LikeExpression(expression: Expression<String, DbPrimitiveType<String>>, value: String) :
+        InfixConditionQueryExpression<String, DbPrimitiveType<String>, String>(expression, value, DbString(), "LIKE")
 
-class RegexExpression(column: Column<String, DbPrimitiveType<String>>, value: String) :
-        PrefixConditionQueryExpression<String, DbPrimitiveType<String>, String>(column, value, DbString(), "match")
+class RegexExpression(expression: Expression<String, DbPrimitiveType<String>>, value: String) :
+        PrefixConditionQueryExpression<String, DbPrimitiveType<String>>(expression, "match", DbString() to value)
 
 //Lists
-class InListExpression<T: Any>(val column: Column<T, DbPrimitiveType<T>>, val value: List<T>) : QueryExpression() {
+class InListExpression<T : Any>(val expression: Expression<T, DbPrimitiveType<T>>, val value: List<T>) : QueryExpression() {
     @Suppress("UNCHECKED_CAST")
     override fun toSqlPreparedDef(): PreparedSqlResult {
-        return PreparedSqlResult("(${column.name} in (${value.joinToString { "?" }}))",
-                value.map { (column.type to it) as Pair<DbType<Any>, Any> })
+        return PreparedSqlResult("(${expression.toSql()} in (${value.joinToString { "?" }}))",
+                value.map { (expression.type to it) as Pair<DbType<Any>, Any> })
     }
 }
 
 
 //ARRAYS
-class HasExpression<T: Any>(column: Column<List<T>, DbArrayType<T>>, value: T)
-    : PrefixConditionQueryExpression<List<T>, DbArrayType<T>, T>(column, value, column.type.toPrimitive(), "has")
+class HasExpression<T : Any>(expression: Expression<List<T>, DbArrayType<T>>, value: T)
+    : PrefixConditionQueryExpression<List<T>, DbArrayType<T>>(expression, "has", expression.type.toPrimitive() to value)
 
-class ExistsExpression<T: Any>(val column: Column<List<T>, DbArrayType<T>>,
-                               val body: (Column<T, DbPrimitiveType<T>>) -> QueryExpression) : QueryExpression() {
+class ExistsExpression<T : Any>(val expression: Expression<List<T>, DbArrayType<T>>,
+                                val body: (Expression<T, DbPrimitiveType<T>>) -> QueryExpression) : QueryExpression() {
     override fun toSqlPreparedDef(): PreparedSqlResult {
-        val innerColumn = Column("x", column.type.toPrimitive())
+        val innerColumn = ValueExpression("x", expression.type.toPrimitive())
         val innerExpression = body(innerColumn)
         val (sql, data) = innerExpression.toSqlPreparedDef()
-        return PreparedSqlResult("(arrayExists(x -> $sql, ${column.name}))", data)
+        return PreparedSqlResult("(arrayExists(x -> $sql, ${expression.toSql()}))", data)
     }
 }
 
@@ -110,63 +117,44 @@ data class PreparedSqlResult(val sql: String, val data: List<Pair<DbType<Any>, A
 
 //Helper functions
 //logic operators
-infix fun QueryExpression.and(value: QueryExpression): AndQueryExpression {
-    return AndQueryExpression(this, value)
-}
+infix fun QueryExpression.and(value: QueryExpression): AndQueryExpression = AndQueryExpression(this, value)
 
-infix fun QueryExpression.or(value: QueryExpression): OrQueryExpression {
-    return OrQueryExpression(this, value)
-}
+infix fun QueryExpression.or(value: QueryExpression): OrQueryExpression = OrQueryExpression(this, value)
 
-fun not(value: QueryExpression): NotQueryExpression {
-    return NotQueryExpression(value)
-}
+fun not(value: QueryExpression): NotQueryExpression = NotQueryExpression(value)
 
 //Equality
 //Array equality is not supported by CH for now
-infix fun <T: Any> Column<T, DbPrimitiveType<T>>.eq(value: T) : EqExpression<T, DbPrimitiveType<T>> {
-    return EqExpression(this, value)
-}
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.eq(value: T): EqExpression<T, DbPrimitiveType<T>> =
+        EqExpression(this, value)
 
 //Numbers
-infix fun <T : Any> Column<T, DbPrimitiveType<T>>.less(value: T) : LessExpression<T, DbPrimitiveType<T>> {
-    return LessExpression(this, value)
-}
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.less(value: T): LessExpression<T, DbPrimitiveType<T>> =
+        LessExpression(this, value)
 
-infix fun <T : Any> Column<T, DbPrimitiveType<T>>.lessOrEq(value: T) : LessOrEqualExpression<T, DbPrimitiveType<T>> {
-    return LessOrEqualExpression(this, value)
-}
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.lessOrEq(value: T): LessOrEqualExpression<T, DbPrimitiveType<T>> =
+        LessOrEqualExpression(this, value)
 
-infix fun <T : Any> Column<T, DbPrimitiveType<T>>.more(value: T) : MoreExpression<T, DbPrimitiveType<T>> {
-    return MoreExpression(this, value)
-}
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.more(value: T): MoreExpression<T, DbPrimitiveType<T>> =
+        MoreExpression(this, value)
 
-infix fun <T : Any> Column<T, DbPrimitiveType<T>>.moreOrEq(value: T) : MoreOrEqualExpression<T, DbPrimitiveType<T>> {
-    return MoreOrEqualExpression(this, value)
-}
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.moreOrEq(value: T): MoreOrEqualExpression<T, DbPrimitiveType<T>> =
+        MoreOrEqualExpression(this, value)
 
 //Strings
-infix fun Column<String, DbPrimitiveType<String>>.like(value: String): LikeExpression {
-    return LikeExpression(this, value)
-}
+infix fun Column<String, DbPrimitiveType<String>>.like(value: String): LikeExpression = LikeExpression(this, value)
 
-infix fun Column<String, DbPrimitiveType<String>>.regex(value: String): RegexExpression {
-    return RegexExpression(this, value)
-}
+infix fun Column<String, DbPrimitiveType<String>>.regex(value: String): RegexExpression = RegexExpression(this, value)
 
 //Lists
-infix fun <T: Any>Column<T, DbPrimitiveType<T>>.inList(values: List<T>): InListExpression<T> {
-    return InListExpression(this, values)
-}
+infix fun <T : Any> Column<T, DbPrimitiveType<T>>.inList(values: List<T>): InListExpression<T> =
+        InListExpression(this, values)
 
 
 //Has arrays
-infix fun <T: Any>Column<List<T>, DbArrayType<T>>.has(value: T): HasExpression<T> {
-    return HasExpression(this, value)
-}
+infix fun <T : Any> Column<List<T>, DbArrayType<T>>.has(value: T): HasExpression<T> = HasExpression(this, value)
 
 //Exists array
-infix fun <T: Any>Column<List<T>, DbArrayType<T>>.exists(body: (Column<T, DbPrimitiveType<T>>) -> QueryExpression): ExistsExpression<T> {
-    return ExistsExpression(this, body)
-}
+infix fun <T : Any> Column<List<T>, DbArrayType<T>>.exists(body: (Expression<T, DbPrimitiveType<T>>) -> QueryExpression): ExistsExpression<T> =
+        ExistsExpression(this, body)
 

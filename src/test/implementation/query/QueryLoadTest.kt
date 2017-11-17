@@ -2,7 +2,7 @@ package implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.Column
+import tanvd.aorm.expression.Column
 import tanvd.aorm.DbType
 import tanvd.aorm.InsertExpression
 import tanvd.aorm.Row
@@ -24,7 +24,9 @@ class QueryLoadTest : AormTestBase() {
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>)
-            InsertClickhouse.insert(InsertExpression(ExampleTable, row))
+            InsertClickhouse.insert(InsertExpression(ExampleTable,
+                    ExampleTable.columns as List<Column<Any, DbType<Any>>>,
+                    arrayListOf(row)))
 
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
 
@@ -40,7 +42,9 @@ class QueryLoadTest : AormTestBase() {
                 ExampleTable.id to 1L,
                 ExampleTable.value to "value",
                 ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>)
-        InsertClickhouse.insert(InsertExpression(ExampleTable, row))
+        InsertClickhouse.insert(InsertExpression(ExampleTable,
+                ExampleTable.columns as List<Column<Any, DbType<Any>>>,
+                arrayListOf(row)))
 
         val select = ExampleTable.select() prewhere (ExampleTable.id eq 1L)
 
@@ -56,7 +60,9 @@ class QueryLoadTest : AormTestBase() {
                 ExampleTable.id to 1L,
                 ExampleTable.value to "value",
                 ExampleTable.date to getDate("2000-01-01")) as Map<Column<Any, DbType<Any>>, Any>)
-        InsertClickhouse.insert(InsertExpression(ExampleTable, row))
+        InsertClickhouse.insert(InsertExpression(ExampleTable,
+                ExampleTable.columns as List<Column<Any, DbType<Any>>>,
+                arrayListOf(row)))
 
         val select = (ExampleTable.select() prewhere (ExampleTable.id eq 1L) where (ExampleTable.value eq "value"))
                 .orderBy(ExampleTable.arrayValue to Order.ASC, ExampleTable.date to Order.DESC).limit(1, 0)

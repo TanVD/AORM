@@ -2,9 +2,9 @@ package api
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.Column
 import tanvd.aorm.DbType
 import tanvd.aorm.Row
+import tanvd.aorm.expression.Expression
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.where
 import utils.AormTestBase
@@ -29,7 +29,7 @@ class InsertTableTest: AormTestBase() {
 
         val expectedRow = Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                 ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
-                as Map<Column<Any, DbType<Any>>, Any>)
+                as Map<Expression<Any, DbType<Any>>, Any>)
         val select = ExampleTable.select() where (ExampleTable.id eq 2L)
         Assert.assertEquals(select.toResult().single(), expectedRow)
     }
@@ -46,10 +46,10 @@ class InsertTableTest: AormTestBase() {
 
         val expectedRows = setOf(Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                 ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
-                as Map<Column<Any, DbType<Any>>, Any>),
+                as Map<Expression<Any, DbType<Any>>, Any>),
                 Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                         ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
-                as Map<Column<Any, DbType<Any>>, Any>))
+                as Map<Expression<Any, DbType<Any>>, Any>))
         val select = ExampleTable.select() where (ExampleTable.value eq "value")
         Assert.assertEquals(select.toResult().toSet(), expectedRows)
     }

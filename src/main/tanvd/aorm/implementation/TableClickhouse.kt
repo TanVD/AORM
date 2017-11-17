@@ -1,8 +1,8 @@
 package tanvd.aorm.implementation
 
-import tanvd.aorm.Column
 import tanvd.aorm.DbType
 import tanvd.aorm.Table
+import tanvd.aorm.expression.Column
 
 object TableClickhouse {
     fun create(table: Table) {
@@ -11,7 +11,7 @@ object TableClickhouse {
                 "ENGINE = ${table.engine.toSqlDef()};")
     }
 
-    // fun table exists ??
+    fun exists(table: Table): Boolean = MetadataClickhouse.existsTable(table)
 
     fun drop(table: Table) {
         table.db.execute("DROP TABLE ${table.name};")

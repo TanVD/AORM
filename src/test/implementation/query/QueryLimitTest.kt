@@ -2,7 +2,7 @@ package implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.Column
+import tanvd.aorm.expression.Column
 import tanvd.aorm.DbType
 import tanvd.aorm.InsertExpression
 import tanvd.aorm.Row

@@ -10,20 +10,19 @@ object MetadataClickhouse {
         }
         val dbTableColumns = columnsOfTable(table)
 
-        // table.columns.filter {}.forEach { } ?
-        for (column in table.columns) {
-            // Case sensitive ?
-            val exists = dbTableColumns.any { (name, type) -> name.equals(column.name, true)
-                    && type.equals(column.type.toSqlName(), true)}
-            if (!exists) {
-                TableClickhouse.addColumn(table, column)
+        table.columns.filter { column ->
+            !dbTableColumns.any { (name, type) ->
+                name == column.name
+                        && type == column.type.toSqlName()
             }
+        }.forEach { column ->
+            TableClickhouse.addColumn(table, column)
         }
     }
 
-    fun existsTable(table: Table) : Boolean {
+    fun existsTable(table: Table): Boolean {
         return table.db.withConnection {
-            metaData.getTables(null, table.db.properties.name, table.name, null).use {
+            metaData.getTables(null, table.db.name, table.name, null).use {
                 it.next()
             }
         }
@@ -33,9 +32,9 @@ object MetadataClickhouse {
      * Returns columns in JDBC representation.
      * Names to Types
      */
-    fun columnsOfTable(table: Table) : Map<String, String> {
+    fun columnsOfTable(table: Table): Map<String, String> {
         return table.db.withConnection {
-            metaData.getColumns(null, table.db.properties.name, table.name, null).use {
+            metaData.getColumns(null, table.db.name, table.name, null).use {
                 val tableColumns = HashMap<String, String>()
                 while (it.next()) {
                     tableColumns.put(it.getString("COLUMN_NAME"), it.getString("TYPE_NAME"))

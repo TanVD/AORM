@@ -2,21 +2,20 @@ package tanvd.aorm.implementation
 
 import tanvd.aorm.DbType
 import tanvd.aorm.Row
-import tanvd.aorm.Table
+import tanvd.aorm.expression.Expression
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
 import java.sql.Connection
 import java.sql.PreparedStatement
 
 object QueryClickhouse {
-    // Table? -> DB
-    fun getResult(table: Table, query: Query) : List<Row> {
-        val rows = ArrayList<Row>()
-        table.db.withConnection {
+    fun getResult(query: Query): List<Row<Expression<Any, DbType<Any>>>> {
+        val rows = ArrayList<Row<Expression<Any, DbType<Any>>>>()
+        query.table.db.withConnection {
             constructQuery(query).use { statement ->
                 val result = statement.executeQuery()
                 while (result.next()) {
-                    rows.add(Row(result, query.columns.map { it.resultColumn }))
+                    rows.add(Row(result, query.columns))
                 }
             }
         }
@@ -31,7 +30,7 @@ object QueryClickhouse {
         return sql
     }
 
-    private fun Connection.constructQuery(query: Query) : PreparedStatement {
+    private fun Connection.constructQuery(query: Query): PreparedStatement {
         val (sql, valuesToSet) = preconstructQuery(query)
         val statement = prepareStatement(sql)
         for ((index, pair) in valuesToSet.withIndex()) {
@@ -43,26 +42,27 @@ object QueryClickhouse {
     }
 
     private fun preconstructQuery(query: Query): PreparedSqlResult {
-        // sql -> buildString ???
-        var sql = "SELECT ${query.columns.joinToString { it.toSql() }} FROM ${query.table.name} "
         val valuesToSet = ArrayList<Pair<DbType<Any>, Any>>()
-        if (query.prewhereSection != null) { // ?.let { sec ->
-            val result = query.prewhereSection!!.toSqlPreparedDef()
-            sql += "PREWHERE ${result.sql} "
-            valuesToSet += result.data
+        val sql = buildString {
+            append("SELECT ${query.columns.joinToString { it.toSql() }} FROM ${query.table.name} ")
+            query.prewhereSection?.let { section ->
+                val result = section.toSqlPreparedDef()
+                append("PREWHERE ${result.sql} ")
+                valuesToSet += result.data
+            }
+            query.whereSection?.let { section ->
+                val result = section.toSqlPreparedDef()
+                append("WHERE ${result.sql} ")
+                valuesToSet += result.data
+            }
+            query.orderBySection?.let { section ->
+                append("ORDER BY ${section.map.toList().joinToString { "${it.first.name} ${it.second}" }} ")
+            }
+            query.limitSection?.let { section ->
+                append("LIMIT ${section.offset}, ${query.limitSection!!.limit} ")
+            }
+            append(";")
         }
-        if (query.whereSection != null) {  // ?.let {
-            val result = query.whereSection!!.toSqlPreparedDef()
-            sql += "WHERE ${result.sql} "
-            valuesToSet += result.data
-        }
-        if (query.orderBySection != null) {  // ?.let {
-            sql += "ORDER BY ${query.orderBySection!!.map.toList().joinToString { "${it.first.name} ${it.second}" }} "
-        }
-        if (query.limitSection != null) {  // ?.let {
-            sql += "LIMIT ${query.limitSection!!.offset}, ${query.limitSection!!.limit} "
-        }
-        sql += ";"
         return PreparedSqlResult(sql, valuesToSet)
     }
 
