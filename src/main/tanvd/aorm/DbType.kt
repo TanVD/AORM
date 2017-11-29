@@ -258,15 +258,15 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
     override fun toSqlName(): String = "Array(UInt8)"
 
     override fun getValue(name: String, result: ResultSet): List<Boolean> {
-        return (result.getArray(name).array as LongArray).toList().map {
+        return (result.getArray(name).array as LongArray).map {
             it.toInt() == 1
-        }.toList()
+        }
     }
 
     override fun getValue(index: Int, result: ResultSet): List<Boolean> {
-        return (result.getArray(index).array as LongArray).toList().map {
+        return (result.getArray(index).array as LongArray).map {
             it.toInt() == 1
-        }.toList()
+        }
     }
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Boolean>) {
