@@ -4,7 +4,7 @@ import tanvd.aorm.exceptions.BasicDbException
 import java.sql.Connection
 import javax.sql.DataSource
 
-abstract class Database(val name: String, private val dataSource: DataSource) {
+class Database(val name: String, private val dataSource: DataSource) {
     fun <T> withConnection(body: Connection.() -> T): T {
         return try {
             dataSource.connection.use {

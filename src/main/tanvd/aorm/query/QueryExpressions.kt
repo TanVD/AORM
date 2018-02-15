@@ -142,12 +142,12 @@ infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.moreOrEq(value: T): MoreOr
         MoreOrEqualExpression(this, value)
 
 //Strings
-infix fun Column<String, DbPrimitiveType<String>>.like(value: String): LikeExpression = LikeExpression(this, value)
+infix fun Expression<String, DbPrimitiveType<String>>.like(value: String): LikeExpression = LikeExpression(this, value)
 
-infix fun Column<String, DbPrimitiveType<String>>.regex(value: String): RegexExpression = RegexExpression(this, value)
+infix fun Expression<String, DbPrimitiveType<String>>.regex(value: String): RegexExpression = RegexExpression(this, value)
 
 //Lists
-infix fun <T : Any> Column<T, DbPrimitiveType<T>>.inList(values: List<T>): InListExpression<T> =
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.inList(values: List<T>): InListExpression<T> =
         InListExpression(this, values)
 
 
