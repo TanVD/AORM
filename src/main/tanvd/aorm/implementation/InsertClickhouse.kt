@@ -7,7 +7,9 @@ import java.sql.PreparedStatement
 object InsertClickhouse {
     fun insert(expression: InsertExpression) {
         expression.table.db.withConnection {
-            constructInsert(expression).execute()
+            constructInsert(expression).use {
+                it.execute()
+            }
         }
     }
 
