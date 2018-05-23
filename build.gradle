@@ -42,7 +42,7 @@ sourceSets {
 }
 
 test {
-    systemProperty "ClickhouseUrl", System.getProperty("ClickhouseUrl")
+    systemProperties = System.properties
     useTestNG()
 }
 
