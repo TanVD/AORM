@@ -42,7 +42,15 @@ sourceSets {
 }
 
 test {
-    systemProperties = System.properties
+    if (project.hasProperty('clickhouseUrl')) {
+        systemProperty "clickhouseUrl", clickhouseUrl
+    }
+    if (project.hasProperty('clickhouseUser')) {
+        systemProperty "clickhouseUser", clickhouseUser
+    }
+    if (project.hasProperty('clickhousePassword')) {
+        systemProperty "clickhousePassword", clickhousePassword
+    }
     useTestNG()
 }
 
