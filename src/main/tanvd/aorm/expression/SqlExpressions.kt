@@ -1,9 +1,9 @@
 package tanvd.aorm.expression
 
-import tanvd.aorm.DbLong
+import tanvd.aorm.DbInt64
 import tanvd.aorm.DbType
 
-class Count<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expression<Long, DbLong>(DbLong()) {
+class Count<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expression<Long, DbInt64>(DbInt64()) {
     override fun toSql(): String = "COUNT(${expression.toSql()})"
 }
 

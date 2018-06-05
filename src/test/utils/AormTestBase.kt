@@ -19,5 +19,6 @@ abstract class AormTestBase {
 fun ignoringExceptions(body: () -> Unit) {
     try {
         body()
-    } catch (e: Exception) {}
+    } catch (e: Exception) {
+    }
 }

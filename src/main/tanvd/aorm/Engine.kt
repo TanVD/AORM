@@ -13,7 +13,7 @@ sealed class Engine {
     }
 
     class ReplacingMergeTree(val dateColumn: Column<Date, DbPrimitiveType<Date>>, val primaryKey: List<Column<*, DbPrimitiveType<*>>>,
-                             val versionColumn: Column<Long, DbULong>,
+                             val versionColumn: Column<Long, DbUInt64>,
                              val indexGranularity: Long = 8192)
         : Engine() {
         override fun toSqlDef() = "ReplacingMergeTree(${dateColumn.name}, (${primaryKey.joinToString { it.name }})," +

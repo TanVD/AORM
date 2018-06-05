@@ -24,3 +24,4 @@ class Database(val name: String, private val dataSource: DataSource) {
     }
 }
 
+fun <T> withDatabase(db: Database, body: ConnectionContext.() -> T): T = ConnectionContext(db).body()

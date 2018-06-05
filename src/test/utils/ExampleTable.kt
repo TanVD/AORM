@@ -1,15 +1,18 @@
 package utils
 
 import org.jetbrains.annotations.TestOnly
-import tanvd.aorm.*
+import tanvd.aorm.DbType
+import tanvd.aorm.Engine
+import tanvd.aorm.Table
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.default
+import tanvd.aorm.withDatabase
 
 @Suppress("UNCHECKED_CAST")
-object ExampleTable: Table("ExampleTable", TestDatabase) {
+object ExampleTable : Table("ExampleTable") {
     val date = date("date")
 
-    val id = long("id").default { 1L }
+    val id = int64("id").default { 1L }
     val value = string("value")
 
     val arrayValue = arrayString("string_array").default { listOf("array1", "array2") }
@@ -18,8 +21,10 @@ object ExampleTable: Table("ExampleTable", TestDatabase) {
 
     @TestOnly
     fun resetTable() {
-        ignoringExceptions {
-            ExampleTable.drop()
+        withDatabase(TestDatabase) {
+            ignoringExceptions {
+                ExampleTable.drop()
+            }
         }
         ExampleTable.columns.clear()
         columns.add(date as Column<Any, DbType<Any>>)

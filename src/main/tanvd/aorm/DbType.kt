@@ -84,7 +84,22 @@ class DbDateTime : DbPrimitiveType<DateTime>() {
     }
 }
 
-class DbLong : DbPrimitiveType<Long>() {
+class DbInt32 : DbPrimitiveType<Int>() {
+    override fun toSqlName(): String = "Int32"
+
+    override fun getValue(name: String, result: ResultSet): Int = result.getInt(name)
+    override fun getValue(index: Int, result: ResultSet): Int = result.getInt(index)
+
+    override fun setValue(index: Int, statement: PreparedStatement, value: Int) {
+        statement.setInt(index, value)
+    }
+
+    override fun toStringValue(value: Int): String = value.toString()
+
+    override fun toArray(): DbArrayType<Int> = DbArrayInt32()
+}
+
+class DbInt64 : DbPrimitiveType<Long>() {
     override fun toSqlName(): String = "Int64"
 
     override fun getValue(name: String, result: ResultSet): Long = result.getLong(name)
@@ -96,14 +111,14 @@ class DbLong : DbPrimitiveType<Long>() {
 
     override fun toStringValue(value: Long): String = value.toString()
 
-    override fun toArray(): DbArrayType<Long> = DbArrayLong()
+    override fun toArray(): DbArrayType<Long> = DbArrayInt64()
 }
 
 /**
  * ULong is equal to long in AORM.
  * Do not use it for values, which not fits in long.
  */
-class DbULong : DbPrimitiveType<Long>() {
+class DbUInt64 : DbPrimitiveType<Long>() {
     override fun toSqlName(): String = "UInt64"
 
     override fun getValue(name: String, result: ResultSet): Long = result.getLong(name)
@@ -115,7 +130,7 @@ class DbULong : DbPrimitiveType<Long>() {
 
     override fun toStringValue(value: Long): String = value.toString()
 
-    override fun toArray(): DbArrayType<Long> = DbArrayULong()
+    override fun toArray(): DbArrayType<Long> = DbArrayUInt64()
 }
 
 class DbBoolean : DbPrimitiveType<Boolean>() {
@@ -210,7 +225,28 @@ class DbArrayDate : DbArrayType<Date>() {
 //
 //}
 
-class DbArrayLong : DbArrayType<Long>() {
+class DbArrayInt32 : DbArrayType<Int>() {
+
+    override fun toSqlName(): String = "Array(Int32)"
+
+    override fun getValue(name: String, result: ResultSet): List<Int> =
+            (result.getArray(name).array as IntArray).toList()
+
+    override fun getValue(index: Int, result: ResultSet): List<Int> = (result.getArray(index).array as IntArray).toList()
+
+
+    override fun setValue(index: Int, statement: PreparedStatement, value: List<Int>) {
+        statement.setArray(index,
+                statement.connection.createArrayOf(toSqlName(), value.toTypedArray()))
+    }
+
+    override fun toStringValue(value: List<Int>): String =
+            value.joinToString(prefix = "[", postfix = "]") { it.toString() }
+
+    override fun toPrimitive(): DbPrimitiveType<Int> = DbInt32()
+}
+
+class DbArrayInt64 : DbArrayType<Long>() {
 
     override fun toSqlName(): String = "Array(Int64)"
 
@@ -228,10 +264,10 @@ class DbArrayLong : DbArrayType<Long>() {
     override fun toStringValue(value: List<Long>): String =
             value.joinToString(prefix = "[", postfix = "]") { it.toString() }
 
-    override fun toPrimitive(): DbPrimitiveType<Long> = DbLong()
+    override fun toPrimitive(): DbPrimitiveType<Long> = DbInt64()
 }
 
-class DbArrayULong : DbArrayType<Long>() {
+class DbArrayUInt64 : DbArrayType<Long>() {
     override fun toSqlName(): String = "Array(UInt64)"
 
     @Suppress("UNCHECKED_CAST")
@@ -251,7 +287,7 @@ class DbArrayULong : DbArrayType<Long>() {
     override fun toStringValue(value: List<Long>): String =
             value.joinToString(prefix = "[", postfix = "]") { it.toString() }
 
-    override fun toPrimitive(): DbPrimitiveType<Long> = DbULong()
+    override fun toPrimitive(): DbPrimitiveType<Long> = DbUInt64()
 }
 
 class DbArrayBoolean : DbArrayType<Boolean>() {

@@ -1,27 +1,28 @@
 package tanvd.aorm.implementation
 
+import tanvd.aorm.Database
 import tanvd.aorm.DbType
 import tanvd.aorm.Table
 import tanvd.aorm.expression.Column
 
 object TableClickhouse {
-    fun create(table: Table) {
-        table.db.execute("CREATE TABLE ${table.name} " +
+    fun create(db: Database, table: Table) {
+        db.execute("CREATE TABLE ${table.name} " +
                 "(${table.columns.joinToString { it.toSqlDef() }}) " +
                 "ENGINE = ${table.engine.toSqlDef()};")
     }
 
-    fun exists(table: Table): Boolean = MetadataClickhouse.existsTable(table)
+    fun exists(db: Database, table: Table): Boolean = MetadataClickhouse.existsTable(db, table)
 
-    fun drop(table: Table) {
-        table.db.execute("DROP TABLE ${table.name};")
+    fun drop(db: Database, table: Table) {
+        db.execute("DROP TABLE ${table.name};")
     }
 
-    fun addColumn(table: Table, column: Column<*, DbType<*>>) {
-        table.db.execute("ALTER TABLE ${table.name} ADD COLUMN ${column.toSqlDef()};")
+    fun addColumn(db: Database, table: Table, column: Column<*, DbType<*>>) {
+        db.execute("ALTER TABLE ${table.name} ADD COLUMN ${column.toSqlDef()};")
     }
 
-    fun dropColumn(table: Table, column: Column<*, DbType<*>>) {
-        table.db.execute("ALTER TABLE ${table.name} DROP COLUMN ${column.name};")
+    fun dropColumn(db: Database, table: Table, column: Column<*, DbType<*>>) {
+        db.execute("ALTER TABLE ${table.name} DROP COLUMN ${column.name};")
     }
 }

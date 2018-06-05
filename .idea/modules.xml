@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AORM.iml" filepath="$PROJECT_DIR$/AORM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AORM_main.iml" filepath="$PROJECT_DIR$/.idea/modules/AORM_main.iml" group="AORM" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AORM_test.iml" filepath="$PROJECT_DIR$/.idea/modules/AORM_test.iml" group="AORM" />
+    </modules>
+  </component>
+</project>

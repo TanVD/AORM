@@ -10,48 +10,48 @@ import utils.AssertDb
 import utils.TestDatabase
 import utils.ignoringExceptions
 
-class EngineClickhouseTest  {
+class EngineClickhouseTest {
 
     @BeforeMethod
     fun resetTables() {
         ignoringExceptions {
-            TableClickhouse.drop(MergeTreeTable)
+            TableClickhouse.drop(TestDatabase, MergeTreeTable)
         }
         ignoringExceptions {
-            TableClickhouse.drop(ReplacingMergeTreeTable)
+            TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
         }
     }
 
     @Test
     fun createTableMergeTree_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(MergeTreeTable)
+        TableClickhouse.create(TestDatabase, MergeTreeTable)
 
         AssertDb.syncedWithDb(MergeTreeTable)
 
-        TableClickhouse.drop(MergeTreeTable)
+        TableClickhouse.drop(TestDatabase, MergeTreeTable)
     }
 
     @Test
     fun createTableReplacingMergeTree_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(ReplacingMergeTreeTable)
+        TableClickhouse.create(TestDatabase, ReplacingMergeTreeTable)
 
         AssertDb.syncedWithDb(ReplacingMergeTreeTable)
 
-        TableClickhouse.drop(ReplacingMergeTreeTable)
+        TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
     }
 }
 
-object MergeTreeTable: Table("MergeTreeTable", TestDatabase) {
+object MergeTreeTable : Table("MergeTreeTable") {
     val date = date("date")
-    val id = long("id").default { 1L }
+    val id = int64("id").default { 1L }
 
     override val engine: Engine = Engine.MergeTree(date, listOf(id), 8192)
 }
 
-object ReplacingMergeTreeTable: Table("ReplacingMergeTreeTable", TestDatabase) {
+object ReplacingMergeTreeTable : Table("ReplacingMergeTreeTable") {
     val date = date("date")
-    val id = long("id").default { 1L }
-    val version = ulong("version").default { 0L }
+    val id = int64("id").default { 1L }
+    val version = uint64("version").default { 0L }
 
     override val engine: Engine = Engine.ReplacingMergeTree(date, listOf(id), version, 8192)
 }

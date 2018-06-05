@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: ru.yandex.clickhouse:clickhouse-jdbc:0.1.38">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ru.yandex.clickhouse/clickhouse-jdbc/0.1.38/f23938e659f6cdc31dca45aa154f30cfb89c658e/clickhouse-jdbc-0.1.38.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ru.yandex.clickhouse/clickhouse-jdbc/0.1.38/a611590713b1034b9a59cef545dce478843873df/clickhouse-jdbc-0.1.38-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
