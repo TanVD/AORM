@@ -79,7 +79,7 @@ class TypesTest {
 
                     AllTypesTable.stringCol to "string",
                     AllTypesTable.arrayStringCol to listOf("string1", "string2")
-            ).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+            ).toMutableMap())
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
 
@@ -175,7 +175,7 @@ class TypesTest {
 
                     AllTypesTable.stringCol to "string",
                     AllTypesTable.arrayStringCol to listOf("string1", "string2")
-            ).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+            ).toMutableMap())
 
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))

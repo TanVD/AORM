@@ -29,7 +29,7 @@ class QueryLoadTest : AormTestBase() {
             val row = Row(mapOf(
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
-                    ExampleTable.date to getDate("2000-01-01")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.date to getDate("2000-01-01")).toMutableMap())
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns as List<Column<Any, DbType<Any>>>,
                     arrayListOf(row)))
 
@@ -37,7 +37,7 @@ class QueryLoadTest : AormTestBase() {
 
             val rowGot = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
-                    ExampleTable.arrayValue to listOf("array1", "array2")) as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             Assert.assertEquals(select.toResult().single(), rowGot)
         }
     }
@@ -49,7 +49,7 @@ class QueryLoadTest : AormTestBase() {
             val row = Row(mapOf(
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
-                    ExampleTable.date to getDate("2000-01-01")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.date to getDate("2000-01-01")).toMutableMap())
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns as List<Column<Any, DbType<Any>>>,
                     arrayListOf(row)))
 
@@ -57,7 +57,7 @@ class QueryLoadTest : AormTestBase() {
 
             val rowGot = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
-                    ExampleTable.arrayValue to listOf("array1", "array2")) as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             Assert.assertEquals(select.toResult().single(), rowGot)
         }
     }
@@ -69,7 +69,7 @@ class QueryLoadTest : AormTestBase() {
             val row = Row(mapOf(
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
-                    ExampleTable.date to getDate("2000-01-01")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.date to getDate("2000-01-01")).toMutableMap())
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns as List<Column<Any, DbType<Any>>>,
                     arrayListOf(row)))
 
@@ -78,7 +78,7 @@ class QueryLoadTest : AormTestBase() {
 
             val rowGot = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
-                    ExampleTable.arrayValue to listOf("array1", "array2")) as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             Assert.assertEquals(select.toResult().single(), rowGot)
         }
 

@@ -1,5 +1,6 @@
 package tanvd.aorm.expression
 
+import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.DbType
 import tanvd.aorm.Table
 
@@ -7,10 +8,9 @@ class Column<E, out T : DbType<E>>(val name: String, type: T, val table: Table,
                                    default: (() -> E)? = null) : Expression<E, T>(type) {
     var defaultFunction: (() -> E)? = default
 
+    fun toSqlDef(): String = "${ClickHouseUtil.escape(name)} ${type.toSqlName()}"
 
-    fun toSqlDef(): String = "$name ${type.toSqlName()}"
-
-    override fun toSql(): String = name
+    override fun toSql(): String = ClickHouseUtil.escape(name)
 
     /** Equals by name and table **/
     override fun equals(other: Any?): Boolean {

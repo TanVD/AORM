@@ -3,15 +3,14 @@ package tanvd.aorm.implementation
 import tanvd.aorm.Database
 import tanvd.aorm.DbType
 import tanvd.aorm.Row
-import tanvd.aorm.expression.Expression
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
 import java.sql.Connection
 import java.sql.PreparedStatement
 
 object QueryClickhouse {
-    fun getResult(db: Database, query: Query): List<Row<Expression<Any, DbType<Any>>>> {
-        val rows = ArrayList<Row<Expression<Any, DbType<Any>>>>()
+    fun getResult(db: Database, query: Query): List<Row> {
+        val rows = ArrayList<Row>()
         db.withConnection {
             constructQuery(query).use { statement ->
                 val result = statement.executeQuery()

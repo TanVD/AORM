@@ -25,7 +25,7 @@ class InsertClickhouseTest : AormTestBase() {
             ExampleTable.create()
             val row = Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
-                    .toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    .toMutableMap())
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
@@ -38,7 +38,7 @@ class InsertClickhouseTest : AormTestBase() {
     fun insert_tableNotExistsRowValid_basicDbException() {
         val row = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                 ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
-                .toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                .toMutableMap())
 
         try {
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
@@ -55,7 +55,7 @@ class InsertClickhouseTest : AormTestBase() {
 
             ExampleTable.create()
             val row = Row(mapOf(ExampleTable.value to "value",
-                    ExampleTable.date to getDate("2000-01-01")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.date to getDate("2000-01-01")).toMutableMap())
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable,
                     ExampleTable.columns as List<Column<Any, DbType<Any>>>, arrayListOf(row)))
@@ -63,7 +63,7 @@ class InsertClickhouseTest : AormTestBase() {
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
             val rowGot = Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
-                    ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Expression<Any, DbType<Any>>, Any>)
+                    ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             Assert.assertEquals(select.toResult().single(), rowGot)
         }
     }
@@ -76,10 +76,10 @@ class InsertClickhouseTest : AormTestBase() {
             val rows = arrayListOf(
                     Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
-                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-02-02"),
-                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap())
             )
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
@@ -92,13 +92,12 @@ class InsertClickhouseTest : AormTestBase() {
     @Test
     fun insert_tableExistsRowsWithDefaults_rowsInserted() {
         withDatabase(TestDatabase) {
-
             ExampleTable.create()
             val rows = arrayListOf(
                     Row(mapOf(ExampleTable.value to "value1",
-                            ExampleTable.date to getDate("2000-01-01")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.date to getDate("2000-01-01")).toMutableMap()),
                     Row(mapOf(ExampleTable.value to "value2",
-                            ExampleTable.date to getDate("2000-02-02")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.date to getDate("2000-02-02")).toMutableMap())
             )
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
@@ -106,10 +105,10 @@ class InsertClickhouseTest : AormTestBase() {
             val gotRows = arrayListOf(
                     Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value1",
                             ExampleTable.date to getDate("2000-01-01"),
-                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value2",
                             ExampleTable.date to getDate("2000-02-02"),
-                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             )
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
             Assert.assertEquals(select.toResult().toSet(), gotRows.toSet())
@@ -122,7 +121,7 @@ class InsertClickhouseTest : AormTestBase() {
 
             ExampleTable.create()
             val row = Row(mapOf(ExampleTable.date to getDate("2000-02-02"), ExampleTable.id to 3L,
-                    ExampleTable.value to "value").toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                    ExampleTable.value to "value").toMutableMap())
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable,
                     ExampleTable.columns as List<Column<Any, DbType<Any>>>, arrayListOf(row)))
@@ -139,9 +138,9 @@ class InsertClickhouseTest : AormTestBase() {
             ExampleTable.create()
             val rows = arrayListOf(
                     Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
-                            ExampleTable.date to getDate("2000-01-01")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.date to getDate("2000-01-01")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
-                            ExampleTable.date to getDate("2000-02-02")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.date to getDate("2000-02-02")).toMutableMap())
             )
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, rows))

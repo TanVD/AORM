@@ -31,10 +31,10 @@ class QueryOrderTest : AormTestBase() {
             val rows = arrayListOf(
                     Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
-                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-02-02"),
-                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap())
             )
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
@@ -50,10 +50,10 @@ class QueryOrderTest : AormTestBase() {
             val rows = arrayListOf(
                     Row(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
-                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-02-02"),
-                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap())
             )
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
@@ -69,10 +69,10 @@ class QueryOrderTest : AormTestBase() {
             val rows = arrayListOf(
                     Row(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
-                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>),
+                            ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-02-02"),
-                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+                            ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap())
             )
 
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))

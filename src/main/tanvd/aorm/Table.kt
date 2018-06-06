@@ -1,11 +1,14 @@
 package tanvd.aorm
 
+import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.expression.Column
 import java.util.*
+import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KClass
 
 
-abstract class Table(var name: String) {
+abstract class Table(name: String) {
+    var name: String = ClickHouseUtil.escape(name)
     val columns: MutableList<Column<Any, DbType<Any>>> = ArrayList()
 
     abstract val engine: Engine
@@ -29,7 +32,12 @@ abstract class Table(var name: String) {
 
     //enums
     fun <T: Enum<*>> enum8(name: String, enumType: KClass<T>) = registerColumn(Column(name, DbEnum8(enumType), this))
+    fun <T: Enum<*>> enum8(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>)
+            = registerColumn(Column(name, DbEnum8(enumMapping, enumType), this))
+
     fun <T: Enum<*>> enum16(name: String, enumType: KClass<T>) = registerColumn(Column(name, DbEnum16(enumType), this))
+    fun <T: Enum<*>> enum16(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>)
+            = registerColumn(Column(name, DbEnum16(enumMapping, enumType), this))
 
     //int8
     fun int8(name: String) = registerColumn(Column(name, DbInt8(), this))
@@ -66,4 +74,5 @@ abstract class Table(var name: String) {
     //string
     fun string(name: String) = registerColumn(Column(name, DbString(), this))
     fun arrayString(name: String) = registerColumn(Column(name, DbArrayString(), this))
+
 }

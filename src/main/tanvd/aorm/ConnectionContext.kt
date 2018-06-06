@@ -37,9 +37,7 @@ class ConnectionContext(val db: Database) {
     fun Table.syncScheme() = MetadataClickhouse.syncScheme(this@ConnectionContext.db, this)
 
     //DML
-
     //selects
-
     fun Table.select(): Query {
         @Suppress("UNCHECKED_CAST")
         return Query(this, columns)
@@ -48,26 +46,25 @@ class ConnectionContext(val db: Database) {
     @Suppress("UNCHECKED_CAST")
     fun Table.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this, functions.toList() as List<Expression<Any, DbType<Any>>>)
 
-    fun Query.toResult(): List<Row<Expression<Any, DbType<Any>>>> = QueryClickhouse.getResult(this@ConnectionContext.db, this)
+    fun Query.toResult(): List<Row> = QueryClickhouse.getResult(this@ConnectionContext.db, this)
 
 
     //inserts
-
     @Suppress("UNCHECKED_CAST")
-    fun Table.insert(body: (Row<Column<*, DbType<*>>>) -> Unit) {
-        val row = Row<Column<*, DbType<*>>>()
+    fun Table.insert(body: (Row) -> Unit) {
+        val row = Row()
         body(row)
-        InsertClickhouse.insert(this@ConnectionContext.db, InsertExpression(this, row as Row<Column<Any, DbType<Any>>>))
+        InsertClickhouse.insert(this@ConnectionContext.db, InsertExpression(this, row))
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> Table.batchInsert(list: Iterable<T>, columns: List<Column<*, DbType<*>>> = this.columns,
-                                    body: (Row<Column<*, DbType<*>>>, T) -> Unit) {
-        val rows = ArrayList<Row<Column<Any, DbType<Any>>>>()
+                                    body: (Row, T) -> Unit) {
+        val rows = ArrayList<Row>()
         list.forEach {
-            val row = Row<Column<*, DbType<*>>>()
+            val row = Row()
             body(row, it)
-            rows.add(row as Row<Column<Any, DbType<Any>>>)
+            rows.add(row)
         }
         InsertClickhouse.insert(this@ConnectionContext.db, InsertExpression(this, columns as List<Column<Any, DbType<Any>>>, rows))
     }

@@ -298,6 +298,7 @@ class DbArrayInt64 : DbIntArrayType<Long>("Array(Int64)",
         {statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(Int64)", value.toTypedArray())) },
         {DbInt64()})
 
+@Suppress("UNCHECKED_CAST")
 class DbArrayUInt64 : DbIntArrayType<Long>("Array(UInt64)",
         {resultSet, name -> (resultSet.getArray(name).array as Array<BigInteger>).map { it.toLong() }.toList()},
         {resultSet, index -> (resultSet.getArray(index).array as Array<BigInteger>).map { it.toLong() }.toList()},

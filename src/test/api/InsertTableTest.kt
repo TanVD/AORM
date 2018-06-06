@@ -32,8 +32,7 @@ class InsertTableTest : AormTestBase() {
 
 
             val expectedRow = Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
-                    ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()
-                    as MutableMap<Expression<Any, DbType<Any>>, Any>)
+                    ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             val select = ExampleTable.select() where (ExampleTable.id eq 2L)
             Assert.assertEquals(select.toResult().single(), expectedRow)
         }
@@ -52,11 +51,9 @@ class InsertTableTest : AormTestBase() {
             }
 
             val expectedRows = setOf(Row(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
-                    ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()
-                    as MutableMap<Expression<Any, DbType<Any>>, Any>),
+                    ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()),
                     Row(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
-                            ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()
-                            as MutableMap<Expression<Any, DbType<Any>>, Any>))
+                            ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap()))
             val select = ExampleTable.select() where (ExampleTable.value eq "value")
             Assert.assertEquals(select.toResult().toSet(), expectedRows)
         }
