@@ -9,8 +9,7 @@ data class InsertRow(val values: MutableMap<Column<Any, DbType<Any>>, Any>) {
 
     constructor() : this(HashMap())
 
-    operator fun <E : Any, K : DbType<E>> get(expression: Column<E, K>): E? = values[expression as Column<Any, DbType<Any>>] as E?
-
+    @Suppress("UNCHECKED_CAST")
     operator fun <E : Any, K : DbType<E>> set(key: Column<E, K>, value: E?) {
         key as Column<Any, DbType<Any>>
         if (value == null) {
@@ -21,6 +20,9 @@ data class InsertRow(val values: MutableMap<Column<Any, DbType<Any>>, Any>) {
             columns.add(key)
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <E : Any, K : DbType<E>> get(expression: Column<E, K>): E? = values[expression as Column<Any, DbType<Any>>] as E?
 }
 
 data class SelectRow(val values: MutableMap<Expression<Any, DbType<Any>>, Any>) {
@@ -29,4 +31,7 @@ data class SelectRow(val values: MutableMap<Expression<Any, DbType<Any>>, Any>) 
     constructor(result: ResultSet, expressions: List<Expression<Any, DbType<Any>>>) : this(expressions.withIndex().map { (index, expr) ->
         expr to expr.getValue(result, index + 1)
     }.toMap().toMutableMap())
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <E : Any, K : DbType<E>> get(expression: Expression<E, K>): E? = values[expression as Expression<Any, DbType<Any>>] as E?
 }
