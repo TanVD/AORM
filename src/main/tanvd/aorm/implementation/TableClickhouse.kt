@@ -12,6 +12,12 @@ object TableClickhouse {
                 "ENGINE = ${table.engine.toSqlDef()};")
     }
 
+    fun replicatedCreate(db: Database, index: Int, table: Table) {
+        db.execute("CREATE TABLE ${table.name} " +
+                "(${table.columns.joinToString { it.toSqlDef() }}) " +
+                "ENGINE = ${table.engine.toReplicatedSqlDef(index)};")
+    }
+
     fun exists(db: Database, table: Table): Boolean = MetadataClickhouse.existsTable(db, table)
 
     fun drop(db: Database, table: Table) {

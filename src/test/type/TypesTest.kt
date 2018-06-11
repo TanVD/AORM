@@ -3,8 +3,9 @@ package type
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import tanvd.aorm.*
-import tanvd.aorm.expression.Column
+import tanvd.aorm.Engine
+import tanvd.aorm.InsertExpression
+import tanvd.aorm.Table
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.QueryClickhouse
@@ -12,12 +13,11 @@ import tanvd.aorm.query.and
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.has
 import tanvd.aorm.query.where
-import utils.TestDatabase
-import utils.getDate
-import utils.getDateTime
+import tanvd.aorm.withDatabase
+import utils.*
 
 @Suppress("UNCHECKED_CAST")
-class TypesTest {
+class TypesTest : AormTestBase() {
 
     @BeforeMethod
     fun resetTable() {
@@ -44,7 +44,7 @@ class TypesTest {
 
             AllTypesTable.create()
 
-            val row = Row(mapOf(
+            val row = prepareInsertRow(mapOf(
                     AllTypesTable.dateCol to getDate("2000-01-01"),
                     AllTypesTable.arrayDateCol to listOf(getDate("2001-01-01"), getDate("2002-02-02")),
 
@@ -89,7 +89,7 @@ class TypesTest {
 //                    (AllTypesTable.arrayDateCol has getDate("2002-02-02")) and
 
                     (AllTypesTable.dateTimeCol eq getDateTime("2000-01-01 12:00:00")) and
-                    
+
                     (AllTypesTable.int8Col eq 1.toByte()) and
                     (AllTypesTable.arrayInt8Col has 1.toByte()) and
                     (AllTypesTable.arrayInt8Col has 2.toByte()) and
@@ -120,7 +120,7 @@ class TypesTest {
 
                     (AllTypesTable.enum8Col eq TestEnumFirst.first_enum) and
                     (AllTypesTable.enum16Col eq TestEnumFirst.second_enum) and
-                    
+
                     (AllTypesTable.boolCol eq true) and
                     (AllTypesTable.arrayBoolCol has true) and
                     (AllTypesTable.arrayBoolCol has false) and
@@ -130,7 +130,7 @@ class TypesTest {
                     (AllTypesTable.arrayStringCol has "string2")
                     )).toResult().single()
 
-            Assert.assertEquals(gotRow, row)
+            AssertDb.assertEquals(gotRow, row)
         }
     }
 
@@ -140,7 +140,7 @@ class TypesTest {
 
             AllTypesTable.create()
 
-            val row = Row(mapOf(
+            val row = prepareInsertRow(mapOf(
                     AllTypesTable.dateCol to getDate("2000-01-01"),
                     AllTypesTable.arrayDateCol to listOf(getDate("2001-01-01"), getDate("2002-02-02")),
 

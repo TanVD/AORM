@@ -3,7 +3,6 @@ package tanvd.aorm
 import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.expression.Column
 import java.util.*
-import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KClass
 
 
@@ -24,6 +23,7 @@ abstract class Table(name: String) {
 
     //date
     fun date(name: String) = registerColumn(Column(name, DbDate(), this))
+
     fun arrayDate(name: String) = registerColumn(Column(name, DbArrayDate(), this))
 
     //datetime
@@ -31,16 +31,16 @@ abstract class Table(name: String) {
 //    fun arrayDateTime(name: String) = registerColumn(Column(name, DbArrayDateTime()))
 
     //enums
-    fun <T: Enum<*>> enum8(name: String, enumType: KClass<T>) = registerColumn(Column(name, DbEnum8(enumType), this))
-    fun <T: Enum<*>> enum8(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>)
-            = registerColumn(Column(name, DbEnum8(enumMapping, enumType), this))
+    fun <T : Enum<*>> enum8(name: String, enumType: KClass<T>) = registerColumn(Column(name, DbEnum8(enumType), this))
 
-    fun <T: Enum<*>> enum16(name: String, enumType: KClass<T>) = registerColumn(Column(name, DbEnum16(enumType), this))
-    fun <T: Enum<*>> enum16(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>)
-            = registerColumn(Column(name, DbEnum16(enumMapping, enumType), this))
+    fun <T : Enum<*>> enum8(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>) = registerColumn(Column(name, DbEnum8(enumMapping, enumType), this))
+
+    fun <T : Enum<*>> enum16(name: String, enumType: KClass<T>) = registerColumn(Column(name, DbEnum16(enumType), this))
+    fun <T : Enum<*>> enum16(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>) = registerColumn(Column(name, DbEnum16(enumMapping, enumType), this))
 
     //int8
     fun int8(name: String) = registerColumn(Column(name, DbInt8(), this))
+
     fun arrayInt8(name: String) = registerColumn(Column(name, DbArrayInt8(), this))
 
     fun uint8(name: String) = registerColumn(Column(name, DbUInt8(), this))
@@ -48,6 +48,7 @@ abstract class Table(name: String) {
 
     //int16
     fun int16(name: String) = registerColumn(Column(name, DbInt16(), this))
+
     fun arrayInt16(name: String) = registerColumn(Column(name, DbArrayInt16(), this))
 
     fun uint16(name: String) = registerColumn(Column(name, DbUInt16(), this))
@@ -55,6 +56,7 @@ abstract class Table(name: String) {
 
     //int32
     fun int32(name: String) = registerColumn(Column(name, DbInt32(), this))
+
     fun arrayInt32(name: String) = registerColumn(Column(name, DbArrayInt32(), this))
 
     fun uint32(name: String) = registerColumn(Column(name, DbUInt32(), this))
@@ -62,6 +64,7 @@ abstract class Table(name: String) {
 
     //int64
     fun int64(name: String) = registerColumn(Column(name, DbInt64(), this))
+
     fun arrayInt64(name: String) = registerColumn(Column(name, DbArrayInt64(), this))
 
     fun uint64(name: String) = registerColumn(Column(name, DbUInt64(), this))
@@ -69,10 +72,12 @@ abstract class Table(name: String) {
 
     //boolean
     fun boolean(name: String) = registerColumn(Column(name, DbBoolean(), this))
+
     fun arrayBoolean(name: String) = registerColumn(Column(name, DbArrayBoolean(), this))
 
     //string
     fun string(name: String) = registerColumn(Column(name, DbString(), this))
+
     fun arrayString(name: String) = registerColumn(Column(name, DbArrayString(), this))
 
 }

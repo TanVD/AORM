@@ -1,6 +1,11 @@
 package utils
 
 import org.testng.annotations.BeforeMethod
+import tanvd.aorm.DbType
+import tanvd.aorm.InsertRow
+import tanvd.aorm.SelectRow
+import tanvd.aorm.expression.Column
+import tanvd.aorm.expression.Expression
 
 abstract class AormTestBase {
     @BeforeMethod
@@ -11,8 +16,15 @@ abstract class AormTestBase {
         executeBeforeMethod()
     }
 
-    open fun executeBeforeMethod() {
+    open fun executeBeforeMethod() {}
 
+    fun prepareInsertRow(map: Map<Column<*, DbType<*>>, Any>): InsertRow {
+        return InsertRow(map.toMutableMap() as MutableMap<Column<Any, DbType<Any>>, Any>)
+    }
+
+
+    fun prepareSelectRow(map: Map<Column<*, DbType<*>>, Any>): SelectRow {
+        return SelectRow(map.toMutableMap() as MutableMap<Expression<Any, DbType<Any>>, Any>)
     }
 }
 

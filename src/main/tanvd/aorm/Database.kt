@@ -1,5 +1,6 @@
 package tanvd.aorm
 
+import tanvd.aorm.context.ConnectionContext
 import tanvd.aorm.exceptions.BasicDbException
 import java.sql.Connection
 import javax.sql.DataSource

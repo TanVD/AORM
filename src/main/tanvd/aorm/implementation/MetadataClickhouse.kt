@@ -38,7 +38,7 @@ object MetadataClickhouse {
             metaData.getColumns(null, db.name, table.name, null).use {
                 val tableColumns = HashMap<String, String>()
                 while (it.next()) {
-                    tableColumns.put(it.getString("COLUMN_NAME"), it.getString("TYPE_NAME"))
+                    tableColumns[it.getString("COLUMN_NAME")] = it.getString("TYPE_NAME")
                 }
                 tableColumns
             }

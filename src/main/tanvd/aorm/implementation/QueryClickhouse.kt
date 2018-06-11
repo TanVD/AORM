@@ -2,20 +2,20 @@ package tanvd.aorm.implementation
 
 import tanvd.aorm.Database
 import tanvd.aorm.DbType
-import tanvd.aorm.Row
+import tanvd.aorm.SelectRow
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
 import java.sql.Connection
 import java.sql.PreparedStatement
 
 object QueryClickhouse {
-    fun getResult(db: Database, query: Query): List<Row> {
-        val rows = ArrayList<Row>()
+    fun getResult(db: Database, query: Query): List<SelectRow> {
+        val rows = ArrayList<SelectRow>()
         db.withConnection {
             constructQuery(query).use { statement ->
                 val result = statement.executeQuery()
                 while (result.next()) {
-                    rows.add(Row(result, query.columns))
+                    rows.add(SelectRow(result, query.columns))
                 }
             }
         }
