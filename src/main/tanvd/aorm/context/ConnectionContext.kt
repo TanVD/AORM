@@ -21,14 +21,14 @@ class ConnectionContext(val db: Database) {
     fun <E : Any, T : DbType<E>> Table.addColumn(column: Column<E, T>) {
         if (!columns.contains(column)) {
             TableClickhouse.addColumn(db, this, column)
-            _columns.add(column)
+            columns.add(column)
         }
     }
 
     fun <E : Any, T : DbType<E>> Table.dropColumn(column: Column<E, T>) {
         if (columns.contains(column)) {
             TableClickhouse.dropColumn(db, this, column)
-            _columns.remove(column)
+            columns.remove(column)
         }
     }
 

@@ -48,7 +48,7 @@ class MetadataClickhouseTest : AormTestBase() {
     fun syncScheme_tableExistsNewColumn_columnAdded() {
         TableClickhouse.create(TestDatabase, ExampleTable)
         val newColumn = Column("new_column", DbInt64(), ExampleTable)
-        ExampleTable._columns.add(newColumn)
+        ExampleTable.columns.add(newColumn)
 
         MetadataClickhouse.syncScheme(TestDatabase, ExampleTable)
 
@@ -57,9 +57,9 @@ class MetadataClickhouseTest : AormTestBase() {
     }
 
     @Test
-    fun syncScheme_tableExistsRemoveColumn_columnsNotChanged() {
+    fun syncScheme_tableExistsRemoveColumncolumnsNotChanged() {
         TableClickhouse.create(TestDatabase, ExampleTable)
-        ExampleTable._columns.remove(ExampleTable.value)
+        ExampleTable.columns.remove(ExampleTable.value)
 
         MetadataClickhouse.syncScheme(TestDatabase, ExampleTable)
 

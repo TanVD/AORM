@@ -10,8 +10,8 @@ import kotlin.reflect.KClass
 abstract class Table(name: String) {
     var name: String = ClickHouseUtil.escape(name)
 
-    internal val _columns: LinkedHashSet<Column<*, DbType<*>>> = linkedSetOf()
-    val columns: Set<Column<*, DbType<*>>> get() = _columns
+    //todo: encapsulate this
+    val columns: LinkedHashSet<Column<*, DbType<*>>> = linkedSetOf()
 
     abstract val engine: Engine
 
@@ -19,7 +19,7 @@ abstract class Table(name: String) {
         get() = columns.filter { it.defaultFunction != null }
 
     private fun <T: Any, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
-        return column.apply { _columns.add(this) }
+        return column.apply { columns.add(this) }
     }
 
     //date

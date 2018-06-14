@@ -23,10 +23,10 @@ object ExampleTable : Table("ExampleTable") {
                 ExampleTable.drop()
             }
         }
-        ExampleTable._columns.clear()
-        _columns.add(date)
-        _columns.add(id)
-        _columns.add(value)
-        _columns.add(arrayValue)
+        ExampleTable.columns.clear()
+        columns.add(date)
+        columns.add(id)
+        columns.add(value)
+        columns.add(arrayValue)
     }
 }
