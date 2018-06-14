@@ -3,22 +3,23 @@ package tanvd.aorm
 import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.expression.Column
 import java.util.*
+import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 
 
 abstract class Table(name: String) {
     var name: String = ClickHouseUtil.escape(name)
-    val columns: MutableList<Column<Any, DbType<Any>>> = ArrayList()
+
+    internal val _columns: LinkedHashSet<Column<*, DbType<*>>> = linkedSetOf()
+    val columns: Set<Column<*, DbType<*>>> get() = _columns
 
     abstract val engine: Engine
 
     val columnsWithDefaults
         get() = columns.filter { it.defaultFunction != null }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
-        columns.add(column as Column<Any, DbType<Any>>)
-        return column
+    private fun <T: Any, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
+        return column.apply { _columns.add(this) }
     }
 
     //date

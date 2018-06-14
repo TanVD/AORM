@@ -3,7 +3,6 @@ package implementation.table
 import org.testng.Assert
 import org.testng.annotations.Test
 import tanvd.aorm.DbInt64
-import tanvd.aorm.DbType
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.TableClickhouse
@@ -12,7 +11,6 @@ import utils.AssertDb
 import utils.ExampleTable
 import utils.TestDatabase
 
-@Suppress("UNCHECKED_CAST")
 class MetadataClickhouseTest : AormTestBase() {
     @Test
     fun existsTable_tableNotExists_returnFalse() {
@@ -50,7 +48,7 @@ class MetadataClickhouseTest : AormTestBase() {
     fun syncScheme_tableExistsNewColumn_columnAdded() {
         TableClickhouse.create(TestDatabase, ExampleTable)
         val newColumn = Column("new_column", DbInt64(), ExampleTable)
-        ExampleTable.columns.add(newColumn as Column<Any, DbType<Any>>)
+        ExampleTable._columns.add(newColumn)
 
         MetadataClickhouse.syncScheme(TestDatabase, ExampleTable)
 
@@ -61,7 +59,7 @@ class MetadataClickhouseTest : AormTestBase() {
     @Test
     fun syncScheme_tableExistsRemoveColumn_columnsNotChanged() {
         TableClickhouse.create(TestDatabase, ExampleTable)
-        ExampleTable.columns.remove(ExampleTable.value as Column<Any, DbType<Any>>)
+        ExampleTable._columns.remove(ExampleTable.value)
 
         MetadataClickhouse.syncScheme(TestDatabase, ExampleTable)
 

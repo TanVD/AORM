@@ -1,7 +1,9 @@
 package tanvd.aorm.implementation
 
 import tanvd.aorm.Database
+import tanvd.aorm.DbType
 import tanvd.aorm.InsertExpression
+import tanvd.aorm.expression.Column
 import java.sql.Connection
 import java.sql.PreparedStatement
 
@@ -21,11 +23,9 @@ object InsertClickhouse {
             var index = 1
             for (row in insert.values) {
                 for (column in insert.columns) {
-                    if (row[column] != null) {
-                        column.setValue(index, it, row[column]!!)
-                    } else {
-                        column.setValue(index, it, column.defaultFunction!!())
-                    }
+                    @Suppress("UNCHECKED_CAST")
+                    val value = row[column as Column<Any, DbType<Any>>] ?: column.defaultValueResolved()
+                    column.setValue(index, it, value)
                     index++
                 }
             }
@@ -37,11 +37,9 @@ object InsertClickhouse {
         return "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
                 "${insert.values.joinToString { row ->
                     insert.columns.joinToString(prefix = "(", postfix = ")") {
-                        if (row[it] != null) {
-                            it.toStringValue(row[it]!!)
-                        } else {
-                            it.toStringValue(it.defaultFunction!!())
-                        }
+                        @Suppress("UNCHECKED_CAST")
+                        val value = row[it  as Column<Any, DbType<Any>>]?: it.defaultValueResolved()
+                        it.toStringValue(value)
                     }
                 }};"
     }

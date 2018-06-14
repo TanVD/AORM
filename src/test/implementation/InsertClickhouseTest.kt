@@ -2,17 +2,14 @@ package implementation
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.DbType
 import tanvd.aorm.InsertExpression
 import tanvd.aorm.exceptions.BasicDbException
-import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.where
 import tanvd.aorm.withDatabase
 import utils.*
 
-@Suppress("UNCHECKED_CAST")
 class InsertClickhouseTest : AormTestBase() {
     @Test
     fun insert_tableExistsRowValid_rowInserted() {
@@ -52,8 +49,7 @@ class InsertClickhouseTest : AormTestBase() {
             val row = prepareInsertRow(mapOf(ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")).toMutableMap())
 
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable,
-                    ExampleTable.columns as List<Column<Any, DbType<Any>>>, arrayListOf(row)))
+            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
             val rowGot = prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
@@ -118,8 +114,7 @@ class InsertClickhouseTest : AormTestBase() {
             val row = prepareInsertRow(mapOf(ExampleTable.date to getDate("2000-02-02"), ExampleTable.id to 3L,
                     ExampleTable.value to "value").toMutableMap())
 
-            val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable,
-                    ExampleTable.columns as List<Column<Any, DbType<Any>>>, arrayListOf(row)))
+            val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
             Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-02-02', 3," +
                     " 'value', ['array1', 'array2']);")

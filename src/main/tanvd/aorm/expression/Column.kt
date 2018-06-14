@@ -4,9 +4,11 @@ import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.DbType
 import tanvd.aorm.Table
 
-class Column<E, out T : DbType<E>>(val name: String, type: T, val table: Table,
+class Column<E: Any, out T : DbType<E>>(val name: String, type: T, val table: Table,
                                    default: (() -> E)? = null) : Expression<E, T>(type) {
     var defaultFunction: (() -> E)? = default
+
+    internal fun defaultValueResolved(): E = defaultFunction?.invoke()?: type.defaultValue
 
     fun toSqlDef(): String = "${ClickHouseUtil.escape(name)} ${type.toSqlName()}"
 

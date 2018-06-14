@@ -2,9 +2,7 @@ package implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.DbType
 import tanvd.aorm.InsertExpression
-import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.query.*
 import tanvd.aorm.withDatabase
@@ -13,7 +11,6 @@ import utils.ExampleTable
 import utils.TestDatabase
 import utils.getDate
 
-@Suppress("UNCHECKED_CAST")
 class QueryLoadTest : AormTestBase() {
     override fun executeBeforeMethod() {
         withDatabase(TestDatabase) {
@@ -29,7 +26,7 @@ class QueryLoadTest : AormTestBase() {
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")))
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns as List<Column<Any, DbType<Any>>>,
+            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns,
                     arrayListOf(row)))
 
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
@@ -49,7 +46,7 @@ class QueryLoadTest : AormTestBase() {
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")))
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns as List<Column<Any, DbType<Any>>>,
+            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns,
                     arrayListOf(row)))
 
             val select = ExampleTable.select() prewhere (ExampleTable.id eq 1L)
@@ -69,7 +66,7 @@ class QueryLoadTest : AormTestBase() {
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")))
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns as List<Column<Any, DbType<Any>>>,
+            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns,
                     arrayListOf(row)))
 
             val select = (ExampleTable.select() prewhere (ExampleTable.id eq 1L) where (ExampleTable.value eq "value"))

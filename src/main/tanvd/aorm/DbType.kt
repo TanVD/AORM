@@ -15,6 +15,8 @@ import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KClass
 
 sealed class DbType<T> {
+    abstract val defaultValue: T
+
     abstract fun toSqlName(): String
 
     abstract fun getValue(name: String, result: ResultSet): T
@@ -44,6 +46,8 @@ sealed class DbPrimitiveType<T> : DbType<T>() {
 }
 
 sealed class DbArrayType<T> : DbType<List<T>>() {
+    override val defaultValue = emptyList<T>()
+
     abstract fun toPrimitive(): DbPrimitiveType<T>
 }
 
@@ -51,6 +55,7 @@ sealed class DbArrayType<T> : DbType<List<T>>() {
 
 abstract class DbEnum<T : Enum<*>>(val enumMapping: LinkedHashMap<String, Int>, val enumType: KClass<T>) : DbPrimitiveType<T>() {
 
+    override val defaultValue: T = enumType.java.enumConstants.first()
 
     protected fun mappingToSql() = enumMapping.entries.joinToString { "\'${it.key}\' = ${it.value}" }
 
@@ -94,7 +99,10 @@ class DbEnum16<T : Enum<*>>(enumMapping: LinkedHashMap<String, Int>, enumType: K
 class DbDate : DbPrimitiveType<Date>() {
     companion object {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        private val defaultDate = Date(0)
     }
+
+    override val defaultValue: Date = defaultDate
 
     override fun toSqlName(): String = "Date"
     override fun getValue(name: String, result: ResultSet): Date = result.getDate(name)
@@ -135,7 +143,10 @@ class DbArrayDate : DbArrayType<Date>() {
 class DbDateTime : DbPrimitiveType<DateTime>() {
     companion object {
         val dateTimeFormat: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
+        private val defaultDateTime = DateTime(0)
     }
+
+    override val defaultValue: DateTime = defaultDateTime
 
     override fun toSqlName(): String = "DateTime"
 
@@ -191,6 +202,7 @@ class DbDateTime : DbPrimitiveType<DateTime>() {
 //Int primitive types
 
 abstract class DbIntPrimitiveType<T : Number>(val sqlName: String,
+                                              override val defaultValue: T,
                                               val getByNameFunc: (ResultSet, String) -> T,
                                               val getByIndexFunc: (ResultSet, Int) -> T,
                                               val setByIndexFunc: (PreparedStatement, Int, T) -> Unit,
@@ -210,28 +222,28 @@ abstract class DbIntPrimitiveType<T : Number>(val sqlName: String,
 
 }
 
-class DbInt8 : DbIntPrimitiveType<Byte>("Int8", { resultSet, name -> resultSet.getByte(name) }, { resultSet, index -> resultSet.getByte(index) },
+class DbInt8 : DbIntPrimitiveType<Byte>("Int8", 0, { resultSet, name -> resultSet.getByte(name) }, { resultSet, index -> resultSet.getByte(index) },
         { statement, index, value -> statement.setByte(index, value) }, { DbArrayInt8() })
 
-class DbUInt8 : DbIntPrimitiveType<Byte>("UInt8", { resultSet, name -> resultSet.getByte(name) }, { resultSet, index -> resultSet.getByte(index) },
+class DbUInt8 : DbIntPrimitiveType<Byte>("UInt8", 0, { resultSet, name -> resultSet.getByte(name) }, { resultSet, index -> resultSet.getByte(index) },
         { statement, index, value -> statement.setByte(index, value) }, { DbArrayUInt8() })
 
-class DbInt16 : DbIntPrimitiveType<Short>("Int16", { resultSet, name -> resultSet.getShort(name) }, { resultSet, index -> resultSet.getShort(index) },
+class DbInt16 : DbIntPrimitiveType<Short>("Int16", 0, { resultSet, name -> resultSet.getShort(name) }, { resultSet, index -> resultSet.getShort(index) },
         { statement, index, value -> statement.setShort(index, value) }, { DbArrayInt16() })
 
-class DbUInt16 : DbIntPrimitiveType<Short>("UInt16", { resultSet, name -> resultSet.getShort(name) }, { resultSet, index -> resultSet.getShort(index) },
+class DbUInt16 : DbIntPrimitiveType<Short>("UInt16", 0, { resultSet, name -> resultSet.getShort(name) }, { resultSet, index -> resultSet.getShort(index) },
         { statement, index, value -> statement.setShort(index, value) }, { DbArrayUInt16() })
 
-class DbInt32 : DbIntPrimitiveType<Int>("Int32", { resultSet, name -> resultSet.getInt(name) }, { resultSet, index -> resultSet.getInt(index) },
+class DbInt32 : DbIntPrimitiveType<Int>("Int32", 0, { resultSet, name -> resultSet.getInt(name) }, { resultSet, index -> resultSet.getInt(index) },
         { statement, index, value -> statement.setInt(index, value) }, { DbArrayInt32() })
 
-class DbUInt32 : DbIntPrimitiveType<Int>("UInt32", { resultSet, name -> resultSet.getInt(name) }, { resultSet, index -> resultSet.getInt(index) },
+class DbUInt32 : DbIntPrimitiveType<Int>("UInt32", 0, { resultSet, name -> resultSet.getInt(name) }, { resultSet, index -> resultSet.getInt(index) },
         { statement, index, value -> statement.setInt(index, value) }, { DbArrayUInt32() })
 
-class DbInt64 : DbIntPrimitiveType<Long>("Int64", { resultSet, name -> resultSet.getLong(name) }, { resultSet, index -> resultSet.getLong(index) },
+class DbInt64 : DbIntPrimitiveType<Long>("Int64", 0, { resultSet, name -> resultSet.getLong(name) }, { resultSet, index -> resultSet.getLong(index) },
         { statement, index, value -> statement.setLong(index, value) }, { DbArrayInt64() })
 
-class DbUInt64 : DbIntPrimitiveType<Long>("UInt64", { resultSet, name -> resultSet.getLong(name) }, { resultSet, index -> resultSet.getLong(index) },
+class DbUInt64 : DbIntPrimitiveType<Long>("UInt64", 0, { resultSet, name -> resultSet.getLong(name) }, { resultSet, index -> resultSet.getLong(index) },
         { statement, index, value -> statement.setLong(index, value) }, { DbArrayUInt64() })
 
 //Int array types
@@ -307,6 +319,9 @@ class DbArrayUInt64 : DbIntArrayType<Long>("Array(UInt64)",
 //Boolean
 
 class DbBoolean : DbPrimitiveType<Boolean>() {
+
+    override val defaultValue = false
+
     override fun toSqlName(): String = "UInt8"
 
     override fun getValue(name: String, result: ResultSet): Boolean = result.getInt(name) == 1
@@ -356,6 +371,9 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
 //String
 
 class DbString : DbPrimitiveType<String>() {
+
+    override val defaultValue = ""
+
     override fun toSqlName(): String = "String"
 
     override fun getValue(name: String, result: ResultSet): String = result.getString(name)

@@ -18,19 +18,17 @@ class ConnectionContext(val db: Database) {
 
     fun Table.exists(): Boolean = TableClickhouse.exists(db, this)
 
-    @Suppress("UNCHECKED_CAST")
     fun <E : Any, T : DbType<E>> Table.addColumn(column: Column<E, T>) {
-        if (!columns.contains(column as Column<Any, DbType<Any>>)) {
+        if (!columns.contains(column)) {
             TableClickhouse.addColumn(db, this, column)
-            columns.add(column)
+            _columns.add(column)
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun <E : Any, T : DbType<E>> Table.dropColumn(column: Column<E, T>) {
-        if (columns.contains(column as Column<Any, DbType<Any>>)) {
+        if (columns.contains(column)) {
             TableClickhouse.dropColumn(db, this, column)
-            columns.remove(column)
+            _columns.remove(column)
         }
     }
 
@@ -39,34 +37,33 @@ class ConnectionContext(val db: Database) {
     //DML
     //selects
     fun Table.select(): Query {
-        @Suppress("UNCHECKED_CAST")
         return Query(this, columns)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun Table.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this, functions.toList() as List<Expression<Any, DbType<Any>>>)
+    fun Table.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this, functions.toSet())
 
     fun Query.toResult(): List<SelectRow> = QueryClickhouse.getResult(db, this)
 
 
     //inserts
-    @Suppress("UNCHECKED_CAST")
     fun Table.insert(body: (InsertRow) -> Unit) {
         val row = InsertRow()
         body(row)
         InsertClickhouse.insert(db, InsertExpression(this, row))
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> Table.batchInsert(list: Iterable<T>, columns: List<Column<*, DbType<*>>> = this.columns,
+    fun <T : Any> Table.batchInsert(list: Iterable<T>, columns: Set<Column<*, DbType<*>>>? = null,
                                     body: (InsertRow, T) -> Unit) {
         val rows = ArrayList<InsertRow>()
+        val columnsFromRows = columns.orEmpty().toMutableSet()
         list.forEach {
             val row = InsertRow()
             body(row, it)
+            columnsFromRows.addAll(row.columns)
             rows.add(row)
         }
-        InsertClickhouse.insert(db, InsertExpression(this, columns as List<Column<Any, DbType<Any>>>, rows))
+
+        InsertClickhouse.insert(db, InsertExpression(this, columnsFromRows, rows))
     }
 }
 

@@ -4,7 +4,7 @@ import tanvd.aorm.DbType
 import tanvd.aorm.Table
 import tanvd.aorm.expression.Expression
 
-class Query(val table: Table, var columns: List<Expression<Any, DbType<Any>>>) {
+class Query(val table: Table, var columns: Set<Expression<*, DbType<*>>>) {
     var whereSection: QueryExpression? = null
     var prewhereSection: QueryExpression? = null
     var orderBySection: OrderByExpression? = null

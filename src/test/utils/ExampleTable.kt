@@ -1,14 +1,11 @@
 package utils
 
 import org.jetbrains.annotations.TestOnly
-import tanvd.aorm.DbType
 import tanvd.aorm.Engine
 import tanvd.aorm.Table
-import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.default
 import tanvd.aorm.withDatabase
 
-@Suppress("UNCHECKED_CAST")
 object ExampleTable : Table("ExampleTable") {
     val date = date("date")
 
@@ -26,10 +23,10 @@ object ExampleTable : Table("ExampleTable") {
                 ExampleTable.drop()
             }
         }
-        ExampleTable.columns.clear()
-        columns.add(date as Column<Any, DbType<Any>>)
-        columns.add(id as Column<Any, DbType<Any>>)
-        columns.add(value as Column<Any, DbType<Any>>)
-        columns.add(arrayValue as Column<Any, DbType<Any>>)
+        ExampleTable._columns.clear()
+        _columns.add(date)
+        _columns.add(id)
+        _columns.add(value)
+        _columns.add(arrayValue)
     }
 }
