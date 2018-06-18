@@ -1,6 +1,7 @@
 package tanvd.aorm.context
 
 import tanvd.aorm.*
+import tanvd.aorm.exceptions.NoValueInsertedException
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import tanvd.aorm.implementation.InsertClickhouse
@@ -52,15 +53,23 @@ class ConnectionContext(val db: Database) {
         InsertClickhouse.insert(db, InsertExpression(this, row))
     }
 
+    @Throws(NoValueInsertedException::class)
     fun <T : Any> Table.batchInsert(list: Iterable<T>, columns: Set<Column<*, DbType<*>>>? = null,
                                     body: (InsertRow, T) -> Unit) {
+        val listIterator = list.iterator()
+        if (!listIterator.hasNext()) return
+
         val rows = ArrayList<InsertRow>()
         val columnsFromRows = columns.orEmpty().toMutableSet()
-        list.forEach {
+        listIterator.forEach {
             val row = InsertRow()
             body(row, it)
             columnsFromRows.addAll(row.columns)
             rows.add(row)
+        }
+
+        if (columnsFromRows.isEmpty()) {
+            throw NoValueInsertedException("No values was inserted during batch insert")
         }
 
         InsertClickhouse.insert(db, InsertExpression(this, columnsFromRows, rows))
