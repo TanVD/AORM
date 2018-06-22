@@ -60,7 +60,7 @@ class ConnectionContext(val db: Database) {
         if (!listIterator.hasNext()) return
 
         val rows = ArrayList<InsertRow>()
-        val columnsFromRows = columns.orEmpty().toMutableSet()
+        val columnsFromRows = (columns.orEmpty() + columnsWithDefaults).toMutableSet()
         listIterator.forEach {
             val row = InsertRow()
             body(row, it)
