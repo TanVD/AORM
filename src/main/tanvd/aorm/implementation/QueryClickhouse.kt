@@ -55,6 +55,9 @@ object QueryClickhouse {
                 append("WHERE ${result.sql} ")
                 valuesToSet += result.data
             }
+            query.groupBySection?.let { section ->
+                append("GROUP BY ${ section.columns.joinToString { it.name }} ")
+            }
             query.orderBySection?.let { section ->
                 append("ORDER BY ${section.map.toList().joinToString { "${it.first.name} ${it.second}" }} ")
             }

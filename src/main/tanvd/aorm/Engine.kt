@@ -31,4 +31,15 @@ sealed class Engine {
             "ReplicatedReplacingMergeTree($zookeeperPath, $index, ${dateColumn.name}, (${primaryKey.joinToString { it.name }}), $indexGranularity, ${versionColumn.name})"
         } ?: throw NotImplementedError("Zookeeper path not stated. Replicated table can not be created.")
     }
+
+    class AggregatingMergeTree(val dateColumn: Column<Date, DbPrimitiveType<Date>>, val primaryKey: List<Column<*, DbPrimitiveType<*>>>,
+                               val indexGranularity: Long = 8192, val zookeeperPath: String? = null)
+        : Engine() {
+        override fun toSqlDef() = "AggregatingMergeTree(${dateColumn.name}, (${primaryKey.joinToString { it.name }}), $indexGranularity)"
+
+        override fun toReplicatedSqlDef(index: Int): String = zookeeperPath?.let { zookeeperPath ->
+            "ReplicatedAggregatingMergeTree($zookeeperPath, $index, ${dateColumn.name}, (${primaryKey.joinToString { it.name }}), $indexGranularity)"
+        } ?: throw NotImplementedError("Zookeeper path not stated. Replicated table can not be created.")
+
+    }
 }

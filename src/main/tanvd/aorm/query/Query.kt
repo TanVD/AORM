@@ -7,6 +7,7 @@ import tanvd.aorm.expression.Expression
 class Query(val table: Table, var columns: Set<Expression<*, DbType<*>>>) {
     var whereSection: QueryExpression? = null
     var prewhereSection: QueryExpression? = null
+    var groupBySection: GroupByExpression? = null
     var orderBySection: OrderByExpression? = null
     var limitSection: LimitExpression? = null
 
@@ -20,6 +21,11 @@ infix fun Query.where(expression: QueryExpression): Query {
 
 infix fun Query.prewhere(expression: QueryExpression): Query {
     prewhereSection = expression
+    return this
+}
+
+infix fun Query.groupBy(expression: GroupByExpression): Query {
+    groupBySection = expression
     return this
 }
 
