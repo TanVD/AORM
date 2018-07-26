@@ -80,5 +80,4 @@ abstract class Table(name: String) {
     fun string(name: String) = registerColumn(Column(name, DbString(), this))
 
     fun arrayString(name: String) = registerColumn(Column(name, DbArrayString(), this))
-
 }
