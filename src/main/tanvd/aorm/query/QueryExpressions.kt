@@ -44,7 +44,7 @@ sealed class InfixConditionQueryExpression<E : Any, out T : DbType<E>, Y : Any>(
                                                                                 val type: DbType<Y>, val op: String) : QueryExpression() {
     override fun toSqlPreparedDef(): PreparedSqlResult {
         @Suppress("UNCHECKED_CAST")
-        return PreparedSqlResult("(${expression.toSql()} $op ?)", listOf((type to value) as Pair<DbType<Any>, Any>))
+        return PreparedSqlResult("(${expression.toQueryQualifier()} $op ?)", listOf((type to value) as Pair<DbType<Any>, Any>))
     }
 }
 
@@ -56,7 +56,7 @@ sealed class PrefixConditionQueryExpression<E : Any, out T : DbType<E>>(val expr
 
     override fun toSqlPreparedDef(): PreparedSqlResult {
         @Suppress("UNCHECKED_CAST")
-        return PreparedSqlResult("($op(${expression.toSql()}, ?))", typeToValue as List<Pair<DbType<Any>, Any>>)
+        return PreparedSqlResult("($op(${expression.toQueryQualifier()}, ?))", typeToValue as List<Pair<DbType<Any>, Any>>)
     }
 }
 
@@ -90,7 +90,7 @@ class RegexExpression(expression: Expression<String, DbPrimitiveType<String>>, v
 class InListExpression<T : Any>(val expression: Expression<T, DbPrimitiveType<T>>, val value: List<T>) : QueryExpression() {
     @Suppress("UNCHECKED_CAST")
     override fun toSqlPreparedDef(): PreparedSqlResult {
-        return PreparedSqlResult("(${expression.toSql()} in (${value.joinToString { "?" }}))",
+        return PreparedSqlResult("(${expression.toQueryQualifier()} in (${value.joinToString { "?" }}))",
                 value.map { (expression.type to it) as Pair<DbType<Any>, Any> })
     }
 }
@@ -106,7 +106,7 @@ class ExistsExpression<T : Any>(val expression: Expression<List<T>, DbArrayType<
         val innerColumn = ValueExpression("x", expression.type.toPrimitive())
         val innerExpression = body(innerColumn)
         val (sql, data) = innerExpression.toSqlPreparedDef()
-        return PreparedSqlResult("(arrayExists(x -> $sql, ${expression.toSql()}))", data)
+        return PreparedSqlResult("(arrayExists(x -> $sql, ${expression.toQueryQualifier()}))", data)
     }
 }
 

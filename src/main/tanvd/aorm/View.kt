@@ -1,12 +1,7 @@
 package tanvd.aorm
 
-import ru.yandex.clickhouse.ClickHouseUtil
-import tanvd.aorm.expression.Expression
+import tanvd.aorm.query.Query
 
-abstract class MaterializedView(name: String) {
-    class MaterializedExpression(val name: String, val expression: Expression<*, DbType<*>>)
-
-    var name: String = ClickHouseUtil.escape(name)
-
-    abstract val expressions: List<Expression<*, DbType<*>>>
+abstract class View(val name: String) {
+    abstract val query: Query
 }

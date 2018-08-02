@@ -5,7 +5,8 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 abstract class Expression<E: Any, out T : DbType<E>>(val type: T) {
-    abstract fun toSql(): String
+    abstract fun toQueryQualifier(): String
+    abstract fun toSelectListDef(): String
 
     fun toStringValue(value: E): String = type.toStringValue(value)
 
@@ -17,13 +18,15 @@ abstract class Expression<E: Any, out T : DbType<E>>(val type: T) {
     }
 }
 
-class MaterializedExpression<E: Any, out T : DbType<E>, Y: Expression<E, T>>(val name: String, val expression: Y):
+class AliasedExpression<E: Any, out T : DbType<E>, Y: Expression<E, T>>(val name: String, val expression: Y):
         Expression<E, T>(expression.type) {
-    override fun toSql(): String {
-        return name
-    }
+    val alias = ValueExpression(name, type)
+
+    override fun toSelectListDef(): String = "${expression.toQueryQualifier()} as $name"
+
+    override fun toQueryQualifier(): String = name
 }
 
-fun <E: Any, T : DbType<E>, Y: Expression<E, T>> materialized(name: String, expression: Y): MaterializedExpression<E, T, Y> {
-    return MaterializedExpression(name, expression)
+fun <E: Any, T : DbType<E>, Y: Expression<E, T>> alias(name: String, expression: Y): AliasedExpression<E, T, Y> {
+    return AliasedExpression(name, expression)
 }

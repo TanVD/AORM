@@ -55,12 +55,6 @@ class ReplicatedConnectionContext(val dbs: List<Pair<Database, Int>>) {
 
     //DML
     //selects
-    fun Table.select(): Query {
-        return Query(this, columns)
-    }
-
-    fun Table.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this, functions.toSet())
-
     fun Query.toResult(specificDb: Database? = null): List<SelectRow> {
         val dbToChoose = chooseDb(specificDb)
         return with(ConnectionContext(dbToChoose)) {

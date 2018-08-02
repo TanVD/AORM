@@ -2,6 +2,8 @@ package tanvd.aorm
 
 import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.expression.Column
+import tanvd.aorm.expression.Expression
+import tanvd.aorm.query.Query
 import java.util.*
 import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
@@ -21,6 +23,13 @@ abstract class Table(name: String) {
     private fun <T: Any, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
         return column.apply { columns.add(this) }
     }
+
+    //selects
+    fun select(): Query {
+        return Query(this.name, columns)
+    }
+
+    fun select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
 
     //date
     fun date(name: String) = registerColumn(Column(name, DbDate(), this))

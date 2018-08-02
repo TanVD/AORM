@@ -4,14 +4,12 @@ import tanvd.aorm.*
 import tanvd.aorm.exceptions.NoValueInsertedException
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
-import tanvd.aorm.implementation.InsertClickhouse
-import tanvd.aorm.implementation.MetadataClickhouse
-import tanvd.aorm.implementation.QueryClickhouse
-import tanvd.aorm.implementation.TableClickhouse
+import tanvd.aorm.implementation.*
 import tanvd.aorm.query.Query
 import java.util.*
 
 class ConnectionContext(val db: Database) {
+    //Tables
     //DDL
     fun Table.create() = TableClickhouse.create(db, this)
 
@@ -37,11 +35,7 @@ class ConnectionContext(val db: Database) {
 
     //DML
     //selects
-    fun Table.select(): Query {
-        return Query(this, columns)
-    }
 
-    fun Table.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this, functions.toSet())
 
     fun Query.toResult(): List<SelectRow> = QueryClickhouse.getResult(db, this)
 
@@ -74,5 +68,20 @@ class ConnectionContext(val db: Database) {
 
         InsertClickhouse.insert(db, InsertExpression(this, columnsFromRows, rows))
     }
+
+    //View
+    fun View.create() = ViewClickhouse.create(db, this)
+
+    fun View.drop() = ViewClickhouse.drop(db, this)
+
+    fun View.exists(): Boolean = ViewClickhouse.exists(db, this)
+
+    //DML
+    //selects
+    fun View.select(): Query {
+        return Query(this.name, this.query.expressions)
+    }
+
+    fun View.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
 }
 

@@ -15,7 +15,7 @@ object QueryClickhouse {
             constructQuery(query).use { statement ->
                 val result = statement.executeQuery()
                 while (result.next()) {
-                    rows.add(SelectRow(result, query.columns))
+                    rows.add(SelectRow(result, query.expressions))
                 }
             }
         }
@@ -44,7 +44,7 @@ object QueryClickhouse {
     private fun preconstructQuery(query: Query): PreparedSqlResult {
         val valuesToSet = ArrayList<Pair<DbType<Any>, Any>>()
         val sql = buildString {
-            append("SELECT ${query.columns.joinToString { it.toSql() }} FROM ${query.table.name} ")
+            append("SELECT ${query.expressions.joinToString { it.toSelectListDef() }} FROM ${query.from} ")
             query.prewhereSection?.let { section ->
                 val result = section.toSqlPreparedDef()
                 append("PREWHERE ${result.sql} ")

@@ -2,6 +2,7 @@ package tanvd.aorm.implementation
 
 import tanvd.aorm.Database
 import tanvd.aorm.Table
+import tanvd.aorm.View
 
 object MetadataClickhouse {
     fun syncScheme(db: Database, table: Table) {
@@ -29,8 +30,16 @@ object MetadataClickhouse {
         }
     }
 
+    fun existsTable(db: Database, view: View): Boolean {
+        return db.withConnection {
+            metaData.getTables(null, db.name, view.name, null).use {
+                it.next()
+            }
+        }
+    }
+
     /**
-     * Returns columns in JDBC representation.
+     * Returns expressions in JDBC representation.
      * Names to Types
      */
     fun columnsOfTable(db: Database, table: Table): Map<String, String> {
