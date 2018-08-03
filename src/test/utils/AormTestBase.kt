@@ -19,6 +19,11 @@ abstract class AormTestBase {
                 ExampleView.drop()
             }
         }
+        ignoringExceptions {
+            withDatabase(TestDatabase) {
+                ExampleMaterializedView.drop()
+            }
+        }
         executeBeforeMethod()
     }
 

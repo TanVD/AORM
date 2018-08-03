@@ -9,12 +9,9 @@ import tanvd.aorm.query.Query
 import java.util.*
 
 class ConnectionContext(val db: Database) {
-    //Tables
-    //DDL
+    //Table
     fun Table.create() = TableClickhouse.create(db, this)
-
     fun Table.drop() = TableClickhouse.drop(db, this)
-
     fun Table.exists(): Boolean = TableClickhouse.exists(db, this)
 
     fun <E : Any, T : DbType<E>> Table.addColumn(column: Column<E, T>) {
@@ -32,11 +29,6 @@ class ConnectionContext(val db: Database) {
     }
 
     fun Table.syncScheme() = MetadataClickhouse.syncScheme(db, this)
-
-    //DML
-    //selects
-
-
     fun Query.toResult(): List<SelectRow> = QueryClickhouse.getResult(db, this)
 
 
@@ -71,17 +63,18 @@ class ConnectionContext(val db: Database) {
 
     //View
     fun View.create() = ViewClickhouse.create(db, this)
-
     fun View.drop() = ViewClickhouse.drop(db, this)
-
     fun View.exists(): Boolean = ViewClickhouse.exists(db, this)
 
-    //DML
-    //selects
-    fun View.select(): Query {
-        return Query(this.name, this.query.expressions)
-    }
-
+    fun View.select(): Query =  Query(this.name, this.query.expressions)
     fun View.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
+
+    //MaterializedView
+    fun MaterializedView.create() = MaterializedViewClickhouse.create(db, this)
+    fun MaterializedView.drop() = MaterializedViewClickhouse.drop(db, this)
+    fun MaterializedView.exists(): Boolean = MaterializedViewClickhouse.exists(db, this)
+
+    fun MaterializedView.select(): Query =  Query(this.name, this.query.expressions)
+    fun MaterializedView.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
 }
 

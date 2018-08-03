@@ -1,6 +1,7 @@
 package tanvd.aorm.implementation
 
 import tanvd.aorm.Database
+import tanvd.aorm.MaterializedView
 import tanvd.aorm.Table
 import tanvd.aorm.View
 
@@ -22,17 +23,13 @@ object MetadataClickhouse {
         }
     }
 
-    fun existsTable(db: Database, table: Table): Boolean {
-        return db.withConnection {
-            metaData.getTables(null, db.name, table.name, null).use {
-                it.next()
-            }
-        }
-    }
+    fun existsTable(db: Database, table: Table) = existsTable(db, table.name)
+    fun existsView(db: Database, view: View) = existsTable(db, view.name)
+    fun existsMaterializedView(db: Database, view: MaterializedView) = existsTable(db, view.name)
 
-    fun existsTable(db: Database, view: View): Boolean {
+    private fun existsTable(db: Database, name: String): Boolean {
         return db.withConnection {
-            metaData.getTables(null, db.name, view.name, null).use {
+            metaData.getTables(null, db.name, name, null).use {
                 it.next()
             }
         }
