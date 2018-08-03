@@ -16,8 +16,6 @@ class Column<E: Any, out T : DbType<E>>(val name: String, type: T, val table: Ta
 
     internal fun defaultValueResolved(): E = defaultFunction?.invoke()?: type.defaultValue
 
-
-
     /** Equals by name and table **/
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

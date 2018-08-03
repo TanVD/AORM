@@ -1,5 +1,6 @@
 package tanvd.aorm.expression
 
+import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.DbType
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -16,15 +17,30 @@ abstract class Expression<E: Any, out T : DbType<E>>(val type: T) {
     fun setValue(index: Int, statement: PreparedStatement, value: E) {
         type.setValue(index, statement, value)
     }
+
+
+    //Equals by query qualifier
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Expression<*, *>
+
+        if (toQueryQualifier() != other.toQueryQualifier()) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int = toQueryQualifier().hashCode()
 }
 
 class AliasedExpression<E: Any, out T : DbType<E>, Y: Expression<E, T>>(val name: String, val expression: Y):
         Expression<E, T>(expression.type) {
-    val alias = ValueExpression(name, type)
+    val alias = ValueExpression(ClickHouseUtil.escape(name), type)
 
-    override fun toSelectListDef(): String = "${expression.toQueryQualifier()} as $name"
+    override fun toSelectListDef(): String = "${expression.toQueryQualifier()} as ${ClickHouseUtil.escape(name)}"
 
-    override fun toQueryQualifier(): String = name
+    override fun toQueryQualifier(): String = ClickHouseUtil.escape(name)
 }
 
 fun <E: Any, T : DbType<E>, Y: Expression<E, T>> alias(name: String, expression: Y): AliasedExpression<E, T, Y> {

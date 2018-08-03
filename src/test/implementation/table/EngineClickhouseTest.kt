@@ -39,6 +39,15 @@ class EngineClickhouseTest {
 
         TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
     }
+
+    @Test
+    fun createTableAggregatingMergeTree_tableNotExists_tableSyncedWithDb() {
+        TableClickhouse.create(TestDatabase, AggregatingMergeTreeTable)
+
+        AssertDb.syncedWithDb(AggregatingMergeTreeTable)
+
+        TableClickhouse.drop(TestDatabase, AggregatingMergeTreeTable)
+    }
 }
 
 object MergeTreeTable : Table("MergeTreeTable") {
@@ -54,4 +63,11 @@ object ReplacingMergeTreeTable : Table("ReplacingMergeTreeTable") {
     val version = uint64("version").default { 0L }
 
     override val engine: Engine = Engine.ReplacingMergeTree(date, listOf(id), version, 8192)
+}
+
+object AggregatingMergeTreeTable : Table("AggregatingMergeTreeTable") {
+    val date = date("date")
+    val id = int64("id").default { 1L }
+
+    override val engine: Engine = Engine.AggregatingMergeTree(date, listOf(id))
 }
