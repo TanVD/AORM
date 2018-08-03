@@ -8,3 +8,11 @@ class ValueExpression<E : Any, out T : DbType<E>>(val name: String, type: T) : E
 
     override fun toQueryQualifier(): String = ClickHouseUtil.escape(name)
 }
+
+class SqlValueExpression<E : Any, out T : DbType<E>>(val value: String, type: T) : Expression<E, T>(type) {
+    override fun toSelectListDef(): String = value
+
+    override fun toQueryQualifier(): String = value
+}
+
+fun <E : Any, T : DbType<E>> sqlValue(value: String, type: T): SqlValueExpression<E, T> = SqlValueExpression(value, type)
