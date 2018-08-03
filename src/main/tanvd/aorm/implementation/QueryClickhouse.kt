@@ -56,10 +56,10 @@ object QueryClickhouse {
                 valuesToSet += result.data
             }
             query.groupBySection?.let { section ->
-                append("GROUP BY ${ section.columns.joinToString { it.name }} ")
+                append("GROUP BY ${ section.columns.joinToString { it.toQueryQualifier() }} ")
             }
             query.orderBySection?.let { section ->
-                append("ORDER BY ${section.map.toList().joinToString { "${it.first.name} ${it.second}" }} ")
+                append("ORDER BY ${section.map.toList().joinToString { "${it.first.toQueryQualifier()} ${it.second}" }} ")
             }
             query.limitSection?.let { section ->
                 append("LIMIT ${section.offset}, ${query.limitSection!!.limit} ")
