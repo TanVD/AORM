@@ -41,9 +41,9 @@ class ViewClickhouseTest : AormTestBase() {
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
 
-            val result = ExampleView.select(ExampleView.idView.alias, ExampleView.valueView.alias).toResult()
+            val result = ExampleView.select(ExampleView.idView, ExampleView.valueView).toResult()
 
-            Assert.assertEquals(result.single(), prepareSelectRow(mapOf(ExampleView.idView.alias to 2L, ExampleView.valueView.alias to "value")))
+            Assert.assertEquals(result.single(), prepareSelectRow(mapOf(ExampleView.idView to 2L, ExampleView.valueView to "value")))
         }
     }
 

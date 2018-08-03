@@ -2,9 +2,7 @@ package implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.expression.count
-import tanvd.aorm.expression.maxMerge
-import tanvd.aorm.expression.maxState
+import tanvd.aorm.expression.*
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.groupBy
 import tanvd.aorm.withDatabase
@@ -40,6 +38,27 @@ class QueryExpressionTest {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assert.assertEquals(sql, "SELECT maxMerge(maxState(${ExampleTable.id.name})) FROM ExampleTable GROUP BY id ;")
+        }
+    }
+
+    @Test
+    fun argMaxState_maxStateByColumn_sqlValid() {
+        withDatabase(TestDatabase) {
+            val query = ExampleTable.select(argMaxState(ExampleTable.id, ExampleTable.value)).groupBy(ExampleTable.id)
+
+            val sql = QueryClickhouse.constructQuery(query)
+            Assert.assertEquals(sql, "SELECT argMaxState(${ExampleTable.id.name}, ${ExampleTable.value.name}) FROM ExampleTable GROUP BY id ;")
+        }
+    }
+
+
+    @Test
+    fun argMaxMerge_maxMergeByColumn_sqlValid() {
+        withDatabase(TestDatabase) {
+            val query = ExampleTable.select(argMaxMerge(argMaxState(ExampleTable.id, ExampleTable.value))).groupBy(ExampleTable.id)
+
+            val sql = QueryClickhouse.constructQuery(query)
+            Assert.assertEquals(sql, "SELECT argMaxMerge(argMaxState(${ExampleTable.id.name}, ${ExampleTable.value.name})) FROM ExampleTable GROUP BY id ;")
         }
     }
 }

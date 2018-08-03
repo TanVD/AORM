@@ -41,10 +41,10 @@ class MaterializedViewClickhouseTest : AormTestBase() {
             InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
 
-            val result = ExampleMaterializedView.select(ExampleMaterializedView.date.alias, ExampleMaterializedView.idView.alias, ExampleMaterializedView.valueView.alias).toResult()
+            val result = ExampleMaterializedView.select(ExampleMaterializedView.date, ExampleMaterializedView.idView, ExampleMaterializedView.valueView).toResult()
 
-            Assert.assertEquals(result.single(), prepareSelectRow(mapOf(ExampleMaterializedView.date.alias to getDate("2000-01-01"),
-                    ExampleMaterializedView.idView.alias to 2L, ExampleMaterializedView.valueView.alias to "value")))
+            Assert.assertEquals(result.single(), prepareSelectRow(mapOf(ExampleMaterializedView.date to getDate("2000-01-01"),
+                    ExampleMaterializedView.idView to 2L, ExampleMaterializedView.valueView to "value")))
         }
     }
 

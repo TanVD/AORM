@@ -3,6 +3,7 @@ package tanvd.aorm.implementation
 import tanvd.aorm.Database
 import tanvd.aorm.DbType
 import tanvd.aorm.SelectRow
+import tanvd.aorm.expression.AliasedExpression
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
 import java.sql.Connection
@@ -44,7 +45,13 @@ object QueryClickhouse {
     private fun preconstructQuery(query: Query): PreparedSqlResult {
         val valuesToSet = ArrayList<Pair<DbType<Any>, Any>>()
         val sql = buildString {
-            append("SELECT ${query.expressions.joinToString { it.toSelectListDef() }} FROM ${query.from} ")
+            append("SELECT ${query.expressions.joinToString {
+                if (query.from == (it as? AliasedExpression<*, *, *>)?.materializedInView) {
+                    it.toQueryQualifier()
+                } else {
+                    it.toSelectListDef()
+                }
+            }} FROM ${query.from} ")
             query.prewhereSection?.let { section ->
                 val result = section.toSqlPreparedDef()
                 append("PREWHERE ${result.sql} ")
