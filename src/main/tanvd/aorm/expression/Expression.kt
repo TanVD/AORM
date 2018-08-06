@@ -7,7 +7,7 @@ import tanvd.aorm.View
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-abstract class Expression<E: Any, out T : DbType<E>>(val type: T) {
+abstract class Expression<E : Any, out T : DbType<E>>(val type: T) {
     abstract fun toQueryQualifier(): String
     abstract fun toSelectListDef(): String
 
@@ -36,7 +36,7 @@ abstract class Expression<E: Any, out T : DbType<E>>(val type: T) {
     override fun hashCode(): Int = toQueryQualifier().hashCode()
 }
 
-class AliasedExpression<E: Any, out T : DbType<E>, Y: Expression<E, T>>(val name: String, val expression: Y):
+class AliasedExpression<E : Any, out T : DbType<E>, Y : Expression<E, T>>(val name: String, val expression: Y) :
         Expression<E, T>(expression.type) {
     var materializedInView: String? = null
     val alias = ValueExpression(ClickHouseUtil.escape(name), type)
@@ -46,10 +46,11 @@ class AliasedExpression<E: Any, out T : DbType<E>, Y: Expression<E, T>>(val name
     override fun toQueryQualifier(): String = ClickHouseUtil.escape(name)
 }
 
-fun <E: Any, T : DbType<E>, Y: Expression<E, T>> alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression)
-fun <E: Any, T : DbType<E>, Y: Expression<E, T>> View.alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression).also {
+fun <E : Any, T : DbType<E>, Y : Expression<E, T>> alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression)
+fun <E : Any, T : DbType<E>, Y : Expression<E, T>> View.alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression).also {
     it.materializedInView = this.name
 }
-fun <E: Any, T : DbType<E>, Y: Expression<E, T>> MaterializedView.alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression).also {
+
+fun <E : Any, T : DbType<E>, Y : Expression<E, T>> MaterializedView.alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression).also {
     it.materializedInView = this.name
 }

@@ -4,6 +4,7 @@ import tanvd.aorm.Database
 import tanvd.aorm.DbType
 import tanvd.aorm.InsertExpression
 import tanvd.aorm.expression.Column
+import tanvd.aorm.use
 import java.sql.Connection
 import java.sql.PreparedStatement
 
@@ -38,7 +39,7 @@ object InsertClickhouse {
                 "${insert.values.joinToString { row ->
                     insert.columns.joinToString(prefix = "(", postfix = ")") {
                         @Suppress("UNCHECKED_CAST")
-                        val value = row[it  as Column<Any, DbType<Any>>]?: it.defaultValueResolved()
+                        val value = row[it as Column<Any, DbType<Any>>] ?: it.defaultValueResolved()
                         it.toStringValue(value)
                     }
                 }};"

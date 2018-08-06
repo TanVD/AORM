@@ -31,14 +31,14 @@ object ExampleTable : Table("ExampleTable") {
     }
 }
 
-object ExampleView: View("ExampleView") {
+object ExampleView : View("ExampleView") {
     val idView = alias("id_view", ExampleTable.id)
     val valueView = alias("value_view", ExampleTable.value)
 
     override val query: Query = ExampleTable.select(idView, valueView)
 }
 
-object ExampleMaterializedView: MaterializedView("ExampleMaterializedView") {
+object ExampleMaterializedView : MaterializedView("ExampleMaterializedView") {
     val date = alias("date_view", ExampleTable.date)
     val idView = alias("id_view", ExampleTable.id)
     val valueView = alias("value_view", ExampleTable.value)

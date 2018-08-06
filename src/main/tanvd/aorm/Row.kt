@@ -20,7 +20,7 @@ data class InsertRow(val values: MutableMap<Column<*, DbType<*>>, Any>) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <E: Any, K: DbType<E>> get(expression: Column<E, K>): E? = values[expression] as E?
+    operator fun <E : Any, K : DbType<E>> get(expression: Column<E, K>): E? = values[expression] as E?
 }
 
 data class SelectRow(val values: MutableMap<Expression<*, DbType<*>>, Any>) {

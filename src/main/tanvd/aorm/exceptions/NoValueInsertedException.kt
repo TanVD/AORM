@@ -1,3 +1,3 @@
 package tanvd.aorm.exceptions
 
-class NoValueInsertedException(msg: String): Exception(msg)
+class NoValueInsertedException(msg: String) : Exception(msg)

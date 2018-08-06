@@ -5,9 +5,14 @@ import org.testng.annotations.Test
 import tanvd.aorm.InsertExpression
 import tanvd.aorm.expression.count
 import tanvd.aorm.implementation.InsertClickhouse
-import tanvd.aorm.query.*
+import tanvd.aorm.query.Order
+import tanvd.aorm.query.groupBy
+import tanvd.aorm.query.orderBy
 import tanvd.aorm.withDatabase
-import utils.*
+import utils.AormTestBase
+import utils.ExampleTable
+import utils.TestDatabase
+import utils.getDate
 
 
 @Suppress("UNCHECKED_CAST")

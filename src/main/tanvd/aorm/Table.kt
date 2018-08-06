@@ -5,7 +5,6 @@ import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import tanvd.aorm.query.Query
 import java.util.*
-import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 
 
@@ -20,7 +19,7 @@ abstract class Table(name: String) {
     val columnsWithDefaults
         get() = columns.filter { it.defaultFunction != null }
 
-    private fun <T: Any, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
+    private fun <T : Any, E : DbType<T>> registerColumn(column: Column<T, E>): Column<T, E> {
         return column.apply { columns.add(this) }
     }
 

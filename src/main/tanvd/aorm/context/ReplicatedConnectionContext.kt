@@ -2,7 +2,6 @@ package tanvd.aorm.context
 
 import tanvd.aorm.*
 import tanvd.aorm.expression.Column
-import tanvd.aorm.expression.Expression
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.TableClickhouse
 import tanvd.aorm.query.Query

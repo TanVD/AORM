@@ -6,6 +6,7 @@ import tanvd.aorm.SelectRow
 import tanvd.aorm.expression.AliasedExpression
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
+import tanvd.aorm.use
 import java.sql.Connection
 import java.sql.PreparedStatement
 
@@ -63,7 +64,7 @@ object QueryClickhouse {
                 valuesToSet += result.data
             }
             query.groupBySection?.let { section ->
-                append("GROUP BY ${ section.columns.joinToString { it.toQueryQualifier() }} ")
+                append("GROUP BY ${section.columns.joinToString { it.toQueryQualifier() }} ")
             }
             query.orderBySection?.let { section ->
                 append("ORDER BY ${section.map.toList().joinToString { "${it.first.toQueryQualifier()} ${it.second}" }} ")

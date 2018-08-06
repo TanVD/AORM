@@ -1,7 +1,6 @@
 package tanvd.aorm.query
 
 import tanvd.aorm.DbType
-import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 
 class OrderByExpression(val map: Map<Expression<*, DbType<*>>, Order>)

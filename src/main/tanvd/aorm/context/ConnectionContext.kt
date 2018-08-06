@@ -11,6 +11,7 @@ import java.util.*
 class ConnectionContext(val db: Database) {
     //Table
     fun Table.create() = TableClickhouse.create(db, this)
+
     fun Table.drop() = TableClickhouse.drop(db, this)
     fun Table.exists(): Boolean = TableClickhouse.exists(db, this)
 
@@ -63,18 +64,20 @@ class ConnectionContext(val db: Database) {
 
     //View
     fun View.create() = ViewClickhouse.create(db, this)
+
     fun View.drop() = ViewClickhouse.drop(db, this)
     fun View.exists(): Boolean = ViewClickhouse.exists(db, this)
 
-    fun View.select(): Query =  Query(this.name, this.query.expressions)
+    fun View.select(): Query = Query(this.name, this.query.expressions)
     fun View.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
 
     //MaterializedView
     fun MaterializedView.create() = MaterializedViewClickhouse.create(db, this)
+
     fun MaterializedView.drop() = MaterializedViewClickhouse.drop(db, this)
     fun MaterializedView.exists(): Boolean = MaterializedViewClickhouse.exists(db, this)
 
-    fun MaterializedView.select(): Query =  Query(this.name, this.query.expressions)
+    fun MaterializedView.select(): Query = Query(this.name, this.query.expressions)
     fun MaterializedView.select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
 }
 
