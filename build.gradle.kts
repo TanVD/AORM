@@ -41,13 +41,13 @@ dependencies {
 
 (tasks["test"] as Test).apply {
     if (project.hasProperty("clickhouseUrl")) {
-        systemProperty("clickhouseUrl", project.properties["clickhouseUrl"]!!)
+        systemProperty("clickhouseUrl", project.findProperty("clickhouseUrl") as String)
     }
     if (project.hasProperty("clickhouseUser")) {
-        systemProperty("clickhouseUser", project.properties["clickhouseUser"]!!)
+        systemProperty("clickhouseUser", project.findProperty("clickhouseUser") as String)
     }
     if (project.hasProperty("clickhousePassword")) {
-        systemProperty("clickhousePassword", project.properties["clickhousePassword"]!!)
+        systemProperty("clickhousePassword", project.findProperty("clickhousePassword") as String)
     }
 
     useTestNG()
@@ -74,7 +74,7 @@ publishing {
 
 bintray {
     user = "tanvd"
-    key = project.findProperty("bintray_api_key") as String
+    key = System.getenv("bintray_api_key")
     publish = true
     setPublications("MavenJava")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
