@@ -1,3 +1,5 @@
+import com.jfrog.bintray.gradle.BintrayExtension
+
 group = "tanvd.aorm"
 version = "1.1-SNAPSHOT"
 
@@ -60,8 +62,10 @@ val sourceJar = task<Jar>("sourceJar") {
 
 
 publishing {
-    publications {
-        create("MavenJava", MavenPublication::class.java) {
+    publications.invoke {
+        "MavenJava"(MavenPublication::class) {
+            artifactId ="aorm"
+
             from(components.getByName("java"))
             artifact(sourceJar)
         }
@@ -71,10 +75,17 @@ publishing {
 bintray {
     user = "tanvd"
     key = project.findProperty("bintray_api_key") as String
+    publish = true
     setPublications("MavenJava")
+    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+        repo = "aorm"
+        name = "aorm"
+        githubRepo = "tanvd/aorm"
+        vcsUrl = "https://github.com/tanvd/aorm"
+        setLabels("kotlin")
+        setLicenses("MIT")
+    })
 }
-
-tasks["bintrayUpload"]!!.dependsOn("publishMavenJavaPublicationToMavenLocal")
 
 task<Wrapper>("wrapper") {
     gradleVersion = "4.9"
