@@ -1,32 +1,20 @@
 import groovy.lang.GroovyObject
-import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
-import org.jfrog.gradle.plugin.artifactory.dsl.ResolverConfig
 
 group = "tanvd.aorm"
 version = "1.1-SNAPSHOT"
 
 val kotlin_version = "1.2.70"
 
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70")
-        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5")
-    }
-}
-
 plugins {
     kotlin("jvm") version "1.2.70" apply true
     `maven-publish` apply true
-    id("com.jfrog.artifactory") version "4.7.5" apply true
+    id("com.jfrog.bintray") version "1.8.4" apply true
 
 }
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://dl.bintray.com/jfrog/jfrog-jars") }
     jcenter()
 
 }
@@ -65,9 +53,7 @@ dependencies {
     useTestNG()
 }
 
-task<Wrapper>("wrapper") {
-    gradleVersion = "4.9"
-}
+
 
 val sourceJar = task<Jar>("sourceJar") {
     classifier = "sources"
@@ -76,30 +62,24 @@ val sourceJar = task<Jar>("sourceJar") {
 
 
 publishing {
-    (publications) {
-        "mavenJava"(MavenPublication::class) {
-            from(components["java"])
-            artifact(sourceJar)
+    publications.create("maven", MavenPublication::class.java) {
+        from(components.getByName("java"))
+        artifact(sourceJar)
+    }
+    repositories {
+        maven {
+            setUrl("https://bintray.com/tanvd/aorm")
         }
     }
 }
 
-artifactory {
-    setContextUrl("https://bintray.com/tanvd")
+bintray {
+    user = "tanvd"
+    key = project.findProperty("bintray_api_key") as String
+    setPublications("maven")
+}
 
-    publish(delegateClosureOf<PublisherConfig> {
-        repository(delegateClosureOf<GroovyObject> {
-            setProperty("repoKey", "aorm")
-            setProperty("username", "tanvd")
-            setProperty("password", project.findProperty("bintray_api_key"))
-            setProperty("maven", true)
-        })
-        defaults(delegateClosureOf<GroovyObject> {
-            setProperty("publishArtifacts", true)
-//            setProperty("publishBuildInfo", true)
-            setProperty("publishPom", true)
-            invokeMethod("publications", "mavenJava")
-        })
-    })
+task<Wrapper>("wrapper") {
+    gradleVersion = "4.9"
 }
 
