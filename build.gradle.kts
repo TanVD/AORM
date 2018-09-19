@@ -74,10 +74,13 @@ val sourceJar = task<Jar>("sourceJar") {
     from(kotlin.sourceSets["main"]!!.kotlin.sourceDirectories)
 }
 
+
 publishing {
-    publications.create("maven", MavenPublication::class.java) {
-        from(components.getByName("java"))
-        artifact(sourceJar)
+    (publications) {
+        "mavenJava"(MavenPublication::class) {
+            from(components["java"])
+            artifact(sourceJar)
+        }
     }
 }
 
@@ -95,7 +98,7 @@ artifactory {
             setProperty("publishArtifacts", true)
 //            setProperty("publishBuildInfo", true)
             setProperty("publishPom", true)
-            invokeMethod("publications", "maven")
+            invokeMethod("publications", "mavenJava")
         })
     })
 }
