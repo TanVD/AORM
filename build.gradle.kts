@@ -40,15 +40,9 @@ dependencies {
 }
 
 (tasks["test"] as Test).apply {
-    if (project.hasProperty("clickhouseUrl")) {
-        systemProperty("clickhouseUrl", project.findProperty("clickhouseUrl") as String)
-    }
-    if (project.hasProperty("clickhouseUser")) {
-        systemProperty("clickhouseUser", project.findProperty("clickhouseUser") as String)
-    }
-    if (project.hasProperty("clickhousePassword")) {
-        systemProperty("clickhousePassword", project.findProperty("clickhousePassword") as String)
-    }
+    systemProperty("clickhouseUrl", System.getenv("clickhouseUrl"))
+    systemProperty("clickhouseUser", System.getenv("clickhouseUser"))
+    systemProperty("clickhousePassword", System.getenv("clickhousePassword"))
 
     useTestNG()
 }
