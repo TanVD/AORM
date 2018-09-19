@@ -62,13 +62,10 @@ val sourceJar = task<Jar>("sourceJar") {
 
 
 publishing {
-    publications.create("maven", MavenPublication::class.java) {
-        from(components.getByName("java"))
-        artifact(sourceJar)
-    }
-    repositories {
-        maven {
-            setUrl("https://bintray.com/tanvd/aorm")
+    publications {
+        create("maven", MavenPublication::class.java) {
+            from(components.getByName("java"))
+            artifact(sourceJar)
         }
     }
 }
