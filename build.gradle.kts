@@ -1,7 +1,7 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 
 group = "tanvd.aorm"
-version = "1.1-SNAPSHOT"
+version = "1.1.0"
 
 val kotlin_version = "1.2.70"
 
@@ -76,8 +76,9 @@ bintray {
         name = "aorm"
         githubRepo = "tanvd/aorm"
         vcsUrl = "https://github.com/tanvd/aorm"
-        setLabels("kotlin")
+        setLabels("kotlin", "clickhouse")
         setLicenses("MIT")
+        desc = "Kotlin SQL Framework for Clickhouse"
     })
 }
 
