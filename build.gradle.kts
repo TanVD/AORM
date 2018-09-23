@@ -76,11 +76,12 @@ artifactory {
             setProperty("password", System.getenv("artifactory_api_key"))
             setProperty("maven", true)
         })
+
         defaults(delegateClosureOf<GroovyObject> {
             setProperty("publishArtifacts", true)
 //            setProperty("publishBuildInfo", true)
             setProperty("publishPom", true)
-            invokeMethod("publications", "maven")
+            invokeMethod("publications", "MavenJava")
         })
     })
 }
