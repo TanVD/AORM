@@ -79,7 +79,6 @@ artifactory {
 
         defaults(delegateClosureOf<GroovyObject> {
             setProperty("publishArtifacts", true)
-//            setProperty("publishBuildInfo", true)
             setProperty("publishPom", true)
             invokeMethod("publications", "MavenJava")
         })
