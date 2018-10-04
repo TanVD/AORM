@@ -117,4 +117,16 @@ class QueryPrimitiveConditionTest {
                     " ExampleTable WHERE (id in (1, 2)) ;")
         }
     }
+
+    @Test
+    fun inList_emptyList_sqlValid() {
+        withDatabase(TestDatabase) {
+            val expression = (ExampleTable.id inList emptyList())
+            val query = ExampleTable.select() where expression
+
+            val sql = QueryClickhouse.constructQuery(query)
+            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+                    " ExampleTable WHERE (false) ;")
+        }
+    }
 }

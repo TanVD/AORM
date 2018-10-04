@@ -98,8 +98,12 @@ class RegexExpression(expression: Expression<String, DbPrimitiveType<String>>, v
 class InListExpression<T : Any>(val expression: Expression<T, DbPrimitiveType<T>>, val value: List<T>) : QueryExpression() {
     @Suppress("UNCHECKED_CAST")
     override fun toSqlPreparedDef(): PreparedSqlResult {
-        return PreparedSqlResult("(${expression.toQueryQualifier()} in (${value.joinToString { "?" }}))",
-                value.map { (expression.type to it) as Pair<DbType<Any>, Any> })
+        return if (value.isEmpty()) {
+            PreparedSqlResult("(false)", emptyList())
+        } else {
+            PreparedSqlResult("(${expression.toQueryQualifier()} in (${value.joinToString { "?" }}))",
+                    value.map { (expression.type to it) as Pair<DbType<Any>, Any> })
+        }
     }
 }
 
