@@ -31,5 +31,8 @@ data class SelectRow(val values: MutableMap<Expression<*, DbType<*>>, Any>) {
     }.toMap().toMutableMap())
 
     @Suppress("UNCHECKED_CAST")
-    operator fun <E : Any, K : DbType<E>> get(expression: Expression<E, K>): E? = values[expression] as E?
+    fun <E : Any, K : DbType<E>> getOrNull(expression: Expression<E, K>): E? = values[expression] as E?
+
+    @Suppress("UNCHECKED_CAST")
+    operator fun <E : Any, K : DbType<E>> get(expression: Expression<E, K>): E = values[expression] as E
 }
