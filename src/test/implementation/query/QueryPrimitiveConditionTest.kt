@@ -70,6 +70,19 @@ class QueryPrimitiveConditionTest {
     }
 
     @Test
+    fun between_longValue_sqlValid() {
+        withDatabase(TestDatabase) {
+            val expression = (ExampleTable.id between (1L to 2L))
+            val query = ExampleTable.select() where expression
+
+            val sql = QueryClickhouse.constructQuery(query)
+            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+                    " ExampleTable WHERE (id between 1 and 2) ;")
+        }
+    }
+
+
+    @Test
     fun like_stringValue_sqlValid() {
         withDatabase(TestDatabase) {
             val expression = (ExampleTable.value like "string")

@@ -79,6 +79,14 @@ class MoreExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression
 class MoreOrEqualExpression<E : Any, out T : DbPrimitiveType<E>>(expression: Expression<E, T>, value: E) :
         InfixConditionQueryExpression<E, T, E>(expression, value, expression.type, ">=")
 
+class BetweenExpression<E : Any, out T : DbPrimitiveType<E>>(val expression: Expression<E, T>, val value: Pair<E, E>) : QueryExpression() {
+    override fun toSqlPreparedDef(): PreparedSqlResult {
+        @Suppress("UNCHECKED_CAST")
+        return PreparedSqlResult("(${expression.toQueryQualifier()} between ? and ?)", listOf((expression.type to value.first) as Pair<DbType<Any>, Any>,
+                (expression.type to value.second) as Pair<DbType<Any>, Any>))
+    }
+}
+
 //Like
 class LikeExpression(expression: Expression<String, DbPrimitiveType<String>>, value: String) :
         InfixConditionQueryExpression<String, DbPrimitiveType<String>, String>(expression, value, DbString(), "LIKE")
@@ -140,6 +148,9 @@ infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.more(value: T): MoreExpres
 
 infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.moreOrEq(value: T): MoreOrEqualExpression<T, DbPrimitiveType<T>> =
         MoreOrEqualExpression(this, value)
+
+infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.between(value: Pair<T, T>): BetweenExpression<T, DbPrimitiveType<T>> =
+        BetweenExpression(this, value)
 
 //Strings
 infix fun Expression<String, DbPrimitiveType<String>>.like(value: String): LikeExpression = LikeExpression(this, value)
