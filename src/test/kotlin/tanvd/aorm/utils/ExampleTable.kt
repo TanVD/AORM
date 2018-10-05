@@ -1,4 +1,4 @@
-package utils
+package tanvd.aorm.utils
 
 import org.jetbrains.annotations.TestOnly
 import tanvd.aorm.*

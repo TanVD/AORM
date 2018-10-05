@@ -1,12 +1,12 @@
-package implementation.query
+package tanvd.aorm.implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.*
 import tanvd.aorm.withDatabase
-import utils.ExampleTable
-import utils.TestDatabase
+import tanvd.aorm.utils.ExampleTable
+import tanvd.aorm.utils.TestDatabase
 
 class QueryOperatorTest {
     @Test

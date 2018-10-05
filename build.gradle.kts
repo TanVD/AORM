@@ -19,15 +19,6 @@ repositories {
     maven { setUrl("https://dl.bintray.com/jfrog/jfrog-jars") }
 }
 
-kotlin.sourceSets {
-    this["main"].kotlin.also {
-        it.srcDir("src/main")
-    }
-    this["test"].kotlin.also {
-        it.srcDir("src/test")
-    }
-}
-
 dependencies {
     compile("org.jetbrains.kotlin", "kotlin-stdlib", kotlin_version)
     compile("org.jetbrains.kotlin", "kotlin-reflect", kotlin_version)

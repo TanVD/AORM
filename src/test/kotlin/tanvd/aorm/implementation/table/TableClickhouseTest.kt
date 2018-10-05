@@ -1,4 +1,4 @@
-package implementation.table
+package tanvd.aorm.implementation.table
 
 import org.testng.Assert
 import org.testng.annotations.Test
@@ -7,10 +7,10 @@ import tanvd.aorm.exceptions.BasicDbException
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.TableClickhouse
-import utils.AormTestBase
-import utils.AssertDb
-import utils.ExampleTable
-import utils.TestDatabase
+import tanvd.aorm.utils.AormTestBase
+import tanvd.aorm.utils.AssertDb
+import tanvd.aorm.utils.ExampleTable
+import tanvd.aorm.utils.TestDatabase
 
 class TableClickhouseTest : AormTestBase() {
     @Test

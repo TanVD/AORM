@@ -1,11 +1,11 @@
-package implementation.view
+package tanvd.aorm.implementation.view
 
 import org.junit.Assert
 import org.testng.annotations.Test
 import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.withDatabase
-import utils.*
+import tanvd.aorm.utils.*
 
 class ViewClickhouseTest : AormTestBase() {
 

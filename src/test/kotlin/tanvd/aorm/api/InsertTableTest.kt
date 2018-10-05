@@ -1,11 +1,11 @@
-package api
+package tanvd.aorm.api
 
 import org.testng.Assert
 import org.testng.annotations.Test
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.where
 import tanvd.aorm.withDatabase
-import utils.*
+import tanvd.aorm.utils.*
 
 class InsertTableTest : AormTestBase() {
 

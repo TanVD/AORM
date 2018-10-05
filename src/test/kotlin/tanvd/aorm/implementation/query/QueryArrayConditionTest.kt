@@ -1,4 +1,4 @@
-package implementation.query
+package tanvd.aorm.implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
@@ -8,8 +8,8 @@ import tanvd.aorm.query.exists
 import tanvd.aorm.query.has
 import tanvd.aorm.query.where
 import tanvd.aorm.withDatabase
-import utils.ExampleTable
-import utils.TestDatabase
+import tanvd.aorm.utils.ExampleTable
+import tanvd.aorm.utils.TestDatabase
 
 class QueryArrayConditionTest {
     @Test

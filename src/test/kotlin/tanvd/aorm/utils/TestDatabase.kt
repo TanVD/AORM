@@ -1,4 +1,4 @@
-package utils
+package tanvd.aorm.utils
 
 import ru.yandex.clickhouse.ClickHouseDataSource
 import ru.yandex.clickhouse.settings.ClickHouseProperties

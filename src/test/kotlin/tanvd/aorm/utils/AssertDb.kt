@@ -1,4 +1,4 @@
-package utils
+package tanvd.aorm.utils
 
 import org.testng.Assert
 import tanvd.aorm.InsertRow

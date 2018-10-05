@@ -1,4 +1,4 @@
-package utils
+package tanvd.aorm.utils
 
 import org.testng.annotations.BeforeMethod
 import tanvd.aorm.DbType

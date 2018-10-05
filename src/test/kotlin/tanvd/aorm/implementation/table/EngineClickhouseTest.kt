@@ -1,4 +1,4 @@
-package implementation.table
+package tanvd.aorm.implementation.table
 
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -6,9 +6,9 @@ import tanvd.aorm.Engine
 import tanvd.aorm.Table
 import tanvd.aorm.expression.default
 import tanvd.aorm.implementation.TableClickhouse
-import utils.AssertDb
-import utils.TestDatabase
-import utils.ignoringExceptions
+import tanvd.aorm.utils.AssertDb
+import tanvd.aorm.utils.TestDatabase
+import tanvd.aorm.utils.ignoringExceptions
 
 class EngineClickhouseTest {
 

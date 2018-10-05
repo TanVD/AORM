@@ -1,4 +1,4 @@
-package type
+package tanvd.aorm.type
 
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
@@ -14,7 +14,7 @@ import tanvd.aorm.query.eq
 import tanvd.aorm.query.has
 import tanvd.aorm.query.where
 import tanvd.aorm.withDatabase
-import utils.*
+import tanvd.aorm.utils.*
 
 @Suppress("UNCHECKED_CAST")
 class TypesTest : AormTestBase() {

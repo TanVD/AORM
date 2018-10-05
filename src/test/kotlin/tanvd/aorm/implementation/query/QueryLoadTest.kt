@@ -1,4 +1,4 @@
-package implementation.query
+package tanvd.aorm.implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
@@ -6,10 +6,10 @@ import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.query.*
 import tanvd.aorm.withDatabase
-import utils.AormTestBase
-import utils.ExampleTable
-import utils.TestDatabase
-import utils.getDate
+import tanvd.aorm.utils.AormTestBase
+import tanvd.aorm.utils.ExampleTable
+import tanvd.aorm.utils.TestDatabase
+import tanvd.aorm.utils.getDate
 
 class QueryLoadTest : AormTestBase() {
     override fun executeBeforeMethod() {
