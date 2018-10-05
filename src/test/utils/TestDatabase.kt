@@ -14,6 +14,6 @@ val TestDatabase = Database("default",
 
 
 val testInsertWorkerDelayMs = 2000L
-val TestInsertWorker = DefaultInsertWorker("test-insert-worker", delayTimeMs = testInsertWorkerDelayMs)
+val TestInsertWorker = DefaultInsertWorker("test-insert-worker", delayTimeMs = testInsertWorkerDelayMs, betweenCallsTimeMs = testInsertWorkerDelayMs)
 
 

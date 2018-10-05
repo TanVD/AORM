@@ -19,7 +19,7 @@ interface InsertWorker {
 
 class DefaultInsertWorker(val name: String, queueSizeMax: Int = 10000,
                           delayTimeMs: Long = 30 * 1000,
-                          initalDelayTimeMs: Long = 30 * 1000,
+                          initalDelayTimeMs: Long = delayTimeMs,
                           betweenCallsTimeMs: Long = 10 * 1000) : InsertWorker {
 
     private val logger = LoggerFactory.getLogger(DefaultInsertWorker::class.java)
