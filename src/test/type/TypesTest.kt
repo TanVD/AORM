@@ -4,7 +4,7 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import tanvd.aorm.Engine
-import tanvd.aorm.InsertExpression
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.Table
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.implementation.MetadataClickhouse

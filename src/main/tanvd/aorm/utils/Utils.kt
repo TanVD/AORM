@@ -1,4 +1,4 @@
-package tanvd.aorm
+package tanvd.aorm.utils
 
 inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     var exception: Throwable? = null

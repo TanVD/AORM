@@ -1,6 +1,7 @@
 package tanvd.aorm.implementation
 
 import tanvd.aorm.*
+import tanvd.aorm.utils.use
 
 object MetadataClickhouse {
     fun syncScheme(db: Database, table: Table) {

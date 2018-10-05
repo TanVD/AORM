@@ -1,12 +1,14 @@
 package tanvd.aorm.context
 
 import tanvd.aorm.*
+import tanvd.aorm.exceptions.NoInsertWorker
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.TableClickhouse
+import tanvd.aorm.insert.InsertWorker
 import tanvd.aorm.query.Query
 
-class ReplicatedConnectionContext(val dbs: List<Pair<Database, Int>>) {
+class ReplicatedConnectionContext(val dbs: List<Pair<Database, Int>>, private val insertWorker: InsertWorker? = null) {
 
     //DDL
     fun Table.create() {
@@ -66,6 +68,16 @@ class ReplicatedConnectionContext(val dbs: List<Pair<Database, Int>>) {
         val dbToChoose = chooseDb(specificDb)
         with(ConnectionContext(dbToChoose)) {
             insert(body)
+        }
+    }
+
+    fun Table.insertLazy(specificDb: Database? = null, body: (InsertRow) -> Unit) {
+        if (insertWorker == null) {
+            throw NoInsertWorker("Lazy insert was performed, but InsertWorker is not present in this ConnectionContext")
+        }
+        val dbToChoose = chooseDb(specificDb)
+        with(ConnectionContext(dbToChoose, insertWorker)) {
+            insertLazy(body)
         }
     }
 

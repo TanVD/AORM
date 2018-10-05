@@ -2,7 +2,7 @@ package implementation
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.InsertExpression
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.exceptions.BasicDbException
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.query.eq

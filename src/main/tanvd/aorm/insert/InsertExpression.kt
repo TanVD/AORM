@@ -1,5 +1,8 @@
-package tanvd.aorm
+package tanvd.aorm.insert
 
+import tanvd.aorm.DbType
+import tanvd.aorm.InsertRow
+import tanvd.aorm.Table
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.InsertClickhouse
 

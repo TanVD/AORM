@@ -2,9 +2,9 @@ package tanvd.aorm.implementation
 
 import tanvd.aorm.Database
 import tanvd.aorm.DbType
-import tanvd.aorm.InsertExpression
 import tanvd.aorm.expression.Column
-import tanvd.aorm.use
+import tanvd.aorm.insert.InsertExpression
+import tanvd.aorm.utils.use
 import java.sql.Connection
 import java.sql.PreparedStatement
 

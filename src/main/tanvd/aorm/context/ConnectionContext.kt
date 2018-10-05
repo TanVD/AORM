@@ -1,14 +1,17 @@
 package tanvd.aorm.context
 
 import tanvd.aorm.*
+import tanvd.aorm.exceptions.NoInsertWorker
 import tanvd.aorm.exceptions.NoValueInsertedException
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import tanvd.aorm.implementation.*
+import tanvd.aorm.insert.InsertExpression
+import tanvd.aorm.insert.InsertWorker
 import tanvd.aorm.query.Query
 import java.util.*
 
-class ConnectionContext(val db: Database) {
+class ConnectionContext(val db: Database, private val insertWorker: InsertWorker? = null) {
     //Table
     fun Table.create() = TableClickhouse.create(db, this)
 
@@ -40,6 +43,14 @@ class ConnectionContext(val db: Database) {
         InsertClickhouse.insert(db, InsertExpression(this, row))
     }
 
+    fun Table.insertLazy(body: (InsertRow) -> Unit) {
+        if (insertWorker == null) {
+            throw NoInsertWorker("Lazy insert was performed, but InsertWorker is not present in this ConnectionContext")
+        }
+        val row = InsertRow().apply { body(this) }
+        insertWorker.add(db, InsertExpression(this, row))
+    }
+
     @Throws(NoValueInsertedException::class)
     fun <T : Any> Table.batchInsert(list: Iterable<T>, columns: Set<Column<*, DbType<*>>>? = null,
                                     body: (InsertRow, T) -> Unit) {
@@ -49,8 +60,7 @@ class ConnectionContext(val db: Database) {
         val rows = ArrayList<InsertRow>()
         val columnsFromRows = (columns.orEmpty() + columnsWithDefaults).toMutableSet()
         listIterator.forEach {
-            val row = InsertRow()
-            body(row, it)
+            val row = InsertRow().apply { body(this, it) }
             columnsFromRows.addAll(row.columns)
             rows.add(row)
         }

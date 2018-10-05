@@ -6,7 +6,7 @@ import tanvd.aorm.SelectRow
 import tanvd.aorm.expression.AliasedExpression
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
-import tanvd.aorm.use
+import tanvd.aorm.utils.use
 import java.sql.Connection
 import java.sql.PreparedStatement
 
