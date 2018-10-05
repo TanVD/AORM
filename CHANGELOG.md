@@ -1,7 +1,7 @@
 # Changelog
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [Unreleased]
+## [1.1.1] - 2018-06-10
 ### Added
 - **lazyInsert functionality**. Now you can create InsertWorker object and use it for lazy batch inserts. If InsertWorker added to ConnectionContext lazyInsert call will add record to it's queue. InsertWorker will aggregate inserts by databases and tables (it has own thread for this purpose) and flush them every *n* seconds (issue #3)
 - between operator for primitive types (issue #4)

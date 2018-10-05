@@ -3,7 +3,7 @@ import groovy.lang.GroovyObject
 import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 
 group = "tanvd.aorm"
-version = "1.1.1-SNAPSHOT"
+version = "1.1.1"
 
 val kotlin_version = "1.2.70"
 
