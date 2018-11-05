@@ -18,6 +18,9 @@ class EngineClickhouseTest {
             TableClickhouse.drop(TestDatabase, MergeTreeTable)
         }
         ignoringExceptions {
+            TableClickhouse.drop(TestDatabase, MergeTreeCustomTable)
+        }
+        ignoringExceptions {
             TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
         }
     }
@@ -29,6 +32,15 @@ class EngineClickhouseTest {
         AssertDb.syncedWithDb(MergeTreeTable)
 
         TableClickhouse.drop(TestDatabase, MergeTreeTable)
+    }
+
+    @Test
+    fun createTableMergeTreeCustom_tableNotExists_tableSyncedWithDb() {
+        TableClickhouse.create(TestDatabase, MergeTreeCustomTable)
+
+        AssertDb.syncedWithDb(MergeTreeCustomTable)
+
+        TableClickhouse.drop(TestDatabase, MergeTreeCustomTable)
     }
 
     @Test
@@ -55,6 +67,16 @@ object MergeTreeTable : Table("MergeTreeTable") {
     val id = int64("id").default { 1L }
 
     override val engine: Engine = Engine.MergeTree(date, listOf(id), 8192)
+}
+
+object MergeTreeCustomTable: Table("MergeTreeCustomTable") {
+    val date = date("date")
+    val id = int64("id").default { 1L }
+
+    override val engine: Engine = Engine.MergeTreeCustom(
+            partitionBy = arrayOf("date"),
+            orderBy = arrayOf("id")
+    )
 }
 
 object ReplacingMergeTreeTable : Table("ReplacingMergeTreeTable") {
