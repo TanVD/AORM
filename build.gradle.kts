@@ -5,10 +5,10 @@ import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 group = "tanvd.aorm"
 version = "1.1.2-SNAPSHOT"
 
-val kotlin_version = "1.2.70"
+val kotlin_version = "1.3.0"
 
 plugins {
-    kotlin("jvm") version "1.2.70" apply true
+    kotlin("jvm") version "1.3.0" apply true
     `maven-publish` apply true
     id("com.jfrog.bintray") version "1.8.4" apply true
     id("com.jfrog.artifactory") version "4.7.5" apply true
