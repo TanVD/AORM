@@ -2,12 +2,12 @@ package tanvd.aorm.implementation
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.exceptions.BasicDbException
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.where
-import tanvd.aorm.withDatabase
 import tanvd.aorm.utils.*
+import tanvd.aorm.withDatabase
 
 class InsertClickhouseTest : AormTestBase() {
     @Test

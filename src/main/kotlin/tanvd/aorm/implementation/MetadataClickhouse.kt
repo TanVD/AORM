@@ -1,6 +1,9 @@
 package tanvd.aorm.implementation
 
-import tanvd.aorm.*
+import tanvd.aorm.Database
+import tanvd.aorm.MaterializedView
+import tanvd.aorm.Table
+import tanvd.aorm.View
 import tanvd.aorm.utils.use
 
 object MetadataClickhouse {

@@ -5,13 +5,18 @@ import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 group = "tanvd.aorm"
 version = "1.1.3-SNAPSHOT"
 
-val kotlin_version = "1.3.0"
-
 plugins {
-    kotlin("jvm") version "1.3.0" apply true
+    idea apply true
+    kotlin("jvm") version "1.3.21" apply true
     `maven-publish` apply true
     id("com.jfrog.bintray") version "1.8.4" apply true
     id("com.jfrog.artifactory") version "4.7.5" apply true
+}
+
+idea {
+    module {
+        excludeDirs = files(".gradle", ".idea", "gradle", "gradlew", "gradlew.bat", "build", "out", "classes").toSet()
+    }
 }
 
 repositories {
@@ -20,9 +25,10 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin", "kotlin-stdlib", kotlin_version)
-    compile("org.jetbrains.kotlin", "kotlin-reflect", kotlin_version)
-    compile("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.41")
+    compile("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.21")
+    compile("org.jetbrains.kotlin", "kotlin-reflect", "1.3.21")
+    compile("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.50")
+    compile("joda-time", "joda-time", "2.9.9")
     compile("org.slf4j", "slf4j-api", "1.7.25")
 
     testCompile("org.testng", "testng", "6.11")
@@ -39,7 +45,6 @@ dependencies {
 }
 
 
-
 val sourceJar = task<Jar>("sourceJar") {
     classifier = "sources"
     from(kotlin.sourceSets["main"]!!.kotlin.sourceDirectories)
@@ -47,13 +52,11 @@ val sourceJar = task<Jar>("sourceJar") {
 
 
 publishing {
-    publications.invoke {
-        "MavenJava"(MavenPublication::class) {
-            artifactId ="aorm"
+    publications.create<MavenPublication>("aorm_package") {
+        artifactId = "aorm"
 
-            from(components.getByName("java"))
-            artifact(sourceJar)
-        }
+        from(components.getByName("java"))
+        artifact(sourceJar)
     }
 }
 
@@ -71,7 +74,7 @@ artifactory {
         defaults(delegateClosureOf<GroovyObject> {
             setProperty("publishArtifacts", true)
             setProperty("publishPom", true)
-            invokeMethod("publications", "MavenJava")
+            invokeMethod("publications", "aorm_package")
         })
     })
 }
@@ -80,7 +83,7 @@ bintray {
     user = "tanvd"
     key = System.getenv("bintray_api_key")
     publish = true
-    setPublications("MavenJava")
+    setPublications("aorm_package")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
         repo = "aorm"
         name = "aorm"
@@ -92,7 +95,6 @@ bintray {
     })
 }
 
-task<Wrapper>("wrapper") {
-    gradleVersion = "4.9"
+tasks.withType(Wrapper::class.java) {
+    gradleVersion = "5.1.1"
 }
-

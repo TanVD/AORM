@@ -1,14 +1,14 @@
 package tanvd.aorm.implementation.query
 
 import org.testng.annotations.Test
-import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.implementation.InsertClickhouse
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.Order
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.orderBy
 import tanvd.aorm.query.where
-import tanvd.aorm.withDatabase
 import tanvd.aorm.utils.*
+import tanvd.aorm.withDatabase
 
 @Suppress("UNCHECKED_CAST")
 class QueryOrderTest : AormTestBase() {

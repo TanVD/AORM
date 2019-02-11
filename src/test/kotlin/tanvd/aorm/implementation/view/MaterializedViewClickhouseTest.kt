@@ -2,10 +2,10 @@ package tanvd.aorm.implementation.view
 
 import org.junit.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.implementation.InsertClickhouse
-import tanvd.aorm.withDatabase
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.utils.*
+import tanvd.aorm.withDatabase
 
 class MaterializedViewClickhouseTest : AormTestBase() {
 

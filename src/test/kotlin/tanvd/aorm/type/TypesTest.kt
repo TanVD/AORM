@@ -4,17 +4,17 @@ import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import tanvd.aorm.Engine
-import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.Table
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.QueryClickhouse
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.and
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.has
 import tanvd.aorm.query.where
-import tanvd.aorm.withDatabase
 import tanvd.aorm.utils.*
+import tanvd.aorm.withDatabase
 
 @Suppress("UNCHECKED_CAST")
 class TypesTest : AormTestBase() {

@@ -4,9 +4,9 @@ import org.testng.Assert
 import org.testng.annotations.Test
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.*
-import tanvd.aorm.withDatabase
 import tanvd.aorm.utils.ExampleTable
 import tanvd.aorm.utils.TestDatabase
+import tanvd.aorm.withDatabase
 
 class QueryOperatorTest {
     @Test

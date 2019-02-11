@@ -2,17 +2,17 @@ package tanvd.aorm.implementation.query
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.expression.count
 import tanvd.aorm.implementation.InsertClickhouse
+import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.Order
 import tanvd.aorm.query.groupBy
 import tanvd.aorm.query.orderBy
-import tanvd.aorm.withDatabase
 import tanvd.aorm.utils.AormTestBase
 import tanvd.aorm.utils.ExampleTable
 import tanvd.aorm.utils.TestDatabase
 import tanvd.aorm.utils.getDate
+import tanvd.aorm.withDatabase
 
 
 @Suppress("UNCHECKED_CAST")

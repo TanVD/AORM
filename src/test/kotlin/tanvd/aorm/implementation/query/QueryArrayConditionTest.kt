@@ -7,9 +7,9 @@ import tanvd.aorm.query.eq
 import tanvd.aorm.query.exists
 import tanvd.aorm.query.has
 import tanvd.aorm.query.where
-import tanvd.aorm.withDatabase
 import tanvd.aorm.utils.ExampleTable
 import tanvd.aorm.utils.TestDatabase
+import tanvd.aorm.withDatabase
 
 class QueryArrayConditionTest {
     @Test
