@@ -240,6 +240,7 @@ class TypesTest : AormTestBase() {
     }
 }
 
+@Suppress("EnumEntryName")
 enum class TestEnumFirst {
     first_enum,
     second_enum

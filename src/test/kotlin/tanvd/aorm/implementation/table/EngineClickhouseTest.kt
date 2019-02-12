@@ -2,8 +2,7 @@ package tanvd.aorm.implementation.table
 
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import tanvd.aorm.Engine
-import tanvd.aorm.Table
+import tanvd.aorm.*
 import tanvd.aorm.expression.default
 import tanvd.aorm.implementation.TableClickhouse
 import tanvd.aorm.utils.AssertDb
@@ -19,6 +18,12 @@ class EngineClickhouseTest {
         }
         ignoringExceptions {
             TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
+        }
+        ignoringExceptions {
+            TableClickhouse.drop(TestDatabase, AggregatingMergeTreeTable)
+        }
+        ignoringExceptions {
+            TableClickhouse.drop(TestDatabase, CustomMergeTreeTable)
         }
     }
 
@@ -48,6 +53,15 @@ class EngineClickhouseTest {
 
         TableClickhouse.drop(TestDatabase, AggregatingMergeTreeTable)
     }
+
+    @Test
+    fun createTableCustomMergeTree_tableNotExists_tableSyncedWithDb() {
+        TableClickhouse.create(TestDatabase, CustomMergeTreeTable)
+
+        AssertDb.syncedWithDb(CustomMergeTreeTable)
+
+        TableClickhouse.drop(TestDatabase, CustomMergeTreeTable)
+    }
 }
 
 object MergeTreeTable : Table("MergeTreeTable") {
@@ -55,6 +69,13 @@ object MergeTreeTable : Table("MergeTreeTable") {
     val id = int64("id").default { 1L }
 
     override val engine: Engine = Engine.MergeTree(date, listOf(id), 8192)
+}
+
+object CustomMergeTreeTable : Table("CustomMergeTreeTable") {
+    val date = date("date")
+    val id = int64("id").default { 1L }
+
+    override val engine: Engine.MergeTree = Engine.MergeTree(date, listOf(id), 8192).partitionBy(date).sampleBy(id).orderBy(id)
 }
 
 object ReplacingMergeTreeTable : Table("ReplacingMergeTreeTable") {
