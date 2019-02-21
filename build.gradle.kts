@@ -1,22 +1,11 @@
-import com.jfrog.bintray.gradle.BintrayExtension
-import groovy.lang.GroovyObject
-import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
+import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
 version = "1.1.3-SNAPSHOT"
 
 plugins {
-    idea apply true
     kotlin("jvm") version "1.3.21" apply true
-    `maven-publish` apply true
-    id("com.jfrog.bintray") version "1.8.4" apply true
-    id("com.jfrog.artifactory") version "4.7.5" apply true
-}
-
-idea {
-    module {
-        excludeDirs = files(".gradle", ".idea", "gradle", "gradlew", "gradlew.bat", "build", "out", "classes").toSet()
-    }
+    id("tanvd.kosogor") version "1.0.0"
 }
 
 repositories {
@@ -44,57 +33,28 @@ dependencies {
     useTestNG()
 }
 
-
-val sourceJar = task<Jar>("sourceJar") {
-    classifier = "sources"
-    from(kotlin.sourceSets["main"]!!.kotlin.sourceDirectories)
-}
-
-
-publishing {
-    publications.create<MavenPublication>("aorm_package") {
+publishJar {
+    publication {
         artifactId = "aorm"
-
-        from(components.getByName("java"))
-        artifact(sourceJar)
     }
-}
 
-artifactory {
-    setContextUrl("https://oss.jfrog.org/artifactory")
+    artifactory {
+        serverUrl = "https://oss.jfrog.org/artifactory"
+        repository = "oss-snapshot-local"
+        username = "tanvd"
+        secretKey = System.getenv("artifactory_api_key")
+    }
 
-    publish(delegateClosureOf<PublisherConfig> {
-        repository(delegateClosureOf<GroovyObject> {
-            setProperty("repoKey", "oss-snapshot-local")
-            setProperty("username", "tanvd")
-            setProperty("password", System.getenv("artifactory_api_key"))
-            setProperty("maven", true)
-        })
-
-        defaults(delegateClosureOf<GroovyObject> {
-            setProperty("publishArtifacts", true)
-            setProperty("publishPom", true)
-            invokeMethod("publications", "aorm_package")
-        })
-    })
-}
-
-bintray {
-    user = "tanvd"
-    key = System.getenv("bintray_api_key")
-    publish = true
-    setPublications("aorm_package")
-    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-        repo = "aorm"
-        name = "aorm"
-        githubRepo = "tanvd/aorm"
-        vcsUrl = "https://github.com/tanvd/aorm"
-        setLabels("kotlin", "clickhouse")
-        setLicenses("MIT")
-        desc = "Kotlin SQL Framework for Clickhouse"
-    })
-}
-
-tasks.withType(Wrapper::class.java) {
-    gradleVersion = "5.1.1"
+    bintray {
+        username = "tanvd"
+        secretKey = System.getenv("bintray_api_key")
+        repository = "aorm"
+        info {
+            githubRepo = "tanvd/aorm"
+            vcsUrl = "https://github.com/tanvd/aorm"
+            labels.addAll(listOf("kotlin", "clickhouse"))
+            license = "MIT"
+            description = "Kotlin SQL Framework for Clickhouse"
+        }
+    }
 }
