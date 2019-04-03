@@ -5,7 +5,7 @@ version = "1.1.3-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.3.21" apply true
-    id("tanvd.kosogor") version "1.0.0"
+    id("tanvd.kosogor") version "1.0.4"
 }
 
 repositories {
@@ -16,7 +16,7 @@ repositories {
 dependencies {
     compile("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.21")
     compile("org.jetbrains.kotlin", "kotlin-reflect", "1.3.21")
-    compile("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.50")
+    compile("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.52")
     compile("joda-time", "joda-time", "2.9.9")
     compile("org.slf4j", "slf4j-api", "1.7.25")
 
