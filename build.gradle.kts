@@ -1,7 +1,7 @@
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.3-SNAPSHOT"
+version = "1.1.3"
 
 plugins {
     kotlin("jvm") version "1.3.21" apply true
@@ -10,7 +10,7 @@ plugins {
 
 repositories {
     jcenter()
-    maven { setUrl("https://dl.bintray.com/jfrog/jfrog-jars") }
+    maven("https://dl.bintray.com/jfrog/jfrog-jars")
 }
 
 dependencies {
