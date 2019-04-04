@@ -1,7 +1,7 @@
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.3"
+version = "1.2.0-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.3.21" apply true
