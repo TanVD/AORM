@@ -12,26 +12,22 @@ AORM supports Exposed-like DSL for standard SQL operations and rich set of Click
 
 AORM releases are published to [JCenter](https://bintray.com/tanvd/aorm/aorm).
 
-Also you can get snapshot versions from [Artifactory](https://oss.jfrog.org) (see libs-snapshot/tanvd/aorm/aorm packages group)
-
 ## How to
 
-First of all you'll need to setup Database object. Provide it with DataSource (self-constructed, JNDI -- it doesn't matter, but don't forget to use pooling :) ). In context of Database (`withContext(db)` call) you will perform all operations.
+First of all you'll need to set up Database object. Provide it with DataSource (self-constructed, JNDI -- it doesn't matter, but don't forget to use pooling :) ). In context of Database (`withContext(db)` call) you will perform all operations.
 
-```
-val TestDatabase = Database("default", 
-         ClickHouseDataSource("jdbc:clickhouse://localhost:8123",
-                 ClickHouseProperties().apply {
-                     user = "default"
-                     password = ""
-                 }))
+```kotlin
+val database = Database("default",
+        ClickHouseDataSource("jdbc:clickhouse://localhost:8123",
+                ClickHouseProperties().withCredentials("default", ""))
+)
 ```
 
-If you have replicated cluster and want to balance load you may need to setup few Database objects and use ReplicatedConnectionContext.
+If you have a replicated cluster and want to balance load you may need to set up few Database objects and use ReplicatedConnectionContext.
 
-Once Database is created you can setup Table objects. Right now AORM supports a lot of ClickHouse types, but does not support nullability. Instead, null values will be fallbacked to ClickHouse defaults. Support of nullability is considered to be implemented.
+You can set up Table objects once database is created. Right now AORM supports a lot of ClickHouse types, but does not support nullability. Instead, null values will fallback to ClickHouse defaults. Support of nullability is considered to be implemented.
 
-```
+```kotlin
 object TestTable : Table("test_table") {
      val dateCol = date("date_col")
      val int8Col = int8("int8_col")
@@ -45,18 +41,18 @@ object TestTable : Table("test_table") {
 
 Please note, that table is not linked to specific database. Table object is only declaration of scheme. You can use it in different contexts during work with different databases.
 
-Once you have create table object, you can align scheme of your table with you database. Aligning of scheme means, that table will be created if it does not exist, or, if it exists, not existing columns will be added. AORM, by default, not performing any removal operations on aligning of scheme. It will not drop not existing tables or columns.
+Once you have created table object, you can align the scheme of your table with you database. Aligning of scheme means, that table will be created if it does not exist, or, if it exists, not existing columns will be added. AORM, by default, not performing any removal operations on aligning of scheme. It will not drop existing tables or columns.
 
-```
-withDatabase(TestDatabase) {
-    TestTable.syncScheme() // this call will align scheme of TestTable in TestDatabase
+```kotlin
+withDatabase(database) {
+    TestTable.syncScheme() // this call will align the scheme of TestTable in a database
 }
 ```
 
-Once everything is setup, you can insert some data:
+Once everything is set up, you can insert some data:
 
-```
-withDatabase(TestDatabase) {
+```kotlin
+withDatabase(database) {
     TestTable.insert {
         it[TestTable.dateCol] = SimpleDateFormat("yyyy-MM-dd").parse("2000-01-01")
         it[TestTable.int8Col] = 1.toByte()
@@ -67,16 +63,16 @@ withDatabase(TestDatabase) {
 }
 ```
 
-And then load it:
+Then load it:
 
-```
-withDatabase(TestDatabase) {
+```kotlin
+withDatabase(database) {
     val query = TestTable.select() where (TestTable.int8Col eq 1.toByte())
     val res = query.toResult()
 }
 ```
 
-There are a lot more query functions, types of columns, and so on. You can take a closer look at all of features of AORM at it's tests or at next section
+There are a lot more query functions, types of columns, and so on. You can take a closer look at all features of AORM at it's tests or at next section
 
 
 ## More examples
