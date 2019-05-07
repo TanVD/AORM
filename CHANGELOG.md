@@ -2,13 +2,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## 1.1.4 - 7 May 2019
+### Updated
 - Update kotlin version to `1.3.31`
 - Rollback JDBC driver to `0.1.50`
 - Migrate to CircleCI, Junit and TestContainers
 
 ## 1.1.3 - 4 Apr 2019
+### Updated
 - Update kotlin version to `1.3.21`
 - Update jdbc driver to `0.1.52`
+### Added
 - Added support of extended syntax of table creation (issue #7)
 - Added support of lazyInsert (asynchronous batching of inserts)
 
