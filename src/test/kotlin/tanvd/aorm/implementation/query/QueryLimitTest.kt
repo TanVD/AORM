@@ -11,14 +11,14 @@ import tanvd.aorm.withDatabase
 @Suppress("UNCHECKED_CAST")
 class QueryLimitTest : AormTestBase() {
     override fun executeBeforeMethod() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
         }
     }
 
     @Test
     fun limit_limitByOneOrdered_gotOneRow() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val rows = arrayListOf(
                     prepareInsertRow(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
@@ -27,7 +27,7 @@ class QueryLimitTest : AormTestBase() {
                             ExampleTable.date to getDate("2000-02-02"),
                             ExampleTable.arrayValue to listOf("array3", "array4")))
             )
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
             val select = (ExampleTable.select() where (ExampleTable.value eq "value")).orderBy(ExampleTable.id to Order.ASC).limit(1L, 0L)
 
@@ -37,7 +37,7 @@ class QueryLimitTest : AormTestBase() {
 
     @Test
     fun limit_limitByZero_gotNoRows() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val rows = arrayListOf(
                     prepareInsertRow(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
@@ -46,7 +46,7 @@ class QueryLimitTest : AormTestBase() {
                             ExampleTable.date to getDate("2000-02-02"),
                             ExampleTable.arrayValue to listOf("array3", "array4")))
             )
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
             val select = (ExampleTable.select() where (ExampleTable.value eq "value")).orderBy(ExampleTable.id to Order.DESC).limit(0L, 0L)
 
@@ -56,7 +56,7 @@ class QueryLimitTest : AormTestBase() {
 
     @Test
     fun limit_limitByTwo_gotAllRows() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val rows = arrayListOf(
                     prepareInsertRow(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
@@ -65,7 +65,7 @@ class QueryLimitTest : AormTestBase() {
                             ExampleTable.date to getDate("2000-02-02"),
                             ExampleTable.arrayValue to listOf("array3", "array4")))
             )
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
             val select = (ExampleTable.select() where (ExampleTable.value eq "value")).orderBy(ExampleTable.id to Order.DESC).limit(2L, 0L)
 
@@ -75,7 +75,7 @@ class QueryLimitTest : AormTestBase() {
 
     @Test
     fun limit_orderedByTwoLimitByTwo_gotAllRows() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val rows = arrayListOf(
                     prepareInsertRow(mapOf(ExampleTable.id to 3L, ExampleTable.value to "value",
                             ExampleTable.date to getDate("2000-01-01"),
@@ -84,7 +84,7 @@ class QueryLimitTest : AormTestBase() {
                             ExampleTable.date to getDate("2000-02-02"),
                             ExampleTable.arrayValue to listOf("array3", "array4")))
             )
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
             val select = (ExampleTable.select() where (ExampleTable.value eq "value")).orderBy(ExampleTable.id to Order.DESC,
                     ExampleTable.value to Order.DESC).limit(2L, 0L)

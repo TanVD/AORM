@@ -3,25 +3,18 @@ package tanvd.aorm.type
 import org.testng.Assert
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import tanvd.aorm.Engine
-import tanvd.aorm.Table
-import tanvd.aorm.implementation.InsertClickhouse
-import tanvd.aorm.implementation.MetadataClickhouse
-import tanvd.aorm.implementation.QueryClickhouse
+import tanvd.aorm.*
+import tanvd.aorm.implementation.*
 import tanvd.aorm.insert.InsertExpression
-import tanvd.aorm.query.and
-import tanvd.aorm.query.eq
-import tanvd.aorm.query.has
-import tanvd.aorm.query.where
+import tanvd.aorm.query.*
 import tanvd.aorm.utils.*
-import tanvd.aorm.withDatabase
 
 @Suppress("UNCHECKED_CAST")
 class TypesTest : AormTestBase() {
 
     @BeforeMethod
     fun resetTable() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             try {
                 AllTypesTable.drop()
             } catch (e: Exception) {
@@ -31,16 +24,16 @@ class TypesTest : AormTestBase() {
 
     @Test
     fun allTypes_createTable_tableCreated() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             AllTypesTable.create()
 
-            Assert.assertTrue(MetadataClickhouse.existsTable(TestDatabase, AllTypesTable))
+            Assert.assertTrue(MetadataClickhouse.existsTable(database, AllTypesTable))
         }
     }
 
     @Test
     fun allTypes_insertIntoTable_rowInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             AllTypesTable.create()
 
@@ -81,7 +74,7 @@ class TypesTest : AormTestBase() {
                     AllTypesTable.arrayStringCol to listOf("string1", "string2")
             ).toMutableMap())
 
-            InsertClickhouse.insert(TestDatabase, InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
+            InsertClickhouse.insert(database, InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
 
             val gotRow = (AllTypesTable.select() where ((AllTypesTable.dateCol eq getDate("2000-01-01")) and
                     //TODO-tanvd date has not working in JDBC
@@ -136,7 +129,7 @@ class TypesTest : AormTestBase() {
 
     @Test
     fun allTypes_insertIntoTable_insertSqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             AllTypesTable.create()
 
@@ -185,7 +178,7 @@ class TypesTest : AormTestBase() {
 
     @Test
     fun allTypes_queryTable_querySqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             AllTypesTable.create()
 

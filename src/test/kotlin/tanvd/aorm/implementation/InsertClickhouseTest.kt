@@ -12,13 +12,13 @@ import tanvd.aorm.withDatabase
 class InsertClickhouseTest : AormTestBase() {
     @Test
     fun insert_tableExistsRowValid_rowInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
             val row = prepareInsertRow(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
                     .toMutableMap())
 
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
             val select = ExampleTable.select() where (ExampleTable.id eq 2L)
             AssertDb.assertEquals(select.toResult().single(), row)
@@ -32,7 +32,7 @@ class InsertClickhouseTest : AormTestBase() {
                 .toMutableMap())
 
         try {
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
         } catch (e: BasicDbException) {
             return
         }
@@ -42,13 +42,13 @@ class InsertClickhouseTest : AormTestBase() {
 
     @Test
     fun insert_tableExistsRowWithDefaults_rowInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             ExampleTable.create()
             val row = prepareInsertRow(mapOf(ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")).toMutableMap())
 
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
             val rowGot = prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
@@ -60,7 +60,7 @@ class InsertClickhouseTest : AormTestBase() {
 
     @Test
     fun insert_tableExistsRowsValid_rowsInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             ExampleTable.create()
             val rows = arrayListOf(
@@ -72,7 +72,7 @@ class InsertClickhouseTest : AormTestBase() {
                             ExampleTable.arrayValue to listOf("array3", "array4")).toMutableMap())
             )
 
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
             val select = ExampleTable.select() where (ExampleTable.value eq "value")
             AssertDb.assertEquals(select.toResult().toSet(), rows.toSet())
@@ -81,7 +81,7 @@ class InsertClickhouseTest : AormTestBase() {
 
     @Test
     fun insert_tableExistsRowsWithDefaults_rowsInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
             val rows = arrayListOf(
                     prepareInsertRow(mapOf(ExampleTable.value to "value1",
@@ -90,7 +90,7 @@ class InsertClickhouseTest : AormTestBase() {
                             ExampleTable.date to getDate("2000-02-02")).toMutableMap())
             )
 
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, rows))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
             val gotRows = arrayListOf(
                     prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value1",
@@ -107,7 +107,7 @@ class InsertClickhouseTest : AormTestBase() {
 
     @Test
     fun constructInsert_oneRow_equalsToPredefined() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             ExampleTable.create()
             val row = prepareInsertRow(mapOf(ExampleTable.date to getDate("2000-02-02"), ExampleTable.id to 3L,
@@ -122,7 +122,7 @@ class InsertClickhouseTest : AormTestBase() {
 
     @Test
     fun constructInsert_twoRows_equalsToPredefined() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             ExampleTable.create()
             val rows = arrayListOf(

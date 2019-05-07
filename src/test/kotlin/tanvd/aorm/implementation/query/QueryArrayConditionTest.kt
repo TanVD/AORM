@@ -3,18 +3,15 @@ package tanvd.aorm.implementation.query
 import org.testng.Assert
 import org.testng.annotations.Test
 import tanvd.aorm.implementation.QueryClickhouse
-import tanvd.aorm.query.eq
-import tanvd.aorm.query.exists
-import tanvd.aorm.query.has
-import tanvd.aorm.query.where
+import tanvd.aorm.query.*
+import tanvd.aorm.utils.AormTestBase
 import tanvd.aorm.utils.ExampleTable
-import tanvd.aorm.utils.TestDatabase
 import tanvd.aorm.withDatabase
 
-class QueryArrayConditionTest {
+class QueryArrayConditionTest : AormTestBase() {
     @Test
     fun exists_stringArray_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val expression = (ExampleTable.arrayValue exists { x -> x eq "value" })
             val query = ExampleTable.select() where expression
 
@@ -26,7 +23,7 @@ class QueryArrayConditionTest {
 
     @Test
     fun match_stringArray_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val expression = (ExampleTable.arrayValue has "value")
             val query = ExampleTable.select() where expression
 

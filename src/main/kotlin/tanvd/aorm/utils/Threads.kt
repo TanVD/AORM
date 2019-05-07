@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 
-fun ScheduledExecutorService?.withExceptionLogger(logger: Logger) = ExecutorServiceWrapperWithExceptionLogger(this!!, logger)
+internal fun ScheduledExecutorService?.withExceptionLogger(logger: Logger) = ExecutorServiceWrapperWithExceptionLogger(this!!, logger)
 
-class ExecutorServiceWrapperWithExceptionLogger(val delegate: ScheduledExecutorService, val logger: Logger) : ScheduledExecutorService by delegate {
+internal class ExecutorServiceWrapperWithExceptionLogger(val delegate: ScheduledExecutorService, val logger: Logger) : ScheduledExecutorService by delegate {
     override fun schedule(command: Runnable?, delay: Long, unit: TimeUnit?): ScheduledFuture<*> = delegate.schedule(wrapRunnable(command), delay, unit)
 
     override fun scheduleAtFixedRate(command: Runnable?, initialDelay: Long, period: Long, unit: TimeUnit?): ScheduledFuture<*> = delegate.scheduleAtFixedRate(wrapRunnable(command), initialDelay, period, unit)
@@ -24,14 +24,14 @@ class ExecutorServiceWrapperWithExceptionLogger(val delegate: ScheduledExecutorS
     }
 }
 
-fun namedFactory(threadNamePrefix: String, isDaemon: Boolean = false) = object : ThreadFactory {
+internal fun namedFactory(threadNamePrefix: String, isDaemon: Boolean = false) = object : ThreadFactory {
     private val num = AtomicInteger(1)
     override fun newThread(r: Runnable) = thread(start = false, isDaemon = isDaemon, name = "$threadNamePrefix-${num.getAndIncrement()}") {
         r.run()
     }
 }
 
-fun ExecutorService.shutdownNowGracefully(logger: Logger, timeout: Long = 10000) = executeAndAwait(timeout, logger, ExecutorService::shutdownNow)
+internal fun ExecutorService.shutdownNowGracefully(logger: Logger, timeout: Long = 10000) = executeAndAwait(timeout, logger, ExecutorService::shutdownNow)
 
 private fun <T> ExecutorService.executeAndAwait(timeout: Long, logger: Logger, exec: ExecutorService.() -> T) {
     exec(this)

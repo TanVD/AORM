@@ -1,16 +1,14 @@
 package tanvd.aorm.utils
 
 import org.testng.Assert
-import tanvd.aorm.InsertRow
-import tanvd.aorm.SelectRow
-import tanvd.aorm.Table
+import tanvd.aorm.*
 import tanvd.aorm.implementation.MetadataClickhouse
 
 object AssertDb {
-    fun syncedWithDb(table: Table) {
-        Assert.assertTrue(MetadataClickhouse.existsTable(TestDatabase, table))
+    fun syncedWithDb(database: Database, table: Table) {
+        Assert.assertTrue(MetadataClickhouse.existsTable(database, table))
 
-        val metadataColumns = MetadataClickhouse.columnsOfTable(TestDatabase, table)
+        val metadataColumns = MetadataClickhouse.columnsOfTable(database, table)
 
         for ((name, type) in metadataColumns) {
             Assert.assertTrue(table.columns.any { column -> column.name == name && column.type.toSqlName() == type })

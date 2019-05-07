@@ -1,6 +1,6 @@
 package tanvd.aorm.utils
 
-inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
+internal inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     var exception: Throwable? = null
     try {
         return block(this)

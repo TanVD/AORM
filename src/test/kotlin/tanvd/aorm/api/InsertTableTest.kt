@@ -8,10 +8,9 @@ import tanvd.aorm.utils.*
 import tanvd.aorm.withDatabase
 
 class InsertTableTest : AormTestBase() {
-
     override fun executeBeforeMethod() {
-        withDatabase(TestDatabase) {
-            ignoringExceptions { ExampleTable.drop() }
+        withDatabase(database) {
+            tryRun { ExampleTable.drop() }
             ExampleTable.create()
         }
     }
@@ -19,7 +18,7 @@ class InsertTableTest : AormTestBase() {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun insert_tableExistsRowValid_rowInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.insert {
                 it[ExampleTable.id] = 2L
                 it[ExampleTable.value] = "value"
@@ -38,7 +37,7 @@ class InsertTableTest : AormTestBase() {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun insertBatch_tableExistsRowValid_rowsInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             ExampleTable.batchInsert(1..2) { table, value ->
                 table[ExampleTable.id] = value.toLong()
@@ -59,7 +58,7 @@ class InsertTableTest : AormTestBase() {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun insertLazy_tableExistsRowsValid_rowsInsertedAfterDelay() {
-        withDatabase(TestDatabase, TestInsertWorker) {
+        withDatabase(database, insertWorker) {
             ExampleTable.insertLazy { table ->
                 table[ExampleTable.id] = 1L
                 table[ExampleTable.value] = "value"
@@ -88,7 +87,7 @@ class InsertTableTest : AormTestBase() {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun insertLazy_tableExistsRowsValid_rowsNotInsertedBeforeDelay() {
-        withDatabase(TestDatabase, TestInsertWorker) {
+        withDatabase(database, insertWorker) {
             ExampleTable.insertLazy { table ->
                 table[ExampleTable.id] = 1L
                 table[ExampleTable.value] = "value"

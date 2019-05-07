@@ -5,14 +5,14 @@ import org.testng.annotations.Test
 import tanvd.aorm.expression.*
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.groupBy
+import tanvd.aorm.utils.AormTestBase
 import tanvd.aorm.utils.ExampleTable
-import tanvd.aorm.utils.TestDatabase
 import tanvd.aorm.withDatabase
 
-class QueryExpressionTest {
+class QueryExpressionTest : AormTestBase() {
     @Test
     fun count_countByColumn_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val query = ExampleTable.select(count(ExampleTable.id))
 
             val sql = QueryClickhouse.constructQuery(query)
@@ -22,7 +22,7 @@ class QueryExpressionTest {
 
     @Test
     fun maxState_maxStateByColumn_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val query = ExampleTable.select(maxState(ExampleTable.id)).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
@@ -33,7 +33,7 @@ class QueryExpressionTest {
 
     @Test
     fun maxMerge_maxMergeByColumn_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val query = ExampleTable.select(maxMerge(maxState(ExampleTable.id))).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
@@ -43,7 +43,7 @@ class QueryExpressionTest {
 
     @Test
     fun argMaxState_maxStateByColumn_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val query = ExampleTable.select(argMaxState(ExampleTable.id, ExampleTable.value)).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
@@ -54,7 +54,7 @@ class QueryExpressionTest {
 
     @Test
     fun argMaxMerge_maxMergeByColumn_sqlValid() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             val query = ExampleTable.select(argMaxMerge(argMaxState(ExampleTable.id, ExampleTable.value))).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)

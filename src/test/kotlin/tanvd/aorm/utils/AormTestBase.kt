@@ -1,26 +1,48 @@
 package tanvd.aorm.utils
 
+import org.junit.ClassRule
 import org.testng.annotations.BeforeMethod
-import tanvd.aorm.DbType
-import tanvd.aorm.InsertRow
-import tanvd.aorm.SelectRow
+import ru.yandex.clickhouse.ClickHouseDataSource
+import ru.yandex.clickhouse.settings.ClickHouseProperties
+import tanvd.aorm.*
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
-import tanvd.aorm.withDatabase
+import tanvd.aorm.insert.DefaultInsertWorker
 
 abstract class AormTestBase {
+    companion object {
+        const val testInsertWorkerDelayMs = 2000L
+        private const val containerPort = 8123
+    }
+
+    @ClassRule
+    private val localstack = KGenericContainer("yandex/clickhouse-server:19.5")
+            .withExposedPorts(containerPort)
+            .apply { start() }
+
+    val database by lazy {
+        Database("default",
+                ClickHouseDataSource("jdbc:clickhouse://localhost:${localstack.getMappedPort(8123)}",
+                        ClickHouseProperties().apply {
+                            user = System.getProperty("clickhouseUser")?.takeIf(String::isNotBlank) ?: "default"
+                            password = System.getProperty("clickhousePassword")?.takeIf(String::isNotBlank) ?: ""
+                        }))
+    }
+
+    val insertWorker by lazy {
+        DefaultInsertWorker("test-insert-worker", delayTimeMs = testInsertWorkerDelayMs, betweenCallsTimeMs = testInsertWorkerDelayMs)
+    }
+
     @BeforeMethod
     fun resetDb() {
-        ignoringExceptions {
-            ExampleTable.resetTable()
+        tryRun {
+            ExampleTable.resetTable(database)
         }
-        ignoringExceptions {
-            withDatabase(TestDatabase) {
+        withDatabase(database) {
+            tryRun {
                 ExampleView.drop()
             }
-        }
-        ignoringExceptions {
-            withDatabase(TestDatabase) {
+            tryRun {
                 ExampleMaterializedView.drop()
             }
         }
@@ -38,9 +60,7 @@ abstract class AormTestBase {
     }
 }
 
-fun ignoringExceptions(body: () -> Unit) {
-    try {
-        body()
-    } catch (e: Exception) {
-    }
+fun tryRun(body: () -> Unit) = try {
+    body()
+} catch (e: Throwable) {
 }

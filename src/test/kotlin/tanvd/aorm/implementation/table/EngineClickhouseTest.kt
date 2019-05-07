@@ -5,62 +5,60 @@ import org.testng.annotations.Test
 import tanvd.aorm.*
 import tanvd.aorm.expression.default
 import tanvd.aorm.implementation.TableClickhouse
-import tanvd.aorm.utils.AssertDb
-import tanvd.aorm.utils.TestDatabase
-import tanvd.aorm.utils.ignoringExceptions
+import tanvd.aorm.utils.*
 
-class EngineClickhouseTest {
+class EngineClickhouseTest : AormTestBase() {
 
     @BeforeMethod
     fun resetTables() {
-        ignoringExceptions {
-            TableClickhouse.drop(TestDatabase, MergeTreeTable)
+        tryRun {
+            TableClickhouse.drop(database, MergeTreeTable)
         }
-        ignoringExceptions {
-            TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
+        tryRun {
+            TableClickhouse.drop(database, ReplacingMergeTreeTable)
         }
-        ignoringExceptions {
-            TableClickhouse.drop(TestDatabase, AggregatingMergeTreeTable)
+        tryRun {
+            TableClickhouse.drop(database, AggregatingMergeTreeTable)
         }
-        ignoringExceptions {
-            TableClickhouse.drop(TestDatabase, CustomMergeTreeTable)
+        tryRun {
+            TableClickhouse.drop(database, CustomMergeTreeTable)
         }
     }
 
     @Test
     fun createTableMergeTree_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(TestDatabase, MergeTreeTable)
+        TableClickhouse.create(database, MergeTreeTable)
 
-        AssertDb.syncedWithDb(MergeTreeTable)
+        AssertDb.syncedWithDb(database, MergeTreeTable)
 
-        TableClickhouse.drop(TestDatabase, MergeTreeTable)
+        TableClickhouse.drop(database, MergeTreeTable)
     }
 
     @Test
     fun createTableReplacingMergeTree_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(TestDatabase, ReplacingMergeTreeTable)
+        TableClickhouse.create(database, ReplacingMergeTreeTable)
 
-        AssertDb.syncedWithDb(ReplacingMergeTreeTable)
+        AssertDb.syncedWithDb(database, ReplacingMergeTreeTable)
 
-        TableClickhouse.drop(TestDatabase, ReplacingMergeTreeTable)
+        TableClickhouse.drop(database, ReplacingMergeTreeTable)
     }
 
     @Test
     fun createTableAggregatingMergeTree_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(TestDatabase, AggregatingMergeTreeTable)
+        TableClickhouse.create(database, AggregatingMergeTreeTable)
 
-        AssertDb.syncedWithDb(AggregatingMergeTreeTable)
+        AssertDb.syncedWithDb(database, AggregatingMergeTreeTable)
 
-        TableClickhouse.drop(TestDatabase, AggregatingMergeTreeTable)
+        TableClickhouse.drop(database, AggregatingMergeTreeTable)
     }
 
     @Test
     fun createTableCustomMergeTree_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(TestDatabase, CustomMergeTreeTable)
+        TableClickhouse.create(database, CustomMergeTreeTable)
 
-        AssertDb.syncedWithDb(CustomMergeTreeTable)
+        AssertDb.syncedWithDb(database, CustomMergeTreeTable)
 
-        TableClickhouse.drop(TestDatabase, CustomMergeTreeTable)
+        TableClickhouse.drop(database, CustomMergeTreeTable)
     }
 }
 

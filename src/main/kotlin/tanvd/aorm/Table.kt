@@ -24,9 +24,7 @@ abstract class Table(name: String) {
     }
 
     //selects
-    fun select(): Query {
-        return Query(this.name, columns)
-    }
+    fun select(): Query = Query(this.name, columns)
 
     fun select(vararg functions: Expression<*, DbType<*>>): Query = Query(this.name, functions.toSet())
 

@@ -11,7 +11,7 @@ class MaterializedViewClickhouseTest : AormTestBase() {
 
     @Test
     fun createView_viewExists() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
             ExampleMaterializedView.create()
             Assert.assertTrue(ExampleMaterializedView.exists())
@@ -20,7 +20,7 @@ class MaterializedViewClickhouseTest : AormTestBase() {
 
     @Test
     fun dropView_viewDoesNotExist() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
             ExampleMaterializedView.create()
             ExampleMaterializedView.drop()
@@ -31,14 +31,14 @@ class MaterializedViewClickhouseTest : AormTestBase() {
 
     @Test
     fun insert_viewExistsRowValid_rowInserted() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
             ExampleMaterializedView.create()
 
             val row = prepareInsertRow(mapOf(ExampleTable.id to 2L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"), ExampleTable.arrayValue to listOf("array1", "array2"))
                     .toMutableMap())
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
 
             val result = ExampleMaterializedView.select(ExampleMaterializedView.date, ExampleMaterializedView.idView, ExampleMaterializedView.valueView).toResult()

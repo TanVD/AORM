@@ -1,14 +1,11 @@
 package tanvd.aorm.expression
 
-import tanvd.aorm.DbInt64
-import tanvd.aorm.DbIntPrimitiveType
-import tanvd.aorm.DbType
+import tanvd.aorm.*
 
 //Count
 
 class Count<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expression<Long, DbInt64>(DbInt64()) {
     override fun toSelectListDef(): String = "COUNT(${expression.toQueryQualifier()})"
-
     override fun toQueryQualifier(): String = "COUNT(${expression.toQueryQualifier()})"
 }
 

@@ -5,28 +5,25 @@ import org.testng.annotations.Test
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.*
-import tanvd.aorm.utils.AormTestBase
-import tanvd.aorm.utils.ExampleTable
-import tanvd.aorm.utils.TestDatabase
-import tanvd.aorm.utils.getDate
+import tanvd.aorm.utils.*
 import tanvd.aorm.withDatabase
 
 class QueryLoadTest : AormTestBase() {
     override fun executeBeforeMethod() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
             ExampleTable.create()
         }
     }
 
     @Test
     fun where_validQuery_gotRow() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             val row = prepareInsertRow(mapOf(
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")))
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns,
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns,
                     arrayListOf(row)))
 
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
@@ -40,13 +37,13 @@ class QueryLoadTest : AormTestBase() {
 
     @Test
     fun prewhere_validQuery_gotRow() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             val row = prepareInsertRow(mapOf(
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")))
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns,
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns,
                     arrayListOf(row)))
 
             val select = ExampleTable.select() prewhere (ExampleTable.id eq 1L)
@@ -60,13 +57,13 @@ class QueryLoadTest : AormTestBase() {
 
     @Test
     fun complexQuery_validQuery_gotRow() {
-        withDatabase(TestDatabase) {
+        withDatabase(database) {
 
             val row = prepareInsertRow(mapOf(
                     ExampleTable.id to 1L,
                     ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01")))
-            InsertClickhouse.insert(TestDatabase, InsertExpression(ExampleTable, ExampleTable.columns,
+            InsertClickhouse.insert(database, InsertExpression(ExampleTable, ExampleTable.columns,
                     arrayListOf(row)))
 
             val select = (ExampleTable.select() prewhere (ExampleTable.id eq 1L) where (ExampleTable.value eq "value"))

@@ -1,7 +1,7 @@
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.2.0-SNAPSHOT"
+version = "1.1.4-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.3.31" apply true
@@ -21,6 +21,7 @@ dependencies {
     testCompile("org.testng", "testng", "6.11")
     testCompile("org.mockito", "mockito-all", "1.10.19")
     testCompile("org.powermock", "powermock-mockito-release-full", "1.6.4")
+    testCompile("org.testcontainers", "testcontainers", "1.11.2")
 }
 
 (tasks["test"] as Test).apply {

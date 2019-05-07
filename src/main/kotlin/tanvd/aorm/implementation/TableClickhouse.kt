@@ -1,8 +1,6 @@
 package tanvd.aorm.implementation
 
-import tanvd.aorm.Database
-import tanvd.aorm.DbType
-import tanvd.aorm.Table
+import tanvd.aorm.*
 import tanvd.aorm.expression.Column
 
 object TableClickhouse {

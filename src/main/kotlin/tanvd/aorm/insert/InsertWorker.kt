@@ -3,12 +3,8 @@ package tanvd.aorm.insert
 import org.slf4j.LoggerFactory
 import tanvd.aorm.Database
 import tanvd.aorm.implementation.InsertClickhouse
-import tanvd.aorm.utils.namedFactory
-import tanvd.aorm.utils.shutdownNowGracefully
-import tanvd.aorm.utils.withExceptionLogger
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
+import tanvd.aorm.utils.*
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface InsertWorker {

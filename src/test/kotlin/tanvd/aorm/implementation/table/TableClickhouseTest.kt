@@ -7,25 +7,22 @@ import tanvd.aorm.exceptions.BasicDbException
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
 import tanvd.aorm.implementation.TableClickhouse
-import tanvd.aorm.utils.AormTestBase
-import tanvd.aorm.utils.AssertDb
-import tanvd.aorm.utils.ExampleTable
-import tanvd.aorm.utils.TestDatabase
+import tanvd.aorm.utils.*
 
 class TableClickhouseTest : AormTestBase() {
     @Test
     fun createTable_tableNotExists_tableSyncedWithDb() {
-        TableClickhouse.create(TestDatabase, ExampleTable)
+        TableClickhouse.create(database, ExampleTable)
 
-        AssertDb.syncedWithDb(ExampleTable)
+        AssertDb.syncedWithDb(database, ExampleTable)
     }
 
     @Test
     fun createTable_tableExists_gotBasicDbException() {
-        TableClickhouse.create(TestDatabase, ExampleTable)
+        TableClickhouse.create(database, ExampleTable)
 
         try {
-            TableClickhouse.create(TestDatabase, ExampleTable)
+            TableClickhouse.create(database, ExampleTable)
         } catch (e: BasicDbException) {
             return
         }
@@ -35,17 +32,17 @@ class TableClickhouseTest : AormTestBase() {
 
     @Test
     fun dropTable_tableExists_tableNotExistsInMetadata() {
-        TableClickhouse.create(TestDatabase, ExampleTable)
+        TableClickhouse.create(database, ExampleTable)
 
-        TableClickhouse.drop(TestDatabase, ExampleTable)
+        TableClickhouse.drop(database, ExampleTable)
 
-        Assert.assertFalse(MetadataClickhouse.existsTable(TestDatabase, ExampleTable))
+        Assert.assertFalse(MetadataClickhouse.existsTable(database, ExampleTable))
     }
 
     @Test
     fun createTable_tableNotExists_gotBasicDbException() {
         try {
-            TableClickhouse.drop(TestDatabase, ExampleTable)
+            TableClickhouse.drop(database, ExampleTable)
         } catch (e: BasicDbException) {
             return
         }
@@ -56,18 +53,18 @@ class TableClickhouseTest : AormTestBase() {
 
     @Test
     fun addColumn_tableExists_columnAddedInMetadata() {
-        TableClickhouse.create(TestDatabase, ExampleTable)
+        TableClickhouse.create(database, ExampleTable)
 
-        TableClickhouse.addColumn(TestDatabase, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
+        TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
 
-        val metadataColumns = MetadataClickhouse.columnsOfTable(TestDatabase, ExampleTable)
+        val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
         Assert.assertEquals(metadataColumns["new_column"]?.toLowerCase(), DbInt64().toSqlName().toLowerCase())
     }
 
     @Test
     fun addColumn_tableNotExists_gotBasicDbException() {
         try {
-            TableClickhouse.addColumn(TestDatabase, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
+            TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
         } catch (e: BasicDbException) {
             return
         }
@@ -78,18 +75,18 @@ class TableClickhouseTest : AormTestBase() {
 
     @Test
     fun dropColumn_tableExists_columnNotInMetadata() {
-        TableClickhouse.create(TestDatabase, ExampleTable)
+        TableClickhouse.create(database, ExampleTable)
 
-        TableClickhouse.dropColumn(TestDatabase, ExampleTable, ExampleTable.value)
+        TableClickhouse.dropColumn(database, ExampleTable, ExampleTable.value)
 
-        val metadataColumns = MetadataClickhouse.columnsOfTable(TestDatabase, ExampleTable)
+        val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
         Assert.assertNull(metadataColumns[ExampleTable.value.name])
     }
 
     @Test
     fun dropColumn_tableNotExists_gotBasicDbException() {
         try {
-            TableClickhouse.dropColumn(TestDatabase, ExampleTable, ExampleTable.value)
+            TableClickhouse.dropColumn(database, ExampleTable, ExampleTable.value)
         } catch (e: BasicDbException) {
             return
         }
