@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.query
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.expression.count
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.insert.InsertExpression
@@ -34,7 +34,7 @@ class QueryGroupByTest : AormTestBase() {
 
             val select = ExampleTable.select(ExampleTable.value, count(ExampleTable.date)).groupBy(ExampleTable.value).toResult()
 
-            Assert.assertEquals(select.single(), prepareSelectRow(mapOf(count(ExampleTable.date) to 2L, ExampleTable.value to "value")))
+            Assertions.assertEquals(select.single(), prepareSelectRow(mapOf(count(ExampleTable.date) to 2L, ExampleTable.value to "value")))
         }
     }
 
@@ -53,7 +53,7 @@ class QueryGroupByTest : AormTestBase() {
 
             val select = ExampleTable.select(ExampleTable.id, count(ExampleTable.id)).orderBy(ExampleTable.id to Order.ASC).groupBy(ExampleTable.id).toResult()
 
-            Assert.assertEquals(select, listOf(
+            Assertions.assertEquals(select, listOf(
                     prepareSelectRow(mapOf(ExampleTable.id to 2L, count(ExampleTable.id) to 1L)),
                     prepareSelectRow(mapOf(ExampleTable.id to 3L, count(ExampleTable.id) to 1L))))
         }

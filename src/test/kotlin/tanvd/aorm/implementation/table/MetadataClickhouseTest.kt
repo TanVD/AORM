@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.table
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.DbInt64
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
@@ -11,26 +11,26 @@ import tanvd.aorm.utils.*
 class MetadataClickhouseTest : AormTestBase() {
     @Test
     fun existsTable_tableNotExists_returnFalse() {
-        Assert.assertFalse(MetadataClickhouse.existsTable(database, ExampleTable))
+        Assertions.assertFalse(MetadataClickhouse.existsTable(database, ExampleTable))
     }
 
     @Test
     fun existsTable_tableExists_returnTrue() {
         TableClickhouse.create(database, ExampleTable)
 
-        Assert.assertTrue(MetadataClickhouse.existsTable(database, ExampleTable))
+        Assertions.assertTrue(MetadataClickhouse.existsTable(database, ExampleTable))
     }
 
     @Test
     fun columnsOfTable_tableNotExists_emptyMap() {
-        Assert.assertTrue(MetadataClickhouse.columnsOfTable(database, ExampleTable).isEmpty())
+        Assertions.assertTrue(MetadataClickhouse.columnsOfTable(database, ExampleTable).isEmpty())
     }
 
     @Test
     fun columnsOfTable_tableExists_mapOfColumnsOfTable() {
         TableClickhouse.create(database, ExampleTable)
 
-        Assert.assertEquals(MetadataClickhouse.columnsOfTable(database, ExampleTable),
+        Assertions.assertEquals(MetadataClickhouse.columnsOfTable(database, ExampleTable),
                 ExampleTable.columns.map { it.name to it.type.toSqlName() }.toMap())
     }
 
@@ -50,7 +50,7 @@ class MetadataClickhouseTest : AormTestBase() {
         MetadataClickhouse.syncScheme(database, ExampleTable)
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
-        Assert.assertTrue(metadataColumns.any { (name, type) -> name == newColumn.name && type == newColumn.type.toSqlName() })
+        Assertions.assertTrue(metadataColumns.any { (name, type) -> name == newColumn.name && type == newColumn.type.toSqlName() })
     }
 
     @Test
@@ -61,7 +61,7 @@ class MetadataClickhouseTest : AormTestBase() {
         MetadataClickhouse.syncScheme(database, ExampleTable)
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
-        Assert.assertTrue(metadataColumns.any { (name, type) ->
+        Assertions.assertTrue(metadataColumns.any { (name, type) ->
             name == ExampleTable.value.name &&
                     type == ExampleTable.value.type.toSqlName()
         })

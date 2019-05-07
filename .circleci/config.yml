@@ -6,7 +6,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
-      - run: ./gradlew build --stacktrace
+      - run: ./gradlew build
   release:
     machine:
       enabled: true

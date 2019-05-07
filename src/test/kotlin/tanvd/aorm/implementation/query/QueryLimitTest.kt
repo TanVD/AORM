@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.query
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.*
@@ -50,7 +50,7 @@ class QueryLimitTest : AormTestBase() {
 
             val select = (ExampleTable.select() where (ExampleTable.value eq "value")).orderBy(ExampleTable.id to Order.DESC).limit(0L, 0L)
 
-            Assert.assertTrue(select.toResult().isEmpty())
+            Assertions.assertTrue(select.toResult().isEmpty())
         }
     }
 

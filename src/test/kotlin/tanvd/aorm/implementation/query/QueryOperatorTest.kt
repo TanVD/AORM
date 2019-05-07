@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.query
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.*
 import tanvd.aorm.utils.AormTestBase
@@ -16,7 +16,7 @@ class QueryOperatorTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE ((id = 1) AND (value = 'string')) ;")
         }
     }
@@ -28,7 +28,7 @@ class QueryOperatorTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE ((id = 1) OR (value = 'string')) ;")
         }
     }
@@ -40,7 +40,7 @@ class QueryOperatorTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (NOT (id = 1)) ;")
         }
     }

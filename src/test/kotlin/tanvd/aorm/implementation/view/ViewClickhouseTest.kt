@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.view
 
-import org.junit.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.utils.*
@@ -14,7 +14,7 @@ class ViewClickhouseTest : AormTestBase() {
         withDatabase(database) {
             ExampleTable.create()
             ExampleView.create()
-            Assert.assertTrue(ExampleView.exists())
+            Assertions.assertTrue(ExampleView.exists())
         }
     }
 
@@ -24,7 +24,7 @@ class ViewClickhouseTest : AormTestBase() {
             ExampleTable.create()
             ExampleView.create()
             ExampleView.drop()
-            Assert.assertFalse(ExampleView.exists())
+            Assertions.assertFalse(ExampleView.exists())
         }
     }
 
@@ -43,7 +43,7 @@ class ViewClickhouseTest : AormTestBase() {
 
             val result = ExampleView.select(ExampleView.idView, ExampleView.valueView).toResult()
 
-            Assert.assertEquals(result.single(), prepareSelectRow(mapOf(ExampleView.idView to 2L, ExampleView.valueView to "value")))
+            Assertions.assertEquals(result.single(), prepareSelectRow(mapOf(ExampleView.idView to 2L, ExampleView.valueView to "value")))
         }
     }
 

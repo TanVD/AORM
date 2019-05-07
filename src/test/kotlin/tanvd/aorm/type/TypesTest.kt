@@ -1,8 +1,6 @@
 package tanvd.aorm.type
 
-import org.testng.Assert
-import org.testng.annotations.BeforeMethod
-import org.testng.annotations.Test
+import org.junit.jupiter.api.*
 import tanvd.aorm.*
 import tanvd.aorm.implementation.*
 import tanvd.aorm.insert.InsertExpression
@@ -12,7 +10,7 @@ import tanvd.aorm.utils.*
 @Suppress("UNCHECKED_CAST")
 class TypesTest : AormTestBase() {
 
-    @BeforeMethod
+    @BeforeEach
     fun resetTable() {
         withDatabase(database) {
             try {
@@ -27,7 +25,7 @@ class TypesTest : AormTestBase() {
         withDatabase(database) {
             AllTypesTable.create()
 
-            Assert.assertTrue(MetadataClickhouse.existsTable(database, AllTypesTable))
+            Assertions.assertTrue(MetadataClickhouse.existsTable(database, AllTypesTable))
         }
     }
 
@@ -172,7 +170,7 @@ class TypesTest : AormTestBase() {
 
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
-            Assert.assertEquals(sql, "INSERT INTO all_types_table (date_col, arrayDate_col, datetime_col, enum8_col, enum16_col, int8_col, arrayInt8_col, uint8_col, arrayUInt8_col, int16_col, arrayInt16_col, uint16_col, arrayUInt16_col, int32_col, arrayInt32_col, uint32_col, arrayUInt32_col, int64_col, arrayInt64_col, uint64_col, arrayUInt64_col, bool_col, arrayBoolean_col, string_col, arrayString_col) VALUES ('2000-01-01', ['2001-01-01', '2002-02-02'], '2000-01-01 12:00:00', first_enum, second_enum, 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 0], 'string', ['string1', 'string2']);")
+            Assertions.assertEquals(sql, "INSERT INTO all_types_table (date_col, arrayDate_col, datetime_col, enum8_col, enum16_col, int8_col, arrayInt8_col, uint8_col, arrayUInt8_col, int16_col, arrayInt16_col, uint16_col, arrayUInt16_col, int32_col, arrayInt32_col, uint32_col, arrayUInt32_col, int64_col, arrayInt64_col, uint64_col, arrayUInt64_col, bool_col, arrayBoolean_col, string_col, arrayString_col) VALUES ('2000-01-01', ['2001-01-01', '2002-02-02'], '2000-01-01 12:00:00', first_enum, second_enum, 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 2], 1, [1, 0], 'string', ['string1', 'string2']);")
         }
     }
 
@@ -228,7 +226,7 @@ class TypesTest : AormTestBase() {
                     (AllTypesTable.arrayStringCol has "string2"))
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT date_col, arrayDate_col, datetime_col, enum8_col, enum16_col, int8_col, arrayInt8_col, uint8_col, arrayUInt8_col, int16_col, arrayInt16_col, uint16_col, arrayUInt16_col, int32_col, arrayInt32_col, uint32_col, arrayUInt32_col, int64_col, arrayInt64_col, uint64_col, arrayUInt64_col, bool_col, arrayBoolean_col, string_col, arrayString_col FROM all_types_table WHERE ((((((((((((((((((((((((((((((((((((date_col = '2000-01-01') AND (has(arrayDate_col, '2001-01-01'))) AND (has(arrayDate_col, '2002-02-02'))) AND (datetime_col = '2000-01-01 12:00:00')) AND (int8_col = 1)) AND (has(arrayInt8_col, 1))) AND (has(arrayInt8_col, 2))) AND (uint8_col = 1)) AND (has(arrayUInt8_col, 1))) AND (has(arrayUInt8_col, 2))) AND (int16_col = 1)) AND (has(arrayInt16_col, 1))) AND (has(arrayInt16_col, 2))) AND (uint16_col = 1)) AND (has(arrayUInt16_col, 1))) AND (has(arrayUInt16_col, 2))) AND (int32_col = 1)) AND (has(arrayInt32_col, 1))) AND (has(arrayInt32_col, 2))) AND (uint32_col = 1)) AND (has(arrayUInt32_col, 1))) AND (has(arrayUInt32_col, 2))) AND (int64_col = 1)) AND (has(arrayInt64_col, 1))) AND (has(arrayInt64_col, 2))) AND (uint64_col = 1)) AND (has(arrayUInt64_col, 1))) AND (has(arrayUInt64_col, 2))) AND (enum8_col = first_enum)) AND (enum16_col = second_enum)) AND (bool_col = 1)) AND (has(arrayBoolean_col, 1))) AND (has(arrayBoolean_col, 0))) AND (string_col = 'string')) AND (has(arrayString_col, 'string1'))) AND (has(arrayString_col, 'string2'))) ;")
+            Assertions.assertEquals(sql, "SELECT date_col, arrayDate_col, datetime_col, enum8_col, enum16_col, int8_col, arrayInt8_col, uint8_col, arrayUInt8_col, int16_col, arrayInt16_col, uint16_col, arrayUInt16_col, int32_col, arrayInt32_col, uint32_col, arrayUInt32_col, int64_col, arrayInt64_col, uint64_col, arrayUInt64_col, bool_col, arrayBoolean_col, string_col, arrayString_col FROM all_types_table WHERE ((((((((((((((((((((((((((((((((((((date_col = '2000-01-01') AND (has(arrayDate_col, '2001-01-01'))) AND (has(arrayDate_col, '2002-02-02'))) AND (datetime_col = '2000-01-01 12:00:00')) AND (int8_col = 1)) AND (has(arrayInt8_col, 1))) AND (has(arrayInt8_col, 2))) AND (uint8_col = 1)) AND (has(arrayUInt8_col, 1))) AND (has(arrayUInt8_col, 2))) AND (int16_col = 1)) AND (has(arrayInt16_col, 1))) AND (has(arrayInt16_col, 2))) AND (uint16_col = 1)) AND (has(arrayUInt16_col, 1))) AND (has(arrayUInt16_col, 2))) AND (int32_col = 1)) AND (has(arrayInt32_col, 1))) AND (has(arrayInt32_col, 2))) AND (uint32_col = 1)) AND (has(arrayUInt32_col, 1))) AND (has(arrayUInt32_col, 2))) AND (int64_col = 1)) AND (has(arrayInt64_col, 1))) AND (has(arrayInt64_col, 2))) AND (uint64_col = 1)) AND (has(arrayUInt64_col, 1))) AND (has(arrayUInt64_col, 2))) AND (enum8_col = first_enum)) AND (enum16_col = second_enum)) AND (bool_col = 1)) AND (has(arrayBoolean_col, 1))) AND (has(arrayBoolean_col, 0))) AND (string_col = 'string')) AND (has(arrayString_col, 'string1'))) AND (has(arrayString_col, 'string2'))) ;")
         }
     }
 }

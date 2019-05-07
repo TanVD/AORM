@@ -1,7 +1,8 @@
 package tanvd.aorm.utils
 
-import org.junit.ClassRule
-import org.testng.annotations.BeforeMethod
+import org.junit.jupiter.api.BeforeEach
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import ru.yandex.clickhouse.ClickHouseDataSource
 import ru.yandex.clickhouse.settings.ClickHouseProperties
 import tanvd.aorm.*
@@ -9,16 +10,17 @@ import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import tanvd.aorm.insert.DefaultInsertWorker
 
+@Testcontainers
 abstract class AormTestBase {
     companion object {
         const val testInsertWorkerDelayMs = 2000L
         private const val containerPort = 8123
-    }
 
-    @ClassRule
-    private val localstack = KGenericContainer("yandex/clickhouse-server:19.5")
-            .withExposedPorts(containerPort)
-            .apply { start() }
+        @Container
+        private val localstack = KGenericContainer("yandex/clickhouse-server:19.5")
+                .withExposedPorts(containerPort)
+                .apply { start() }
+    }
 
     val database by lazy {
         Database("default",
@@ -33,7 +35,7 @@ abstract class AormTestBase {
         DefaultInsertWorker("test-insert-worker", delayTimeMs = testInsertWorkerDelayMs, betweenCallsTimeMs = testInsertWorkerDelayMs)
     }
 
-    @BeforeMethod
+    @BeforeEach
     fun resetDb() {
         tryRun {
             ExampleTable.resetTable(database)

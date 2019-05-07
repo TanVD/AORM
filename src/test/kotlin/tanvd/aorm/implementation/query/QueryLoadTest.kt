@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.query
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.implementation.InsertClickhouse
 import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.*
@@ -31,7 +31,7 @@ class QueryLoadTest : AormTestBase() {
             val rowGot = prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
                     ExampleTable.arrayValue to listOf("array1", "array2")))
-            Assert.assertEquals(select.toResult().single(), rowGot)
+            Assertions.assertEquals(select.toResult().single(), rowGot)
         }
     }
 
@@ -51,7 +51,7 @@ class QueryLoadTest : AormTestBase() {
             val rowGot = prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
                     ExampleTable.arrayValue to listOf("array1", "array2")))
-            Assert.assertEquals(select.toResult().single(), rowGot)
+            Assertions.assertEquals(select.toResult().single(), rowGot)
         }
     }
 
@@ -72,7 +72,7 @@ class QueryLoadTest : AormTestBase() {
             val rowGot = prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
                     ExampleTable.arrayValue to listOf("array1", "array2")))
-            Assert.assertEquals(select.toResult().single(), rowGot)
+            Assertions.assertEquals(select.toResult().single(), rowGot)
         }
 
     }

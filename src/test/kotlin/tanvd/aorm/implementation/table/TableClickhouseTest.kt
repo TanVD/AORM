@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.table
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.DbInt64
 import tanvd.aorm.exceptions.BasicDbException
 import tanvd.aorm.expression.Column
@@ -27,7 +27,7 @@ class TableClickhouseTest : AormTestBase() {
             return
         }
 
-        Assert.fail()
+        Assertions.fail<Nothing>()
     }
 
     @Test
@@ -36,7 +36,7 @@ class TableClickhouseTest : AormTestBase() {
 
         TableClickhouse.drop(database, ExampleTable)
 
-        Assert.assertFalse(MetadataClickhouse.existsTable(database, ExampleTable))
+        Assertions.assertFalse(MetadataClickhouse.existsTable(database, ExampleTable))
     }
 
     @Test
@@ -47,7 +47,7 @@ class TableClickhouseTest : AormTestBase() {
             return
         }
 
-        Assert.fail()
+        Assertions.fail<Nothing>()
     }
 
 
@@ -58,7 +58,7 @@ class TableClickhouseTest : AormTestBase() {
         TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
-        Assert.assertEquals(metadataColumns["new_column"]?.toLowerCase(), DbInt64().toSqlName().toLowerCase())
+        Assertions.assertEquals(metadataColumns["new_column"]?.toLowerCase(), DbInt64().toSqlName().toLowerCase())
     }
 
     @Test
@@ -69,7 +69,7 @@ class TableClickhouseTest : AormTestBase() {
             return
         }
 
-        Assert.fail()
+        Assertions.fail<Nothing>()
     }
 
 
@@ -80,7 +80,7 @@ class TableClickhouseTest : AormTestBase() {
         TableClickhouse.dropColumn(database, ExampleTable, ExampleTable.value)
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
-        Assert.assertNull(metadataColumns[ExampleTable.value.name])
+        Assertions.assertNull(metadataColumns[ExampleTable.value.name])
     }
 
     @Test
@@ -91,7 +91,7 @@ class TableClickhouseTest : AormTestBase() {
             return
         }
 
-        Assert.fail()
+        Assertions.fail<Nothing>()
     }
 
 }

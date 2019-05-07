@@ -4,7 +4,6 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import ru.yandex.clickhouse.ClickHouseUtil
-import sun.reflect.generics.reflectiveObjects.NotImplementedException
 import java.math.BigInteger
 import java.sql.*
 import java.text.SimpleDateFormat
@@ -67,7 +66,7 @@ abstract class DbEnum<T : Enum<*>>(val enumMapping: LinkedHashMap<String, Int>, 
     override fun toStringValue(value: T): String = value.name
 
     override fun toArray(): DbArrayType<T> {
-        throw NotImplementedException()
+        throw NotImplementedError()
     }
 }
 
@@ -157,7 +156,7 @@ class DbDateTime : DbPrimitiveType<DateTime>() {
     override fun toStringValue(value: DateTime): String = "'${dateTimeFormat.print(value)}'"
 
     override fun toArray(): DbArrayType<DateTime> {
-        throw NotImplementedException()
+        throw NotImplementedError()
 //        return DbArrayDateTime()
     }
 }

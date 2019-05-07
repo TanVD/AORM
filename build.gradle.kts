@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
@@ -18,18 +19,28 @@ dependencies {
     api("joda-time", "joda-time", "2.9.9")
     api("org.slf4j", "slf4j-api", "1.7.25")
 
-    testCompile("org.testng", "testng", "6.11")
-    testCompile("org.mockito", "mockito-all", "1.10.19")
-    testCompile("org.powermock", "powermock-mockito-release-full", "1.6.4")
+
+    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
+    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
+
     testCompile("org.testcontainers", "testcontainers", "1.11.2")
+    testCompile("org.testcontainers", "junit-jupiter", "1.11.2")
 }
 
-(tasks["test"] as Test).apply {
-    systemProperty("clickhouseUrl", System.getenv("clickhouseUrl"))
-    systemProperty("clickhouseUser", System.getenv("clickhouseUser"))
-    systemProperty("clickhousePassword", System.getenv("clickhousePassword"))
+tasks.withType<KotlinJvmCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+    }
+}
 
-    useTestNG()
+tasks.withType<Test> {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 publishJar {

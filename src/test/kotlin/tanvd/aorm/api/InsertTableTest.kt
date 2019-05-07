@@ -1,7 +1,7 @@
 package tanvd.aorm.api
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.query.eq
 import tanvd.aorm.query.where
 import tanvd.aorm.utils.*
@@ -103,7 +103,7 @@ class InsertTableTest : AormTestBase() {
             }
 
             val select = ExampleTable.select() where (ExampleTable.value eq "value")
-            Assert.assertTrue(select.toResult().isEmpty())
+            Assertions.assertTrue(select.toResult().isEmpty())
         }
     }
 }

@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.table
 
-import org.testng.annotations.BeforeMethod
-import org.testng.annotations.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import tanvd.aorm.*
 import tanvd.aorm.expression.default
 import tanvd.aorm.implementation.TableClickhouse
@@ -9,7 +9,7 @@ import tanvd.aorm.utils.*
 
 class EngineClickhouseTest : AormTestBase() {
 
-    @BeforeMethod
+    @BeforeEach
     fun resetTables() {
         tryRun {
             TableClickhouse.drop(database, MergeTreeTable)

@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.exceptions.BasicDbException
 import tanvd.aorm.insert.InsertExpression
 import tanvd.aorm.query.eq
@@ -37,7 +37,7 @@ class InsertClickhouseTest : AormTestBase() {
             return
         }
 
-        Assert.fail()
+        Assertions.fail<Nothing>()
     }
 
     @Test
@@ -54,7 +54,7 @@ class InsertClickhouseTest : AormTestBase() {
             val rowGot = prepareSelectRow(mapOf(ExampleTable.id to 1L, ExampleTable.value to "value",
                     ExampleTable.date to getDate("2000-01-01"),
                     ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
-            Assert.assertEquals(select.toResult().single(), rowGot)
+            Assertions.assertEquals(select.toResult().single(), rowGot)
         }
     }
 
@@ -101,7 +101,7 @@ class InsertClickhouseTest : AormTestBase() {
                             ExampleTable.arrayValue to listOf("array1", "array2")).toMutableMap())
             )
             val select = ExampleTable.select() where (ExampleTable.id eq 1L)
-            Assert.assertEquals(select.toResult().toSet(), gotRows.toSet())
+            Assertions.assertEquals(select.toResult().toSet(), gotRows.toSet())
         }
     }
 
@@ -115,7 +115,7 @@ class InsertClickhouseTest : AormTestBase() {
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
-            Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-02-02', 3," +
+            Assertions.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-02-02', 3," +
                     " 'value', ['array1', 'array2']);")
         }
     }
@@ -134,7 +134,7 @@ class InsertClickhouseTest : AormTestBase() {
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
-            Assert.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-01-01', 2, 'value', ['array1', 'array2']), ('2000-02-02', 3, 'value', ['array1', 'array2']);")
+            Assertions.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-01-01', 2, 'value', ['array1', 'array2']), ('2000-02-02', 3, 'value', ['array1', 'array2']);")
         }
     }
 }

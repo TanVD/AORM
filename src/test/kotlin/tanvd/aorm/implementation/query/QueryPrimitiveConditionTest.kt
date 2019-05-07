@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.query
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.*
 import tanvd.aorm.utils.AormTestBase
@@ -16,7 +16,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id = 1) ;")
         }
     }
@@ -28,7 +28,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id < 1) ;")
         }
     }
@@ -40,7 +40,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id <= 1) ;")
         }
     }
@@ -52,7 +52,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id > 1) ;")
         }
     }
@@ -64,7 +64,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id >= 1) ;")
         }
     }
@@ -76,7 +76,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id between 1 and 2) ;")
         }
     }
@@ -89,7 +89,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (value LIKE 'string') ;")
         }
     }
@@ -101,7 +101,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (match(value, 'string')) ;")
         }
     }
@@ -113,7 +113,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (id in (1, 2)) ;")
         }
     }
@@ -125,7 +125,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
                     " ExampleTable WHERE (false) ;")
         }
     }

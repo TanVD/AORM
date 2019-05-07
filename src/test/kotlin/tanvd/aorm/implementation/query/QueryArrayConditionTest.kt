@@ -1,7 +1,7 @@
 package tanvd.aorm.implementation.query
 
-import org.testng.Assert
-import org.testng.annotations.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import tanvd.aorm.implementation.QueryClickhouse
 import tanvd.aorm.query.*
 import tanvd.aorm.utils.AormTestBase
@@ -16,7 +16,7 @@ class QueryArrayConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM ExampleTable" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM ExampleTable" +
                     " WHERE (arrayExists(x -> (x = 'value'), string_array)) ;")
         }
     }
@@ -28,7 +28,7 @@ class QueryArrayConditionTest : AormTestBase() {
             val query = ExampleTable.select() where expression
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assert.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM ExampleTable" +
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM ExampleTable" +
                     " WHERE (has(string_array, 'value')) ;")
         }
     }
