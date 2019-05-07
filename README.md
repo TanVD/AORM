@@ -1,5 +1,6 @@
 # AORM
 
+[![CircleCI](https://circleci.com/gh/TanVD/AORM.svg?style=svg)](https://circleci.com/gh/TanVD/AORM)
 [ ![Download](https://api.bintray.com/packages/tanvd/aorm/aorm/images/download.svg) ](https://bintray.com/tanvd/aorm/aorm/_latestVersion)
 
 AORM is analytical SQL framework. Basically, it is a fork of [Exposed SQL framework](https://github.com/JetBrains/Exposed) for ClickHouse database dialect.

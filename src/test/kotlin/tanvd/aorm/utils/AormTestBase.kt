@@ -23,12 +23,8 @@ abstract class AormTestBase {
     }
 
     val database by lazy {
-        Database("default",
-                ClickHouseDataSource("jdbc:clickhouse://localhost:${localstack.getMappedPort(8123)}",
-                        ClickHouseProperties().apply {
-                            user = System.getProperty("clickhouseUser")?.takeIf(String::isNotBlank) ?: "default"
-                            password = System.getProperty("clickhousePassword")?.takeIf(String::isNotBlank) ?: ""
-                        }))
+        Database("default", ClickHouseDataSource("jdbc:clickhouse://localhost:${localstack.getMappedPort(containerPort)}",
+                ClickHouseProperties().withCredentials("default", "")))
     }
 
     val insertWorker by lazy {

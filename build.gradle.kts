@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.52")
+    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.50")
     api("joda-time", "joda-time", "2.9.9")
     api("org.slf4j", "slf4j-api", "1.7.25")
 
