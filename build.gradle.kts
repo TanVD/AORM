@@ -4,21 +4,19 @@ group = "tanvd.aorm"
 version = "1.2.0-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.3.21" apply true
-    id("tanvd.kosogor") version "1.0.4"
+    kotlin("jvm") version "1.3.31" apply true
+    id("tanvd.kosogor") version "1.0.5"
 }
 
 repositories {
     jcenter()
-    maven("https://dl.bintray.com/jfrog/jfrog-jars")
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.21")
-    compile("org.jetbrains.kotlin", "kotlin-reflect", "1.3.21")
-    compile("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.52")
-    compile("joda-time", "joda-time", "2.9.9")
-    compile("org.slf4j", "slf4j-api", "1.7.25")
+    api(kotlin("stdlib"))
+    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.52")
+    api("joda-time", "joda-time", "2.9.9")
+    api("org.slf4j", "slf4j-api", "1.7.25")
 
     testCompile("org.testng", "testng", "6.11")
     testCompile("org.mockito", "mockito-all", "1.10.19")
