@@ -1,19 +1,17 @@
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    machine:
+      enabled: true
     working_directory: ~
     steps:
-      - setup_remote_docker
       - checkout
-      - run: ./gradlew build
+      - run: ./gradlew build --stacktrace
   release:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    machine:
+      enabled: true
     working_directory: ~
     steps:
-      - setup_remote_docker
       - checkout
       - run: ./gradlew bintrayUpload
 workflows:
