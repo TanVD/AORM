@@ -47,16 +47,8 @@ publishJar {
         artifactId = "aorm"
     }
 
-    artifactory {
-        serverUrl = "https://oss.jfrog.org/artifactory"
-        repository = "oss-snapshot-local"
-        username = "tanvd"
-        secretKey = System.getenv("artifactory_api_key")
-    }
-
     bintray {
         username = "tanvd"
-        secretKey = System.getenv("bintray_api_key")
         repository = "aorm"
         info {
             githubRepo = "tanvd/aorm"
