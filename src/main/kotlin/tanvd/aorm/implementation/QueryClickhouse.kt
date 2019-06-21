@@ -44,13 +44,17 @@ object QueryClickhouse {
     private fun preconstructQuery(query: Query): PreparedSqlResult {
         val valuesToSet = ArrayList<Pair<DbType<Any>, Any>>()
         val sql = buildString {
-            append("SELECT ${query.expressions.joinToString {
+            append("SELECT ")
+            if (query.withDistinct)
+                append("DISTINCT ")
+            query.expressions.joinTo(this) {
                 if (query.from == (it as? AliasedExpression<*, *, *>)?.materializedInView) {
                     it.toQueryQualifier()
                 } else {
                     it.toSelectListDef()
                 }
-            }} FROM ${query.from} ")
+            }
+            append(" FROM ${query.from} ")
             query.prewhereSection?.let { section ->
                 val result = section.toSqlPreparedDef()
                 append("PREWHERE ${result.sql} ")

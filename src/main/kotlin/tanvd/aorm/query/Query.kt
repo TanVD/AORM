@@ -4,6 +4,7 @@ import tanvd.aorm.DbType
 import tanvd.aorm.expression.Expression
 
 class Query(val from: String, var expressions: Set<Expression<*, DbType<*>>>) {
+    internal var withDistinct : Boolean = false
     var whereSection: QueryExpression? = null
     var prewhereSection: QueryExpression? = null
     var groupBySection: GroupByExpression? = null
@@ -12,6 +13,8 @@ class Query(val from: String, var expressions: Set<Expression<*, DbType<*>>>) {
 }
 
 //Helper functions
+fun Query.distinct() = apply { withDistinct = true }
+
 infix fun Query.where(expression: QueryExpression): Query {
     whereSection = expression
     return this
