@@ -71,11 +71,16 @@ abstract class Table(name: String) {
 
     //int64
     fun int64(name: String) = registerColumn(Column(name, DbInt64(), this))
-
     fun arrayInt64(name: String) = registerColumn(Column(name, DbArrayInt64(), this))
 
     fun uint64(name: String) = registerColumn(Column(name, DbUInt64(), this))
     fun arrayUInt64(name: String) = registerColumn(Column(name, DbArrayUInt64(), this))
+
+    //float
+    fun float32(name: String) = registerColumn(Column(name, DbFloat32(), this))
+    fun arrayFloat32(name: String) = registerColumn(Column(name, DbArrayFloat32(), this))
+    fun float64(name: String) = registerColumn(Column(name, DbFloat64(), this))
+    fun arrayFloat64(name: String) = registerColumn(Column(name, DbArrayFloat64(), this))
 
     //boolean
     fun boolean(name: String) = registerColumn(Column(name, DbBoolean(), this))

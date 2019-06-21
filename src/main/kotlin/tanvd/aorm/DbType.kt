@@ -9,6 +9,8 @@ import java.sql.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction2
+import kotlin.reflect.KFunction3
 
 sealed class DbType<T> {
     abstract val defaultValue: T
@@ -197,12 +199,12 @@ class DbDateTime : DbPrimitiveType<DateTime>() {
 
 //Int primitive types
 
-abstract class DbIntPrimitiveType<T : Number>(val sqlName: String,
-                                              override val defaultValue: T,
-                                              val getByNameFunc: (ResultSet, String) -> T,
-                                              val getByIndexFunc: (ResultSet, Int) -> T,
-                                              val setByIndexFunc: (PreparedStatement, Int, T) -> Unit,
-                                              val getArrayType: () -> DbArrayType<T>) : DbPrimitiveType<T>() {
+abstract class DbNumericPrimitiveType<T : Number>(val sqlName: String,
+                                                  override val defaultValue: T,
+                                                  val getByNameFunc: KFunction2<ResultSet, String, T>,
+                                                  val getByIndexFunc: KFunction2<ResultSet, Int, T>,
+                                                  val setByIndexFunc: KFunction3<PreparedStatement, Int, T, Unit>,
+                                                  val getArrayType: () -> DbArrayType<T>) : DbPrimitiveType<T>() {
     override fun toSqlName(): String = sqlName
 
     override fun getValue(name: String, result: ResultSet) = getByNameFunc(result, name)
@@ -218,37 +220,36 @@ abstract class DbIntPrimitiveType<T : Number>(val sqlName: String,
 
 }
 
-class DbInt8 : DbIntPrimitiveType<Byte>("Int8", 0, { resultSet, name -> resultSet.getByte(name) }, { resultSet, index -> resultSet.getByte(index) },
-        { statement, index, value -> statement.setByte(index, value) }, { DbArrayInt8() })
+class DbInt8 : DbNumericPrimitiveType<Byte>("Int8", 0, ResultSet::getByte, ResultSet::getByte, PreparedStatement::setByte, { DbArrayInt8() })
 
-class DbUInt8 : DbIntPrimitiveType<Byte>("UInt8", 0, { resultSet, name -> resultSet.getByte(name) }, { resultSet, index -> resultSet.getByte(index) },
-        { statement, index, value -> statement.setByte(index, value) }, { DbArrayUInt8() })
+class DbUInt8 : DbNumericPrimitiveType<Byte>("UInt8", 0, ResultSet::getByte, ResultSet::getByte, PreparedStatement::setByte, { DbArrayUInt8() })
 
-class DbInt16 : DbIntPrimitiveType<Short>("Int16", 0, { resultSet, name -> resultSet.getShort(name) }, { resultSet, index -> resultSet.getShort(index) },
-        { statement, index, value -> statement.setShort(index, value) }, { DbArrayInt16() })
+class DbInt16 : DbNumericPrimitiveType<Short>("Int16", 0, ResultSet::getShort, ResultSet::getShort, PreparedStatement::setShort, { DbArrayInt16() })
 
-class DbUInt16 : DbIntPrimitiveType<Short>("UInt16", 0, { resultSet, name -> resultSet.getShort(name) }, { resultSet, index -> resultSet.getShort(index) },
-        { statement, index, value -> statement.setShort(index, value) }, { DbArrayUInt16() })
+class DbUInt16 : DbNumericPrimitiveType<Short>("UInt16", 0, ResultSet::getShort, ResultSet::getShort, PreparedStatement::setShort, { DbArrayInt16() })
 
-class DbInt32 : DbIntPrimitiveType<Int>("Int32", 0, { resultSet, name -> resultSet.getInt(name) }, { resultSet, index -> resultSet.getInt(index) },
-        { statement, index, value -> statement.setInt(index, value) }, { DbArrayInt32() })
+class DbInt32 : DbNumericPrimitiveType<Int>("Int32", 0, ResultSet::getInt,ResultSet::getInt, PreparedStatement::setInt, { DbArrayInt32() })
 
-class DbUInt32 : DbIntPrimitiveType<Int>("UInt32", 0, { resultSet, name -> resultSet.getInt(name) }, { resultSet, index -> resultSet.getInt(index) },
-        { statement, index, value -> statement.setInt(index, value) }, { DbArrayUInt32() })
+class DbUInt32 : DbNumericPrimitiveType<Int>("UInt32", 0, ResultSet::getInt,ResultSet::getInt, PreparedStatement::setInt, { DbArrayInt32() })
 
-class DbInt64 : DbIntPrimitiveType<Long>("Int64", 0, { resultSet, name -> resultSet.getLong(name) }, { resultSet, index -> resultSet.getLong(index) },
-        { statement, index, value -> statement.setLong(index, value) }, { DbArrayInt64() })
+class DbInt64 : DbNumericPrimitiveType<Long>("Int64", 0, ResultSet::getLong, ResultSet::getLong, PreparedStatement::setLong, { DbArrayInt64() })
 
-class DbUInt64 : DbIntPrimitiveType<Long>("UInt64", 0, { resultSet, name -> resultSet.getLong(name) }, { resultSet, index -> resultSet.getLong(index) },
-        { statement, index, value -> statement.setLong(index, value) }, { DbArrayUInt64() })
+class DbUInt64 : DbNumericPrimitiveType<Long>("UInt64", 0, ResultSet::getLong, ResultSet::getLong, PreparedStatement::setLong, { DbArrayInt64() })
+
+class DbFloat32 : DbNumericPrimitiveType<Float>("Float32", 0f, ResultSet::getFloat, ResultSet::getFloat, PreparedStatement::setFloat, { DbArrayFloat32() })
+
+class DbFloat64 : DbNumericPrimitiveType<Double>("Float64", 0.0, ResultSet::getDouble, ResultSet::getDouble, PreparedStatement::setDouble, { DbArrayFloat64() })
 
 //Int array types
 
-abstract class DbIntArrayType<T : Number>(val sqlName: String,
-                                          val getByNameFunc: (ResultSet, String) -> List<T>,
-                                          val getByIndexFunc: (ResultSet, Int) -> List<T>,
-                                          val setByIndexFunc: (PreparedStatement, Int, List<T>) -> Unit,
-                                          val getPrimitiveType: () -> DbPrimitiveType<T>) : DbArrayType<T>() {
+abstract class DbNumericArrayType<T : Number>(val sqlName: String,
+                                              val getByNameFunc: (ResultSet, String) -> List<T>,
+                                              val getByIndexFunc: (ResultSet, Int) -> List<T>,
+                                              val getPrimitiveType: () -> DbPrimitiveType<T>,
+                                              @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+                                              val setByIndexFunc: (PreparedStatement, Int, List<T>) -> Unit = { statement, index, value ->
+                                                  statement.setArray(index, statement.connection.createArrayOf(sqlName, (value as java.util.Collection<*>).toArray()))
+                                              }) : DbArrayType<T>() {
     override fun toSqlName(): String = sqlName
 
     override fun getValue(name: String, result: ResultSet) = getByNameFunc(result, name)
@@ -263,54 +264,56 @@ abstract class DbIntArrayType<T : Number>(val sqlName: String,
     override fun toPrimitive(): DbPrimitiveType<T> = getPrimitiveType()
 }
 
-class DbArrayInt8 : DbIntArrayType<Byte>("Array(Int8)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toByte() }.toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toByte() }.toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(Int8)", value.toTypedArray())) },
+class DbArrayInt8 : DbNumericArrayType<Byte>("Array(Int8)",
+        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toByte() } },
+        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toByte() } },
         { DbInt8() })
 
-class DbArrayUInt8 : DbIntArrayType<Byte>("Array(UInt8)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toByte() }.toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toByte() }.toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(UInt8)", value.toTypedArray())) },
+class DbArrayUInt8 : DbNumericArrayType<Byte>("Array(UInt8)",
+        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toByte() } },
+        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toByte() } },
         { DbUInt8() })
 
-class DbArrayInt16 : DbIntArrayType<Short>("Array(Int16)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toShort() }.toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toShort() }.toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(Int16)", value.toTypedArray())) },
+class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
+        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toShort() } },
+        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toShort() } },
         { DbInt16() })
 
-class DbArrayUInt16 : DbIntArrayType<Short>("Array(UInt16)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toShort() }.toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toShort() }.toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(UInt16)", value.toTypedArray())) },
+class DbArrayUInt16 : DbNumericArrayType<Short>("Array(UInt16)",
+        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toShort() } },
+        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toShort() } },
         { DbUInt16() })
 
-class DbArrayInt32 : DbIntArrayType<Int>("Array(Int32)",
+class DbArrayInt32 : DbNumericArrayType<Int>("Array(Int32)",
         { resultSet, name -> (resultSet.getArray(name).array as IntArray).toList() },
         { resultSet, index -> (resultSet.getArray(index).array as IntArray).toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(Int32)", value.toTypedArray())) },
         { DbInt32() })
 
-class DbArrayUInt32 : DbIntArrayType<Int>("Array(UInt32)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toInt() }.toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toInt() }.toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(UInt32)", value.toTypedArray())) },
+class DbArrayUInt32 : DbNumericArrayType<Int>("Array(UInt32)",
+        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toInt() } },
+        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toInt() } },
         { DbUInt32() })
 
-class DbArrayInt64 : DbIntArrayType<Long>("Array(Int64)",
+class DbArrayInt64 : DbNumericArrayType<Long>("Array(Int64)",
         { resultSet, name -> (resultSet.getArray(name).array as LongArray).toList() },
         { resultSet, index -> (resultSet.getArray(index).array as LongArray).toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(Int64)", value.toTypedArray())) },
         { DbInt64() })
 
 @Suppress("UNCHECKED_CAST")
-class DbArrayUInt64 : DbIntArrayType<Long>("Array(UInt64)",
-        { resultSet, name -> (resultSet.getArray(name).array as Array<BigInteger>).map { it.toLong() }.toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as Array<BigInteger>).map { it.toLong() }.toList() },
-        { statement, index, value -> statement.setArray(index, statement.connection.createArrayOf("Array(UInt64)", value.toTypedArray())) },
+class DbArrayUInt64 : DbNumericArrayType<Long>("Array(UInt64)",
+        { resultSet, name -> (resultSet.getArray(name).array as Array<BigInteger>).map { it.toLong() } },
+        { resultSet, index -> (resultSet.getArray(index).array as Array<BigInteger>).map { it.toLong() } },
         { DbUInt64() })
+
+class DbArrayFloat32 : DbNumericArrayType<Float>("Array(Float32)",
+        { resultSet, name -> (resultSet.getArray(name).array as FloatArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as FloatArray).toList() },
+        { DbFloat32() })
+
+class DbArrayFloat64 : DbNumericArrayType<Double>("Array(Float64)",
+        { resultSet, name -> (resultSet.getArray(name).array as DoubleArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as DoubleArray).toList() },
+        { DbFloat64() })
 
 //Boolean
 
