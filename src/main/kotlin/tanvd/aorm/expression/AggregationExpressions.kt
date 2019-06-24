@@ -11,6 +11,13 @@ class Count<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expr
 
 fun <E : Any, T : DbType<E>> count(column: Column<E, T>): Count<E, T> = Count(column)
 
+class Max<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expression<E, T>(expression.type) {
+    override fun toSelectListDef(): String = "MAX(${expression.toQueryQualifier()})"
+    override fun toQueryQualifier(): String = "MAX(${expression.toQueryQualifier()})"
+}
+
+fun <E : Any, T : DbType<E>> max(column: Expression<E, T>) = Max(column)
+
 //ArgMax (State and Merge)
 class ArgMaxState<E : Number, out T : DbNumericPrimitiveType<E>, Y : Any, Z : DbType<Y>>(val argExpression: Expression<E, T>, val valExpression: Expression<Y, Z>, type: Z) : Expression<Y, Z>(type) {
     override fun toSelectListDef(): String = "argMaxState(${argExpression.toQueryQualifier()}, ${valExpression.toQueryQualifier()})"
