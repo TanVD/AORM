@@ -1,6 +1,12 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.5 - 26 June 2019
+### Updated
+- Support of Float types
+- Support of Distinct
+- Support of Max function and Divide operator
+
 ## 1.1.4 - 7 May 2019
 ### Updated
 - Update kotlin version to `1.3.31`
