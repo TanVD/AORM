@@ -5,8 +5,8 @@ group = "tanvd.aorm"
 version = "1.1.6-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.3.31" apply true
-    id("tanvd.kosogor") version "1.0.6"
+    kotlin("jvm") version "1.3.61" apply true
+    id("tanvd.kosogor") version "1.0.7"
 }
 
 repositories {
@@ -15,15 +15,15 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.1.50")
-    api("joda-time", "joda-time", "2.9.9")
+    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.2.3")
+    api("joda-time", "joda-time", "2.10.5")
     api("org.slf4j", "slf4j-api", "1.7.25")
 
-    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
-    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
+    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.6.0")
+    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.6.0")
 
-    testCompile("org.testcontainers", "testcontainers", "1.11.2")
-    testCompile("org.testcontainers", "junit-jupiter", "1.11.2")
+    testCompile("org.testcontainers", "testcontainers", "1.12.5")
+    testCompile("org.testcontainers", "junit-jupiter", "1.12.5")
 }
 
 tasks.withType<KotlinJvmCompile> {

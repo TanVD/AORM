@@ -271,7 +271,7 @@ class DbArrayInt8 : DbNumericArrayType<Byte>("Array(Int8)",
 
 class DbArrayUInt8 : DbNumericArrayType<Byte>("Array(UInt8)",
         { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toByte() } },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toByte() } },
+        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toByte() } },
         { DbUInt8() })
 
 class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
@@ -281,7 +281,7 @@ class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
 
 class DbArrayUInt16 : DbNumericArrayType<Short>("Array(UInt16)",
         { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toShort() } },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toShort() } },
+        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toShort() } },
         { DbUInt16() })
 
 class DbArrayInt32 : DbNumericArrayType<Int>("Array(Int32)",
@@ -350,9 +350,7 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
     }
 
     override fun getValue(index: Int, result: ResultSet): List<Boolean> {
-        return (result.getArray(index).array as LongArray).map {
-            it.toInt() == 1
-        }
+        return (result.getArray(index).array as IntArray).map { it == 1 }
     }
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Boolean>) {
