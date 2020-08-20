@@ -1,6 +1,11 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.6 - 20 August 2020
+### Updated
+- Update kotlin version to `1.4.0`
+- Update jdbc driver to `0.2.4`
+
 ## 1.1.5 - 26 June 2019
 ### Updated
 - Support of Float types
