@@ -1,6 +1,12 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.7 - 20 August 2020
+### Updated
+- Update kotlin version to `1.4.10`
+### Added
+- Added support of decimal64 and arrayDecimal64 types
+
 ## 1.1.6 - 20 August 2020
 ### Updated
 - Update kotlin version to `1.4.0`
