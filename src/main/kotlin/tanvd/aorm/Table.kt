@@ -82,6 +82,10 @@ abstract class Table(name: String) {
     fun float64(name: String) = registerColumn(Column(name, DbFloat64(), this))
     fun arrayFloat64(name: String) = registerColumn(Column(name, DbArrayFloat64(), this))
 
+    //decimal
+    fun decimal64(name: String, scale: Int) = registerColumn(Column(name, DbDecimal(64, scale), this))
+    fun arrayDecimal64(name: String, scale: Int) = registerColumn(Column(name, DbArrayDecimal(64, scale), this))
+
     //boolean
     fun boolean(name: String) = registerColumn(Column(name, DbBoolean(), this))
 

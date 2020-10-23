@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import ru.yandex.clickhouse.ClickHouseUtil
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.sql.*
 import java.text.SimpleDateFormat
@@ -240,6 +241,10 @@ class DbFloat32 : DbNumericPrimitiveType<Float>("Float32", 0f, ResultSet::getFlo
 
 class DbFloat64 : DbNumericPrimitiveType<Double>("Float64", 0.0, ResultSet::getDouble, ResultSet::getDouble, PreparedStatement::setDouble, { DbArrayFloat64() })
 
+class DbDecimal(val bit: Int, val scale: Int) : DbNumericPrimitiveType<BigDecimal>(
+    "Decimal$bit($scale)", BigDecimal.ZERO, ResultSet::getBigDecimal, ResultSet::getBigDecimal, PreparedStatement::setBigDecimal, { DbArrayDecimal(bit, scale) }
+)
+
 //Int array types
 
 abstract class DbNumericArrayType<T : Number>(val sqlName: String,
@@ -314,6 +319,11 @@ class DbArrayFloat64 : DbNumericArrayType<Double>("Array(Float64)",
         { resultSet, name -> (resultSet.getArray(name).array as DoubleArray).toList() },
         { resultSet, index -> (resultSet.getArray(index).array as DoubleArray).toList() },
         { DbFloat64() })
+
+class DbArrayDecimal(private val bit: Int, val scale: Int) : DbNumericArrayType<BigDecimal>("Array(Decimal$bit($scale))",
+    { resultSet, name -> (resultSet.getArray(name).array as Array<BigDecimal>).toList() },
+    { resultSet, index -> (resultSet.getArray(index).array as Array<BigDecimal>).toList() },
+    { DbDecimal(bit, scale) })
 
 //Boolean
 

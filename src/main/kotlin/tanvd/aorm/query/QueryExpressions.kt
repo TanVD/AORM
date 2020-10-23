@@ -4,6 +4,12 @@ import tanvd.aorm.*
 import tanvd.aorm.expression.*
 
 sealed class QueryExpression {
+    protected fun preparePlaceholderForType(type: DbType<*>?) : String {
+        return if (type is DbDecimal) {
+            "toDecimal${type.bit}(?, ${type.scale})"
+        } else
+            "?"
+    }
     abstract fun toSqlPreparedDef(): PreparedSqlResult
 }
 
@@ -38,8 +44,9 @@ class NotQueryExpression(expression: QueryExpression) : UnaryQueryExpression(exp
 sealed class InfixConditionQueryExpression<E : Any, out T : DbType<E>, Y : Any>(val expression: Expression<E, T>, val value: Y,
                                                                                 val type: DbType<Y>, val op: String) : QueryExpression() {
     override fun toSqlPreparedDef(): PreparedSqlResult {
+        val paramPlaceholder = preparePlaceholderForType(type)
         @Suppress("UNCHECKED_CAST")
-        return PreparedSqlResult("(${expression.toQueryQualifier()} $op ?)", listOf((type to value) as Pair<DbType<Any>, Any>))
+        return PreparedSqlResult("(${expression.toQueryQualifier()} $op $paramPlaceholder)", listOf((type to value) as Pair<DbType<Any>, Any>))
     }
 }
 
@@ -50,8 +57,9 @@ sealed class PrefixConditionQueryExpression<E : Any, out T : DbType<E>>(val expr
     constructor(expression: Expression<E, T>, op: String, vararg typeToValue: Pair<DbType<*>, *>) : this(expression, op, typeToValue.toList())
 
     override fun toSqlPreparedDef(): PreparedSqlResult {
+        val paramPlaceholder = preparePlaceholderForType(typeToValue.singleOrNull()?.first)
         @Suppress("UNCHECKED_CAST")
-        return PreparedSqlResult("($op(${expression.toQueryQualifier()}, ?))", typeToValue as List<Pair<DbType<Any>, Any>>)
+        return PreparedSqlResult("($op(${expression.toQueryQualifier()}, $paramPlaceholder))", typeToValue as List<Pair<DbType<Any>, Any>>)
     }
 }
 
