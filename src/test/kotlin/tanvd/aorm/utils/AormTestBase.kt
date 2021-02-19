@@ -17,13 +17,13 @@ abstract class AormTestBase {
         private const val containerPort = 8123
 
         @Container
-        private val localstack = KGenericContainer("yandex/clickhouse-server:21.1")
+        val serverContainer: KGenericContainer = KGenericContainer("yandex/clickhouse-server:21.1")
                 .withExposedPorts(containerPort)
                 .apply { start() }
     }
 
     val database by lazy {
-        Database("default", ClickHouseDataSource("jdbc:clickhouse://localhost:${localstack.getMappedPort(containerPort)}",
+        Database("default", ClickHouseDataSource("jdbc:clickhouse://localhost:${serverContainer.getMappedPort(containerPort)}",
                 ClickHouseProperties().withCredentials("default", "")))
     }
 

@@ -83,6 +83,10 @@ class TypesTest : AormTestBase() {
 
             InsertClickhouse.insert(database, InsertExpression(AllTypesTable, AllTypesTable.columns, arrayListOf(row)))
 
+            // we need to disable query parser stack limitation for tests, so we add line "<max_parser_depth>0</max_parser_depth>" to the config:
+            serverContainer.execInContainer("sed", "-i", "/^.*\\<max_memory_usage\\>.*/a \\<max_parser_depth\\>0\\<\\/max_parser_depth\\>", "/etc/clickhouse-server/users.xml")
+            Thread.sleep(1000)  // wait for server to reload just changed config
+
             val gotRow = (AllTypesTable.select() where ((AllTypesTable.dateCol eq getDate("2000-01-01")) and
                     //TODO-tanvd date has not working in JDBC
 //                    (AllTypesTable.arrayDateCol has getDate("2001-01-01")) and
