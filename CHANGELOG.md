@@ -1,7 +1,12 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## 1.1.7 - 20 August 2020
+## 1.1.8 - 19 February 2021
+### Updated
+- Update kotlin version to `1.4.30`
+- Bumped versions of other dependencies
+
+## 1.1.7 - 23 October 2020
 ### Updated
 - Update kotlin version to `1.4.10`
 ### Added
