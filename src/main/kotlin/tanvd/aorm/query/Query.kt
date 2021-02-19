@@ -10,6 +10,7 @@ class Query(val from: String, var expressions: Set<Expression<*, DbType<*>>>) {
     var groupBySection: GroupByExpression? = null
     var orderBySection: OrderByExpression? = null
     var limitSection: LimitExpression? = null
+    var settings: SettingsExpression? = null
 }
 
 //Helper functions
@@ -37,5 +38,10 @@ infix fun Query.orderBy(expression: OrderByExpression): Query {
 
 infix fun Query.limit(expression: LimitExpression): Query {
     limitSection = expression
+    return this
+}
+
+fun Query.withSettings(vararg settings: Pair<String, String>): Query {
+    this.settings = SettingsExpression(settings.toList())
     return this
 }
