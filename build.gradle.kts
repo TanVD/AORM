@@ -70,7 +70,7 @@ publishJar {
 
     if (artifactoryUploadEnabled) {
         artifactory {
-
+            secretKey = System.getenv("artifactory_api_key")
         }
     }
 }
