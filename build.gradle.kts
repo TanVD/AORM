@@ -9,8 +9,15 @@ plugins {
     id("tanvd.kosogor") version "1.0.10"
 }
 
+val bintrayUploadEnabled = System.getenv("bintray_key") != null
+val artifactoryUploadEnabled = System.getenv("artifactory_url") != null
+
 repositories {
-    jcenter()
+    mavenCentral()
+    if (bintrayUploadEnabled)
+        jcenter()
+    if (artifactoryUploadEnabled)
+        maven(System.getenv("artifactory_url")!!)
 }
 
 dependencies {
@@ -47,15 +54,23 @@ publishJar {
         artifactId = "aorm"
     }
 
-    bintray {
-        username = "tanvd"
-        repository = "aorm"
-        info {
-            githubRepo = "tanvd/aorm"
-            vcsUrl = "https://github.com/tanvd/aorm"
-            labels.addAll(listOf("kotlin", "clickhouse"))
-            license = "MIT"
-            description = "Kotlin SQL Framework for Clickhouse"
+    if (bintrayUploadEnabled) {
+        bintray {
+            username = "tanvd"
+            repository = "aorm"
+            info {
+                githubRepo = "tanvd/aorm"
+                vcsUrl = "https://github.com/tanvd/aorm"
+                labels.addAll(listOf("kotlin", "clickhouse"))
+                license = "MIT"
+                description = "Kotlin SQL Framework for Clickhouse"
+            }
+        }
+    }
+
+    if (artifactoryUploadEnabled) {
+        artifactory {
+
         }
     }
 }
