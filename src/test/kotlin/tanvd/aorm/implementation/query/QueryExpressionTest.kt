@@ -16,7 +16,7 @@ class QueryExpressionTest : AormTestBase() {
             val query = ExampleTable.select(count(ExampleTable.id))
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assertions.assertEquals(sql, "SELECT COUNT(${ExampleTable.id.name}) FROM ExampleTable ;")
+            Assertions.assertEquals(sql, "SELECT COUNT(${ExampleTable.id.name}) FROM ExampleTable")
         }
     }
 
@@ -26,7 +26,7 @@ class QueryExpressionTest : AormTestBase() {
             val query = ExampleTable.select(maxState(ExampleTable.id)).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assertions.assertEquals(sql, "SELECT maxState(${ExampleTable.id.name}) FROM ExampleTable GROUP BY id ;")
+            Assertions.assertEquals(sql, "SELECT maxState(${ExampleTable.id.name}) FROM ExampleTable GROUP BY id")
         }
     }
 
@@ -37,7 +37,7 @@ class QueryExpressionTest : AormTestBase() {
             val query = ExampleTable.select(maxMerge(maxState(ExampleTable.id))).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assertions.assertEquals(sql, "SELECT maxMerge(maxState(${ExampleTable.id.name})) FROM ExampleTable GROUP BY id ;")
+            Assertions.assertEquals(sql, "SELECT maxMerge(maxState(${ExampleTable.id.name})) FROM ExampleTable GROUP BY id")
         }
     }
 
@@ -47,7 +47,7 @@ class QueryExpressionTest : AormTestBase() {
             val query = ExampleTable.select(argMaxState(ExampleTable.id, ExampleTable.value)).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assertions.assertEquals(sql, "SELECT argMaxState(${ExampleTable.id.name}, ${ExampleTable.value.name}) FROM ExampleTable GROUP BY id ;")
+            Assertions.assertEquals(sql, "SELECT argMaxState(${ExampleTable.id.name}, ${ExampleTable.value.name}) FROM ExampleTable GROUP BY id")
         }
     }
 
@@ -58,7 +58,7 @@ class QueryExpressionTest : AormTestBase() {
             val query = ExampleTable.select(argMaxMerge(argMaxState(ExampleTable.id, ExampleTable.value))).groupBy(ExampleTable.id)
 
             val sql = QueryClickhouse.constructQuery(query)
-            Assertions.assertEquals(sql, "SELECT argMaxMerge(argMaxState(${ExampleTable.id.name}, ${ExampleTable.value.name})) FROM ExampleTable GROUP BY id ;")
+            Assertions.assertEquals(sql, "SELECT argMaxMerge(argMaxState(${ExampleTable.id.name}, ${ExampleTable.value.name})) FROM ExampleTable GROUP BY id")
         }
     }
 }

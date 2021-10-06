@@ -36,12 +36,12 @@ object InsertClickhouse {
 
     fun constructInsert(insert: InsertExpression): String {
         return "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
-                "${insert.values.joinToString { row ->
+                insert.values.joinToString { row ->
                     insert.columns.joinToString(prefix = "(", postfix = ")") {
                         @Suppress("UNCHECKED_CAST")
                         val value = row[it as Column<Any, DbType<Any>>] ?: it.defaultValueResolved()
                         it.toStringValue(value)
                     }
-                }};"
+                }
     }
 }

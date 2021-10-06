@@ -17,7 +17,7 @@ class QueryOperatorTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE ((id = 1) AND (value = 'string')) ;")
+                    " ExampleTable WHERE ((id = 1) AND (value = 'string'))")
         }
     }
 
@@ -29,7 +29,7 @@ class QueryOperatorTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE ((id = 1) OR (value = 'string')) ;")
+                    " ExampleTable WHERE ((id = 1) OR (value = 'string'))")
         }
     }
 
@@ -41,7 +41,7 @@ class QueryOperatorTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (NOT (id = 1)) ;")
+                    " ExampleTable WHERE (NOT (id = 1))")
         }
     }
 }

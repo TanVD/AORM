@@ -116,7 +116,7 @@ class InsertClickhouseTest : AormTestBase() {
             val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, arrayListOf(row)))
 
             Assertions.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-02-02', 3," +
-                    " 'value', ['array1', 'array2']);")
+                    " 'value', ['array1', 'array2'])")
         }
     }
 
@@ -134,7 +134,7 @@ class InsertClickhouseTest : AormTestBase() {
 
             val sql = InsertClickhouse.constructInsert(InsertExpression(ExampleTable, ExampleTable.columns, rows))
 
-            Assertions.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-01-01', 2, 'value', ['array1', 'array2']), ('2000-02-02', 3, 'value', ['array1', 'array2']);")
+            Assertions.assertEquals(sql, "INSERT INTO ExampleTable (date, id, value, string_array) VALUES ('2000-01-01', 2, 'value', ['array1', 'array2']), ('2000-02-02', 3, 'value', ['array1', 'array2'])")
         }
     }
 }

@@ -17,7 +17,7 @@ class QueryArrayConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM ExampleTable" +
-                    " WHERE (arrayExists(x -> (x = 'value'), string_array)) ;")
+                    " WHERE (arrayExists(x -> (x = 'value'), string_array))")
         }
     }
 
@@ -29,7 +29,7 @@ class QueryArrayConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM ExampleTable" +
-                    " WHERE (has(string_array, 'value')) ;")
+                    " WHERE (has(string_array, 'value'))")
         }
     }
 

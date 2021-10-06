@@ -77,7 +77,6 @@ object QueryClickhouse {
             query.settings?.let { section ->
                 append("SETTINGS ${section.settings.joinToString { "${it.first} = ${it.second}" }}")
             }
-            append(";")
         }
         return PreparedSqlResult(sql, valuesToSet)
     }

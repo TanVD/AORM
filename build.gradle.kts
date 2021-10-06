@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.8"
+version = "1.1.9"
 
 plugins {
-    kotlin("jvm") version "1.4.30" apply true
+    kotlin("jvm") version "1.5.31" apply true
     id("tanvd.kosogor") version "1.0.10"
 }
 
@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.2.6")
+    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.3.1-patch")
     api("joda-time", "joda-time", "2.10.8")
     api("org.slf4j", "slf4j-api", "1.7.30")
 
@@ -36,8 +36,8 @@ dependencies {
 tasks.withType<KotlinJvmCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.4"
-        apiVersion = "1.4"
+        languageVersion = "1.5"
+        apiVersion = "1.5"
     }
 }
 
