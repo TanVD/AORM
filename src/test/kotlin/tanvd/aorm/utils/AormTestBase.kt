@@ -1,6 +1,7 @@
 package tanvd.aorm.utils
 
 import org.junit.jupiter.api.BeforeEach
+import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import ru.yandex.clickhouse.ClickHouseDataSource
@@ -14,17 +15,15 @@ import tanvd.aorm.insert.DefaultInsertWorker
 abstract class AormTestBase {
     companion object {
         const val testInsertWorkerDelayMs = 2000L
-        private const val containerPort = 8123
 
         @Container
-        val serverContainer: KGenericContainer = KGenericContainer("yandex/clickhouse-server:21.1")
-                .withExposedPorts(containerPort)
-                .apply { start() }
+        val serverContainer = ClickHouseContainer("yandex/clickhouse-server:21.1").apply { start() }
     }
 
     val database by lazy {
-        Database("default", ClickHouseDataSource("jdbc:clickhouse://localhost:${serverContainer.getMappedPort(containerPort)}",
-                ClickHouseProperties().withCredentials("default", "")))
+        Database("default", ClickHouseDataSource(serverContainer.jdbcUrl,
+                ClickHouseProperties().withCredentials(serverContainer.username, serverContainer.password)
+        ))
     }
 
     val insertWorker by lazy {
