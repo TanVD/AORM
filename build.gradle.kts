@@ -28,7 +28,6 @@ dependencies {
 
     testImplementation("org.testcontainers", "testcontainers", "1.16.0")
     testImplementation("org.testcontainers", "clickhouse", "1.16.0")
-    testImplementation("org.testcontainers", "junit-jupiter", "1.16.0")
 }
 
 tasks.withType<KotlinJvmCompile> {
