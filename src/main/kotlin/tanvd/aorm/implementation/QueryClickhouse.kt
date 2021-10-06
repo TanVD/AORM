@@ -54,28 +54,28 @@ object QueryClickhouse {
                     it.toSelectListDef()
                 }
             }
-            append(" FROM ${query.from} ")
+            append(" FROM ${query.from}")
             query.prewhereSection?.let { section ->
                 val result = section.toSqlPreparedDef()
-                append("PREWHERE ${result.sql} ")
+                append(" PREWHERE ${result.sql}")
                 valuesToSet += result.data
             }
             query.whereSection?.let { section ->
                 val result = section.toSqlPreparedDef()
-                append("WHERE ${result.sql} ")
+                append(" WHERE ${result.sql}")
                 valuesToSet += result.data
             }
             query.groupBySection?.let { section ->
-                append("GROUP BY ${section.columns.joinToString { it.toQueryQualifier() }} ")
+                append(" GROUP BY ${section.columns.joinToString { it.toQueryQualifier() }}")
             }
             query.orderBySection?.let { section ->
-                append("ORDER BY ${section.map.toList().joinToString { "${it.first.toQueryQualifier()} ${it.second}" }} ")
+                append(" ORDER BY ${section.map.toList().joinToString { "${it.first.toQueryQualifier()} ${it.second}" }}")
             }
             query.limitSection?.let { section ->
-                append("LIMIT ${section.offset}, ${query.limitSection!!.limit} ")
+                append(" LIMIT ${section.offset}, ${query.limitSection!!.limit}")
             }
             query.settings?.let { section ->
-                append("SETTINGS ${section.settings.joinToString { "${it.first} = ${it.second}" }}")
+                append(" SETTINGS ${section.settings.joinToString { "${it.first} = ${it.second}" }}")
             }
         }
         return PreparedSqlResult(sql, valuesToSet)

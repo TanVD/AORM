@@ -17,7 +17,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id = 1) ")
+                    " ExampleTable WHERE (id = 1)")
         }
     }
 
@@ -29,7 +29,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id < 1) ")
+                    " ExampleTable WHERE (id < 1)")
         }
     }
 
@@ -41,7 +41,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id <= 1) ")
+                    " ExampleTable WHERE (id <= 1)")
         }
     }
 
@@ -53,7 +53,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id > 1) ")
+                    " ExampleTable WHERE (id > 1)")
         }
     }
 
@@ -65,7 +65,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id >= 1) ")
+                    " ExampleTable WHERE (id >= 1)")
         }
     }
 
@@ -77,7 +77,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id between 1 and 2) ")
+                    " ExampleTable WHERE (id between 1 and 2)")
         }
     }
 
@@ -90,7 +90,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (value LIKE 'string') ")
+                    " ExampleTable WHERE (value LIKE 'string')")
         }
     }
 
@@ -102,7 +102,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (match(value, 'string')) ")
+                    " ExampleTable WHERE (match(value, 'string'))")
         }
     }
 
@@ -114,7 +114,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (id in (1, 2)) ")
+                    " ExampleTable WHERE (id in (1, 2))")
         }
     }
 
@@ -126,7 +126,7 @@ class QueryPrimitiveConditionTest : AormTestBase() {
 
             val sql = QueryClickhouse.constructQuery(query)
             Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
-                    " ExampleTable WHERE (false) ")
+                    " ExampleTable WHERE (false)")
         }
     }
 }
