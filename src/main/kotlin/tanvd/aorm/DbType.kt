@@ -5,9 +5,9 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import ru.yandex.clickhouse.ClickHouseUtil
 import java.math.BigDecimal
-import java.math.BigInteger
 import java.sql.*
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Date
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction2
@@ -120,10 +120,15 @@ class DbArrayDate : DbArrayType<Date>() {
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(name: String, result: ResultSet): List<Date> =
-            (result.getArray(name).array as Array<Date>).toList()
+        (result.getArray(name).array as Array<LocalDate>).map {
+            java.sql.Date.valueOf(it)
+        }
 
     @Suppress("UNCHECKED_CAST")
-    override fun getValue(index: Int, result: ResultSet): List<Date> = (result.getArray(index).array as Array<Date>).toList()
+    override fun getValue(index: Int, result: ResultSet): List<Date> =
+        (result.getArray(index).array as Array<LocalDate>).map {
+            java.sql.Date.valueOf(it)
+        }
 
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Date>) {
@@ -153,7 +158,10 @@ class DbDateTime : DbPrimitiveType<DateTime>() {
     override fun getValue(index: Int, result: ResultSet): DateTime = DateTime(result.getTimestamp(index).time)
 
     override fun setValue(index: Int, statement: PreparedStatement, value: DateTime) {
-        statement.setTimestamp(index, Timestamp(value.millis))
+        val localDateTime = with(value) {
+            java.time.LocalDateTime.of(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute)
+        }
+        statement.setObject(index, localDateTime)
     }
 
     override fun toStringValue(value: DateTime): String = "'${dateTimeFormat.print(value)}'"
@@ -270,22 +278,22 @@ abstract class DbNumericArrayType<T : Number>(val sqlName: String,
 }
 
 class DbArrayInt8 : DbNumericArrayType<Byte>("Array(Int8)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toByte() } },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toByte() } },
+        { resultSet, name -> (resultSet.getArray(name).array as ByteArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as ByteArray).toList() },
         { DbInt8() })
 
 class DbArrayUInt8 : DbNumericArrayType<Byte>("Array(UInt8)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toByte() } },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toByte() } },
+        { resultSet, name -> (resultSet.getArray(name).array as ShortArray).map { it.toByte() } },
+        { resultSet, index -> (resultSet.getArray(index).array as ShortArray).map { it.toByte() } },
         { DbUInt8() })
 
 class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toShort() } },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toShort() } },
+        { resultSet, name -> (resultSet.getArray(name).array as ShortArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as ShortArray).toList() },
         { DbInt16() })
 
 class DbArrayUInt16 : DbNumericArrayType<Short>("Array(UInt16)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toShort() } },
+        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toShort() } },
         { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toShort() } },
         { DbUInt16() })
 
@@ -306,8 +314,8 @@ class DbArrayInt64 : DbNumericArrayType<Long>("Array(Int64)",
 
 @Suppress("UNCHECKED_CAST")
 class DbArrayUInt64 : DbNumericArrayType<Long>("Array(UInt64)",
-        { resultSet, name -> (resultSet.getArray(name).array as Array<BigInteger>).map { it.toLong() } },
-        { resultSet, index -> (resultSet.getArray(index).array as Array<BigInteger>).map { it.toLong() } },
+        { resultSet, name -> (resultSet.getArray(name).array as LongArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as LongArray).toList() },
         { DbUInt64() })
 
 class DbArrayFloat32 : DbNumericArrayType<Float>("Array(Float32)",
@@ -320,6 +328,7 @@ class DbArrayFloat64 : DbNumericArrayType<Double>("Array(Float64)",
         { resultSet, index -> (resultSet.getArray(index).array as DoubleArray).toList() },
         { DbFloat64() })
 
+@Suppress("UNCHECKED_CAST")
 class DbArrayDecimal(private val bit: Int, val scale: Int) : DbNumericArrayType<BigDecimal>("Array(Decimal$bit($scale))",
     { resultSet, name -> (resultSet.getArray(name).array as Array<BigDecimal>).toList() },
     { resultSet, index -> (resultSet.getArray(index).array as Array<BigDecimal>).toList() },
@@ -354,13 +363,11 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
     override fun toSqlName(): String = "Array(UInt8)"
 
     override fun getValue(name: String, result: ResultSet): List<Boolean> {
-        return (result.getArray(name).array as LongArray).map {
-            it.toInt() == 1
-        }
+        return (result.getArray(name).array as ShortArray).map { it== 1.toShort() }
     }
 
     override fun getValue(index: Int, result: ResultSet): List<Boolean> {
-        return (result.getArray(index).array as IntArray).map { it == 1 }
+        return (result.getArray(index).array as ShortArray).map { it == 1.toShort() }
     }
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Boolean>) {

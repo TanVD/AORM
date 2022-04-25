@@ -15,7 +15,7 @@ interface InsertWorker {
 
 class DefaultInsertWorker(val name: String, queueSizeMax: Int = 10000,
                           delayTimeMs: Long = 30 * 1000,
-                          initalDelayTimeMs: Long = delayTimeMs,
+                          initialDelayTimeMs: Long = delayTimeMs,
                           betweenCallsTimeMs: Long = 10 * 1000) : InsertWorker {
 
     private val logger = LoggerFactory.getLogger(DefaultInsertWorker::class.java)
@@ -48,7 +48,7 @@ class DefaultInsertWorker(val name: String, queueSizeMax: Int = 10000,
                 }
                 Thread.sleep(betweenCallsTimeMs)
             }
-        }, initalDelayTimeMs, delayTimeMs, TimeUnit.MILLISECONDS)
+        }, initialDelayTimeMs, delayTimeMs, TimeUnit.MILLISECONDS)
     }
 
     override fun add(db: Database, insertExpression: InsertExpression) {

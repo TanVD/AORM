@@ -5,7 +5,7 @@ group = "tanvd.aorm"
 version = "1.1.10-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.5.31" apply true
+    kotlin("jvm") version "1.5.32" apply true
     id("tanvd.kosogor") version "1.0.12"
 }
 
@@ -19,20 +19,20 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("ru.yandex.clickhouse", "clickhouse-jdbc", "0.3.1-patch")
-    api("joda-time", "joda-time", "2.10.8")
-    api("org.slf4j", "slf4j-api", "1.7.30")
+    api("com.clickhouse", "clickhouse-jdbc", "0.3.2-patch8")
+    api("joda-time", "joda-time", "2.10.14")
+    api("org.slf4j", "slf4j-api", "1.7.32")
 
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.2")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.6.2")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
 
-    testImplementation("org.testcontainers", "testcontainers", "1.16.0")
-    testImplementation("org.testcontainers", "clickhouse", "1.16.0")
+    testImplementation("org.testcontainers", "testcontainers", "1.17.1")
+    testImplementation("org.testcontainers", "clickhouse", "1.17.1")
 }
 
 tasks.withType<KotlinJvmCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         languageVersion = "1.5"
         apiVersion = "1.5"
     }

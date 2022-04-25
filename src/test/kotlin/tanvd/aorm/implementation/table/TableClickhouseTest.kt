@@ -58,7 +58,7 @@ class TableClickhouseTest : AormTestBase() {
         TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
-        Assertions.assertEquals(metadataColumns["new_column"]?.toLowerCase(), DbInt64().toSqlName().toLowerCase())
+        Assertions.assertEquals(metadataColumns["new_column"]?.lowercase(), DbInt64().toSqlName().lowercase())
     }
 
     @Test

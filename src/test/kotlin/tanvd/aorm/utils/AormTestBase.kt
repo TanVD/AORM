@@ -1,19 +1,21 @@
 package tanvd.aorm.utils
 
+import com.clickhouse.client.config.ClickHouseDefaults
+import com.clickhouse.jdbc.ClickHouseDataSource
 import org.junit.jupiter.api.BeforeEach
 import org.testcontainers.containers.ClickHouseContainer
-import ru.yandex.clickhouse.ClickHouseDataSource
-import ru.yandex.clickhouse.settings.ClickHouseProperties
 import tanvd.aorm.*
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import tanvd.aorm.insert.DefaultInsertWorker
+import java.util.*
 
 abstract class AormTestBase {
     companion object {
         const val testInsertWorkerDelayMs = 2000L
 
-        val serverContainer = ClickHouseContainer("yandex/clickhouse-server:21.1").apply {
+        // consider using 'clickhouse/clickhouse-server' after testcontainers version update
+        val serverContainer = ClickHouseContainer("yandex/clickhouse-server:21.1-alpine").apply {
             start()
             // we need to disable query parser stack limitation for tests, so we add line "<max_parser_depth>0</max_parser_depth>" to the config:
             execInContainer("sed", "-i", "/^.*\\<max_memory_usage\\>.*/a \\<max_parser_depth\\>0\\<\\/max_parser_depth\\>", "/etc/clickhouse-server/users.xml")
@@ -22,9 +24,13 @@ abstract class AormTestBase {
     }
 
     val database by lazy {
-        Database("default", ClickHouseDataSource(serverContainer.jdbcUrl,
-                ClickHouseProperties().withCredentials(serverContainer.username, serverContainer.password)
-        ))
+        Database(
+            name = "default",
+            dataSource = ClickHouseDataSource(serverContainer.jdbcUrl, Properties().apply {
+                put(ClickHouseDefaults.USER, serverContainer.username)
+                put(ClickHouseDefaults.PASSWORD, serverContainer.password)
+            })
+        )
     }
 
     val insertWorker by lazy {
@@ -60,5 +66,5 @@ abstract class AormTestBase {
 
 fun tryRun(body: () -> Unit) = try {
     body()
-} catch (e: Throwable) {
+} catch (_: Throwable) {
 }

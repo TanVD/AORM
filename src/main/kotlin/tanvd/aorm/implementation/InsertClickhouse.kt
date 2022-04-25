@@ -11,31 +11,30 @@ import java.sql.PreparedStatement
 object InsertClickhouse {
     fun insert(db: Database, expression: InsertExpression) {
         db.withConnection {
-            constructInsert(expression).use {
-                it.execute()
-            }
+            constructBatchInsert(expression).use(PreparedStatement::executeBatch)
         }
     }
 
-    private fun Connection.constructInsert(insert: InsertExpression): PreparedStatement {
-        val sql = "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
-                insert.values.joinToString { "(${insert.columns.joinToString { "?" }})" }
-        return prepareStatement(sql).let {
-            var index = 1
-            for (row in insert.values) {
-                for (column in insert.columns) {
+    private fun Connection.constructBatchInsert(insert: InsertExpression): PreparedStatement {
+        val columns = insert.columns
+        val sql = "INSERT INTO ${insert.table.name} (${columns.joinToString { it.name }}) VALUES " +
+                "(${columns.joinToString { "?" }})"
+        return prepareStatement(sql).also { statement ->
+            insert.values.forEach { row ->
+                columns.forEachIndexed { index, column ->
+                    val valueIndex = index + 1
+
                     @Suppress("UNCHECKED_CAST")
                     val value = row[column as Column<Any, DbType<Any>>] ?: column.defaultValueResolved()
-                    column.setValue(index, it, value)
-                    index++
+                    column.setValue(valueIndex, statement, value)
                 }
+                statement.addBatch()
             }
-            it
         }
     }
 
-    fun constructInsert(insert: InsertExpression): String {
-        return "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
+    fun constructInsert(insert: InsertExpression): String =
+        "INSERT INTO ${insert.table.name} (${insert.columns.joinToString { it.name }}) VALUES " +
                 insert.values.joinToString { row ->
                     insert.columns.joinToString(prefix = "(", postfix = ")") {
                         @Suppress("UNCHECKED_CAST")
@@ -43,5 +42,4 @@ object InsertClickhouse {
                         it.toStringValue(value)
                     }
                 }
-    }
 }
