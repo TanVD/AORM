@@ -1,6 +1,18 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.10 - 25 April 2022
+### Updated
+- Update kotlin to `1.5.32`
+- Update jdbc driver to `0.3.2-patch8`
+- Bumped versions of other dependencies
+- Change build target to JDK 11
+
+## 1.1.9 - 7 October 2021
+### Updated
+- Update kotlin version to `1.5.31`
+- Update jdbc driver to `0.3.1-patch`
+
 ## 1.1.8 - 19 February 2021
 ### Updated
 - Update kotlin version to `1.4.30`
