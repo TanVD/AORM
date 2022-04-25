@@ -30,6 +30,11 @@ dependencies {
     testImplementation("org.testcontainers", "clickhouse", "1.17.1")
 }
 
+tasks.withType<JavaCompile> {
+    targetCompatibility = "11"
+    sourceCompatibility = "11"
+}
+
 tasks.withType<KotlinJvmCompile> {
     kotlinOptions {
         jvmTarget = "11"

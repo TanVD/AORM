@@ -14,9 +14,9 @@ interface InsertWorker {
 }
 
 class DefaultInsertWorker(val name: String, queueSizeMax: Int = 10000,
-                          delayTimeMs: Long = 30 * 1000,
+                          delayTimeMs: Long = 30L * 1000,
                           initialDelayTimeMs: Long = delayTimeMs,
-                          betweenCallsTimeMs: Long = 10 * 1000) : InsertWorker {
+                          betweenCallsTimeMs: Long = 10L * 1000) : InsertWorker {
 
     private val logger = LoggerFactory.getLogger(DefaultInsertWorker::class.java)
 
