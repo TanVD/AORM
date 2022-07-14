@@ -71,7 +71,7 @@ object MergeTreeTable : Table("MergeTreeTable") {
 
 object CustomMergeTreeTable : Table("CustomMergeTreeTable") {
     val date = date("date")
-    val id = int64("id").default { 1L }
+    val id = uint64("id").default { 1L }
 
     override val engine: Engine.MergeTree = Engine.MergeTree(date, listOf(id), 8192).partitionBy(date).sampleBy(id).orderBy(id)
 }
