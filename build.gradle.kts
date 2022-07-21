@@ -26,8 +26,8 @@ dependencies {
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
 
-    testImplementation("org.testcontainers", "testcontainers", "1.17.1")
-    testImplementation("org.testcontainers", "clickhouse", "1.17.1")
+    testImplementation("org.testcontainers", "testcontainers", "1.17.3")
+    testImplementation("org.testcontainers", "clickhouse", "1.17.3")
 }
 
 tasks.withType<JavaCompile> {
