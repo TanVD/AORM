@@ -1,6 +1,12 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.11 - 30 July 2022
+### Updated
+- Low level plain text SQL queries execution support
+- Fixed DbDateTime to have getValue symmetric to setValue
+- Updated ClickHouse image version
+
 ## 1.1.10 - 25 April 2022
 ### Updated
 - Update kotlin to `1.5.32`
