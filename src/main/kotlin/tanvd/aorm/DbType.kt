@@ -8,6 +8,7 @@ import java.math.BigDecimal
 import java.sql.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction2
@@ -154,12 +155,19 @@ class DbDateTime : DbPrimitiveType<DateTime>() {
 
     override fun toSqlName(): String = "DateTime"
 
-    override fun getValue(name: String, result: ResultSet): DateTime = DateTime(result.getTimestamp(name).time)
-    override fun getValue(index: Int, result: ResultSet): DateTime = DateTime(result.getTimestamp(index).time)
+    private fun localDateTimeToDateTime(localDateTime : LocalDateTime) : DateTime = with(localDateTime) {
+        DateTime(year, monthValue, dayOfMonth, hour, minute, second)
+    }
+
+    override fun getValue(name: String, result: ResultSet): DateTime =
+            localDateTimeToDateTime(result.getObject(name, LocalDateTime::class.java))
+
+    override fun getValue(index: Int, result: ResultSet): DateTime =
+            localDateTimeToDateTime(result.getObject(index, LocalDateTime::class.java))
 
     override fun setValue(index: Int, statement: PreparedStatement, value: DateTime) {
         val localDateTime = with(value) {
-            java.time.LocalDateTime.of(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute)
+            LocalDateTime.of(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute)
         }
         statement.setObject(index, localDateTime)
     }
