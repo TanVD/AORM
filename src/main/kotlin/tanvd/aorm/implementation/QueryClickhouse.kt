@@ -2,20 +2,34 @@ package tanvd.aorm.implementation
 
 import tanvd.aorm.*
 import tanvd.aorm.expression.AliasedExpression
+import tanvd.aorm.expression.Expression
 import tanvd.aorm.query.PreparedSqlResult
 import tanvd.aorm.query.Query
 import tanvd.aorm.utils.use
-import java.sql.Connection
-import java.sql.PreparedStatement
 
 object QueryClickhouse {
+
     fun getResult(db: Database, query: Query): List<SelectRow> {
+        val preparedQuery = preconstructQuery(query)
+        return getResult(db, preparedQuery, query.expressions)
+    }
+
+    /**
+     * Low level plain text SQL queries execution support
+     */
+    fun getResult(db: Database, preparedQuery: PreparedSqlResult, expressions: Set<Expression<*, DbType<*>>>): List<SelectRow> {
         val rows = ArrayList<SelectRow>()
         db.withConnection {
-            constructQuery(query).use { statement ->
+            val statement = prepareStatement(preparedQuery.sql)
+            for ((index, pair) in preparedQuery.data.withIndex()) {
+                val column = pair.first
+                val value = pair.second
+                column.setValue(index + 1, statement, value)
+            }
+            statement.use {
                 val result = statement.executeQuery()
                 while (result.next()) {
-                    rows.add(SelectRow(result, query.expressions))
+                    rows.add(SelectRow(result, expressions))
                 }
             }
         }
@@ -28,17 +42,6 @@ object QueryClickhouse {
             sql = sql.replaceFirst("?", type.toStringValue(value))
         }
         return sql
-    }
-
-    private fun Connection.constructQuery(query: Query): PreparedStatement {
-        val (sql, valuesToSet) = preconstructQuery(query)
-        val statement = prepareStatement(sql)
-        for ((index, pair) in valuesToSet.withIndex()) {
-            val column = pair.first
-            val value = pair.second
-            column.setValue(index + 1, statement, value)
-        }
-        return statement
     }
 
     private fun preconstructQuery(query: Query): PreparedSqlResult {
@@ -72,7 +75,7 @@ object QueryClickhouse {
                 append(" ORDER BY ${section.map.toList().joinToString { "${it.first.toQueryQualifier()} ${it.second}" }}")
             }
             query.limitSection?.let { section ->
-                append(" LIMIT ${section.offset}, ${query.limitSection!!.limit}")
+                append(" LIMIT ${section.offset}, ${section.limit}")
             }
             query.settings?.let { section ->
                 append(" SETTINGS ${section.settings.joinToString { "${it.first} = ${it.second}" }}")
