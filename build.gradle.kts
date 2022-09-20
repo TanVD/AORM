@@ -1,12 +1,12 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.12"
+version = "1.1.13"
 
 plugins {
-    kotlin("jvm") version "1.5.32" apply true
-    id("tanvd.kosogor") version "1.0.12"
+    kotlin("jvm") version "1.7.10" apply true
+    id("tanvd.kosogor") version "1.0.15"
 }
 
 val artifactoryUploadEnabled = System.getenv("artifactory_url") != null
@@ -19,9 +19,9 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.clickhouse", "clickhouse-jdbc", "0.3.2-patch8")
-    api("joda-time", "joda-time", "2.10.14")
-    api("org.slf4j", "slf4j-api", "1.7.32")
+    api("com.clickhouse", "clickhouse-jdbc", "0.3.2-patch9")
+    api("joda-time", "joda-time", "2.11.1")
+    api("org.slf4j", "slf4j-api", "1.7.36")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
@@ -35,11 +35,11 @@ tasks.withType<JavaCompile> {
     sourceCompatibility = "11"
 }
 
-tasks.withType<KotlinJvmCompile> {
+tasks.withType<KotlinJvmCompile>().configureEach {
     kotlinOptions {
         jvmTarget = "11"
-        languageVersion = "1.5"
-        apiVersion = "1.5"
+        apiVersion = "1.7"
+        languageVersion = "1.7"
     }
 }
 

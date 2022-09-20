@@ -1,6 +1,13 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.13 - 20 September 2022                             
+- Update kotlin to `1.7.10`
+- Update jdbc driver to `0.3.2-patch9`
+- Update joda-time to `2.11.1`
+- Update slf4j-api to `1.7.36`
+- Update kosogor to `1.0.15`
+
 ## 1.1.12 - 20 September 2022
 ### Updated
 - ILIKE operator support has been added
