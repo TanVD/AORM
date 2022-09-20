@@ -1,6 +1,10 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.12 - 20 September 2022
+### Updated
+- ILIKE operator support has been added
+
 ## 1.1.11 - 30 July 2022
 ### Updated
 - Low level plain text SQL queries execution support

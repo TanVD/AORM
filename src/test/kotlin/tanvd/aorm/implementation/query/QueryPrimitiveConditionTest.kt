@@ -95,6 +95,18 @@ class QueryPrimitiveConditionTest : AormTestBase() {
     }
 
     @Test
+    fun iLike_stringValue_sqlValid() {
+        withDatabase(database) {
+            val expression = (ExampleTable.value iLike "strIng")
+            val query = ExampleTable.select() where expression
+
+            val sql = QueryClickhouse.constructQuery(query)
+            Assertions.assertEquals(sql, "SELECT ${ExampleTable.columns.joinToString { it.name }} FROM" +
+                    " ExampleTable WHERE (value ILIKE 'strIng')")
+        }
+    }
+
+    @Test
     fun regex_stringValue_sqlValid() {
         withDatabase(database) {
             val expression = (ExampleTable.value regex "string")

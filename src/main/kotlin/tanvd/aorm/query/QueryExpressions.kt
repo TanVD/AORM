@@ -94,6 +94,9 @@ class BetweenExpression<E : Any, out T : DbPrimitiveType<E>>(val expression: Exp
 class LikeExpression(expression: Expression<String, DbPrimitiveType<String>>, value: String) :
         InfixConditionQueryExpression<String, DbPrimitiveType<String>, String>(expression, value, DbString(), "LIKE")
 
+class ILikeExpression(expression: Expression<String, DbPrimitiveType<String>>, value: String) :
+    InfixConditionQueryExpression<String, DbPrimitiveType<String>, String>(expression, value, DbString(), "ILIKE")
+
 class RegexExpression(expression: Expression<String, DbPrimitiveType<String>>, value: String) :
         PrefixConditionQueryExpression<String, DbPrimitiveType<String>>(expression, "match", DbString() to value)
 
@@ -161,6 +164,8 @@ infix fun <T : Any> Expression<T, DbPrimitiveType<T>>.between(value: Pair<T, T>)
 
 //Strings
 infix fun Expression<String, DbPrimitiveType<String>>.like(value: String): LikeExpression = LikeExpression(this, value)
+
+infix fun Expression<String, DbPrimitiveType<String>>.iLike(value: String): ILikeExpression = ILikeExpression(this, value)
 
 infix fun Expression<String, DbPrimitiveType<String>>.regex(value: String): RegexExpression = RegexExpression(this, value)
 
