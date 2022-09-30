@@ -4,19 +4,44 @@ import tanvd.aorm.*
 
 //Count
 
-class Count<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expression<Long, DbInt64>(DbInt64()) {
-    override fun toSelectListDef(): String = "COUNT(${expression.toQueryQualifier()})"
-    override fun toQueryQualifier(): String = "COUNT(${expression.toQueryQualifier()})"
+abstract class SingleParameterExpression<E : Any, out T : DbType<E>, R: Any, out RT: DbType<R>>(
+    private val statement: String, val expression: Expression<E, T>, dbType: RT
+) : Expression<R, RT>(dbType) {
+    override fun toSelectListDef(): String = "$statement(${expression.toQueryQualifier()})"
+    override fun toQueryQualifier(): String = "$statement(${expression.toQueryQualifier()})"
 }
+
+class Count<E : Any, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, Long, DbInt64>("COUNT", expression, DbInt64())
 
 fun <E : Any, T : DbType<E>> count(column: Column<E, T>): Count<E, T> = Count(column)
 
-class Max<E : Any, out T : DbType<E>>(val expression: Expression<E, T>) : Expression<E, T>(expression.type) {
-    override fun toSelectListDef(): String = "MAX(${expression.toQueryQualifier()})"
-    override fun toQueryQualifier(): String = "MAX(${expression.toQueryQualifier()})"
-}
+class Max<E : Any, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("MAX", expression, expression.type)
 
 fun <E : Any, T : DbType<E>> max(column: Expression<E, T>) = Max(column)
+
+class Min<E : Any, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("MIN", expression, expression.type)
+
+fun <E : Any, T : DbType<E>> min(column: Expression<E, T>) = Min(column)
+
+class Sum<E : Number, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("SUM", expression, expression.type)
+
+fun <E : Number, T : DbType<E>> sum(column: Expression<E, T>) = Sum(column)
+
+class Avg<E : Number, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("AVG", expression, expression.type)
+
+fun <E : Number, T : DbType<E>> avg(column: Expression<E, T>) = Avg(column)
+
+class AnyExpression<E : Any, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("any", expression, expression.type)
+
+fun <E : Any, T : DbType<E>> any(column: Expression<E, T>) = AnyExpression(column)
+
+class AnyLast<E : Any, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("anyLast", expression, expression.type)
+
+fun <E : Any, T : DbType<E>> anyLast(column: Expression<E, T>) = AnyLast(column)
+
+class AnyHeavy<E : Any, out T : DbType<E>>(expression: Expression<E, T>) : SingleParameterExpression<E, T, E, T>("anyHeavy", expression, expression.type)
+
+fun <E : Any, T : DbType<E>> anyHeavy(column: Expression<E, T>) = AnyHeavy(column)
 
 //ArgMax (State and Merge)
 class ArgMaxState<E : Number, out T : DbNumericPrimitiveType<E>, Y : Any, Z : DbType<Y>>(val argExpression: Expression<E, T>, val valExpression: Expression<Y, Z>, type: Z) : Expression<Y, Z>(type) {

@@ -1,6 +1,9 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 1.1.14 - 30 September 2022
+- Different aggregated functions added: min, sum, avg, any, anyLast, anyHeavy 
+
 ## 1.1.13 - 20 September 2022                             
 - Update kotlin to `1.7.10`
 - Update jdbc driver to `0.3.2-patch9`
