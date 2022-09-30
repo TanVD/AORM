@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.14"
+version = "1.1.15-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.7.10" apply true
