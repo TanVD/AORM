@@ -19,15 +19,15 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.clickhouse", "clickhouse-jdbc", "0.3.2-patch9")
+    api("com.clickhouse", "clickhouse-jdbc", "0.3.2-patch11")
     api("joda-time", "joda-time", "2.11.1")
     api("org.slf4j", "slf4j-api", "1.7.36")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
 
-    testImplementation("org.testcontainers", "testcontainers", "1.17.3")
-    testImplementation("org.testcontainers", "clickhouse", "1.17.3")
+    testImplementation("org.testcontainers", "testcontainers", "1.17.5")
+    testImplementation("org.testcontainers", "clickhouse", "1.17.5")
 }
 
 tasks.withType<JavaCompile> {
