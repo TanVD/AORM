@@ -133,10 +133,12 @@ class DbArrayDate : DbArrayType<Date>() {
 
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Date>) {
-        statement.setArray(index,
-                statement.connection.createArrayOf(toSqlName(), value.map {
-                    java.sql.Date(it.time)
-                }.toTypedArray()))
+        if (value.isNotEmpty()) {
+            val array = value.map { java.sql.Date(it.time) }.toTypedArray()
+            statement.setArray(index, statement.connection.createArrayOf(toSqlName(), array))
+        } else {
+            statement.setNull(index, Types.ARRAY)
+        }
     }
 
     override fun toStringValue(value: List<Date>): String =
@@ -269,7 +271,11 @@ abstract class DbNumericArrayType<T : Number>(val sqlName: String,
                                               val getPrimitiveType: () -> DbPrimitiveType<T>,
                                               @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
                                               val setByIndexFunc: (PreparedStatement, Int, List<T>) -> Unit = { statement, index, value ->
-                                                  statement.setArray(index, statement.connection.createArrayOf(sqlName, (value as java.util.Collection<*>).toArray()))
+                                                   if (value.isNotEmpty()) {
+                                                       statement.setArray(index, statement.connection.createArrayOf(sqlName, (value as java.util.Collection<*>).toArray()))
+                                                   } else {
+                                                       statement.setNull(index, Types.ARRAY)
+                                                   }
                                               }) : DbArrayType<T>() {
     override fun toSqlName(): String = sqlName
 
@@ -277,7 +283,11 @@ abstract class DbNumericArrayType<T : Number>(val sqlName: String,
     override fun getValue(index: Int, result: ResultSet) = getByIndexFunc(result, index)
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<T>) {
-        setByIndexFunc(statement, index, value)
+        if (value.isNotEmpty()) {
+            setByIndexFunc(statement, index, value)
+        } else {
+            statement.setNull(index, Types.NUMERIC)
+        }
     }
 
     override fun toStringValue(value: List<T>): String = value.joinToString(prefix = "[", postfix = "]") { it.toString() }
@@ -379,8 +389,12 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
     }
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Boolean>) {
-        statement.setArray(index,
-                statement.connection.createArrayOf(toSqlName(), value.map { if (it) 1 else 0 }.toTypedArray()))
+        if (value.isNotEmpty()) {
+            val array = value.map { if (it) 1 else 0 }.toTypedArray()
+            statement.setArray(index, statement.connection.createArrayOf(toSqlName(), array))
+        } else {
+            statement.setNull(index, Types.ARRAY)
+        }
     }
 
     override fun toStringValue(value: List<Boolean>): String =
@@ -423,8 +437,12 @@ class DbArrayString : DbArrayType<String>() {
 
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<String>) {
-        statement.setArray(index,
+        if (value.isNotEmpty()) {
+            statement.setArray(index,
                 statement.connection.createArrayOf(toSqlName(), value.toTypedArray()))
+        } else {
+            statement.setNull(index, Types.ARRAY)
+        }
     }
 
     override fun toStringValue(value: List<String>): String =
