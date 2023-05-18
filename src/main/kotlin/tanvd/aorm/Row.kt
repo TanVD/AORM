@@ -26,9 +26,10 @@ data class InsertRow(val values: MutableMap<Column<*, DbType<*>>, Any>) {
 data class SelectRow(val values: MutableMap<Expression<*, DbType<*>>, Any>) {
     val columns = LinkedHashSet(values.map { it.key })
 
-    constructor(result: ResultSet, expressions: Set<Expression<*, DbType<*>>>) : this(expressions.withIndex().map { (index, expr) ->
-        expr to expr.getValue(result, index + 1)
-    }.toMap().toMutableMap())
+    constructor(result: ResultSet, expressions: Set<Expression<*, DbType<*>>>) : this(
+        expressions.withIndex().associateTo(hashMapOf()) { (index, expr) ->
+            expr to expr.getValue(result, index + 1)
+        })
 
     @Suppress("UNCHECKED_CAST")
     fun <E : Any, K : DbType<E>> getOrNull(expression: Expression<E, K>): E? = values[expression] as E?

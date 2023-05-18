@@ -9,8 +9,6 @@ import tanvd.aorm.query.*
 import tanvd.aorm.utils.*
 import tanvd.aorm.withDatabase
 
-
-@Suppress("UNCHECKED_CAST")
 class QueryGroupByTest : AormTestBase() {
 
     override fun executeBeforeMethod() {

@@ -8,7 +8,6 @@ import tanvd.aorm.query.*
 import tanvd.aorm.utils.*
 import java.math.BigDecimal
 
-@Suppress("UNCHECKED_CAST")
 class TypesTest : AormTestBase() {
 
     @BeforeEach
@@ -17,6 +16,7 @@ class TypesTest : AormTestBase() {
             try {
                 AllTypesTable.drop()
             } catch (e: Exception) {
+                //ignore
             }
         }
     }

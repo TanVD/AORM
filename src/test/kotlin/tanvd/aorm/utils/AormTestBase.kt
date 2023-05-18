@@ -14,9 +14,7 @@ abstract class AormTestBase {
     companion object {
         const val testInsertWorkerDelayMs = 2000L
 
-        val serverContainer = object : ClickHouseContainer("clickhouse/clickhouse-server:22.3.8.39-alpine") {
-            override fun getDriverClassName(): String = "com.clickhouse.jdbc.ClickHouseDriver"
-        }.apply {
+        val serverContainer = ClickHouseContainer("clickhouse/clickhouse-server:22.3.8.39-alpine").apply {
             start()
             // we need to disable query parser stack limitation for tests, so we add line "<max_parser_depth>0</max_parser_depth>" to the config:
             execInContainer("sed", "-i", "/^.*\\<max_memory_usage\\>.*/a \\<max_parser_depth\\>0\\<\\/max_parser_depth\\>", "/etc/clickhouse-server/users.xml")

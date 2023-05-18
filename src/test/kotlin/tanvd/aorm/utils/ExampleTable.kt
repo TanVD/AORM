@@ -43,5 +43,5 @@ object ExampleMaterializedView : MaterializedView("ExampleMaterializedView") {
 
     override val query: Query = ExampleTable.select(date, idView, valueView)
 
-    override val engine: Engine = Engine.MergeTree(ExampleMaterializedView.date, listOf(ExampleMaterializedView.idView, ExampleMaterializedView.valueView))
+    override val engine: Engine = Engine.MergeTree(date, listOf(idView, valueView))
 }

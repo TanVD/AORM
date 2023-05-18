@@ -7,7 +7,6 @@ import tanvd.aorm.query.*
 import tanvd.aorm.utils.*
 import tanvd.aorm.withDatabase
 
-@Suppress("UNCHECKED_CAST")
 class QueryOrderTest : AormTestBase() {
     override fun executeBeforeMethod() {
         withDatabase(database) {

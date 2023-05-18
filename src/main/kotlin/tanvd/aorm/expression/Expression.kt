@@ -1,7 +1,7 @@
 package tanvd.aorm.expression
 
-import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.*
+import tanvd.aorm.utils.escapeQuotes
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
@@ -37,11 +37,11 @@ abstract class Expression<E : Any, out T : DbType<E>>(val type: T) {
 class AliasedExpression<E : Any, out T : DbType<E>, Y : Expression<E, T>>(val name: String, val expression: Y) :
         Expression<E, T>(expression.type) {
     var materializedInView: String? = null
-    val alias = ValueExpression(ClickHouseUtil.escape(name), type)
+    val alias = ValueExpression(name.escapeQuotes(), type)
 
-    override fun toSelectListDef(): String = "${expression.toQueryQualifier()} as ${ClickHouseUtil.escape(name)}"
+    override fun toSelectListDef(): String = "${expression.toQueryQualifier()} as ${name.escapeQuotes()}"
 
-    override fun toQueryQualifier(): String = ClickHouseUtil.escape(name)
+    override fun toQueryQualifier(): String = name.escapeQuotes()
 }
 
 fun <E : Any, T : DbType<E>, Y : Expression<E, T>> alias(name: String, expression: Y): AliasedExpression<E, T, Y> = AliasedExpression(name, expression)

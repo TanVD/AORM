@@ -3,7 +3,7 @@ package tanvd.aorm
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
-import ru.yandex.clickhouse.ClickHouseUtil
+import tanvd.aorm.utils.escapeQuotes
 import java.math.BigDecimal
 import java.sql.*
 import java.text.SimpleDateFormat
@@ -301,8 +301,8 @@ class DbArrayInt8 : DbNumericArrayType<Byte>("Array(Int8)",
         { DbInt8() })
 
 class DbArrayUInt8 : DbNumericArrayType<Byte>("Array(UInt8)",
-        { resultSet, name -> (resultSet.getArray(name).array as ShortArray).map { it.toByte() } },
-        { resultSet, index -> (resultSet.getArray(index).array as ShortArray).map { it.toByte() } },
+        { resultSet, name -> (resultSet.getArray(name).array as ByteArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as ByteArray).toList() },
         { DbUInt8() })
 
 class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
@@ -311,8 +311,8 @@ class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
         { DbInt16() })
 
 class DbArrayUInt16 : DbNumericArrayType<Short>("Array(UInt16)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).map { it.toShort() } },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).map { it.toShort() } },
+        { resultSet, name -> (resultSet.getArray(name).array as ShortArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as ShortArray).toList() },
         { DbUInt16() })
 
 class DbArrayInt32 : DbNumericArrayType<Int>("Array(Int32)",
@@ -321,8 +321,8 @@ class DbArrayInt32 : DbNumericArrayType<Int>("Array(Int32)",
         { DbInt32() })
 
 class DbArrayUInt32 : DbNumericArrayType<Int>("Array(UInt32)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).map { it.toInt() } },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).map { it.toInt() } },
+        { resultSet, name -> (resultSet.getArray(name).array as IntArray).toList() },
+        { resultSet, index -> (resultSet.getArray(index).array as IntArray).toList() },
         { DbUInt32() })
 
 class DbArrayInt64 : DbNumericArrayType<Long>("Array(Int64)",
@@ -330,7 +330,6 @@ class DbArrayInt64 : DbNumericArrayType<Long>("Array(Int64)",
         { resultSet, index -> (resultSet.getArray(index).array as LongArray).toList() },
         { DbInt64() })
 
-@Suppress("UNCHECKED_CAST")
 class DbArrayUInt64 : DbNumericArrayType<Long>("Array(UInt64)",
         { resultSet, name -> (resultSet.getArray(name).array as LongArray).toList() },
         { resultSet, index -> (resultSet.getArray(index).array as LongArray).toList() },
@@ -381,11 +380,11 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
     override fun toSqlName(): String = "Array(UInt8)"
 
     override fun getValue(name: String, result: ResultSet): List<Boolean> {
-        return (result.getArray(name).array as ShortArray).map { it== 1.toShort() }
+        return (result.getArray(name).array as ByteArray).map { it == 1.toByte() }
     }
 
     override fun getValue(index: Int, result: ResultSet): List<Boolean> {
-        return (result.getArray(index).array as ShortArray).map { it == 1.toShort() }
+        return (result.getArray(index).array as ByteArray).map { it == 1.toByte() }
     }
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Boolean>) {
@@ -419,7 +418,7 @@ class DbString : DbPrimitiveType<String>() {
         statement.setString(index, value)
     }
 
-    override fun toStringValue(value: String): String = "'${ClickHouseUtil.escape(value)}'"
+    override fun toStringValue(value: String): String = "'${value.escapeQuotes()}'"
 
     override fun toArray(): DbArrayType<String> = DbArrayString()
 }
@@ -446,7 +445,7 @@ class DbArrayString : DbArrayType<String>() {
     }
 
     override fun toStringValue(value: List<String>): String =
-            value.joinToString(prefix = "[", postfix = "]") { "'${ClickHouseUtil.escape(it)}'" }
+            value.joinToString(prefix = "[", postfix = "]") { "'${it.escapeQuotes()}'" }
 
     override fun toPrimitive(): DbPrimitiveType<String> = DbString()
 }

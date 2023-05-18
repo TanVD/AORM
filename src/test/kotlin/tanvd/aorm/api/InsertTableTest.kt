@@ -15,7 +15,6 @@ class InsertTableTest : AormTestBase() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     @Test
     fun insert_tableExistsRowValid_rowInserted() {
         withDatabase(database) {
@@ -34,7 +33,6 @@ class InsertTableTest : AormTestBase() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     @Test
     fun insertBatch_tableExistsRowValid_rowsInserted() {
         withDatabase(database) {
@@ -55,7 +53,6 @@ class InsertTableTest : AormTestBase() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     @Test
     fun insertLazy_tableExistsRowsValid_rowsInsertedAfterDelay() {
         withDatabase(database, insertWorker) {
@@ -84,7 +81,6 @@ class InsertTableTest : AormTestBase() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     @Test
     fun insertLazy_tableExistsRowsValid_rowsNotInsertedBeforeDelay() {
         withDatabase(database, insertWorker) {

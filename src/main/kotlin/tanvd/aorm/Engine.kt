@@ -33,7 +33,7 @@ sealed class Engine {
                     (sample_by?.let { "SAMPLE BY ${it.toQueryQualifier()} " } ?: "")
 
         override fun toSqlDef() = if (extendedSyntaxUsed)
-            "${familyModifier}MergeTree(${specificParams?.let { it } ?: ""}) $extendedSyntaxDef"
+            "${familyModifier}MergeTree(${specificParams ?: ""}) $extendedSyntaxDef"
         else
             "${familyModifier}MergeTree($mainSyntaxDef${specificParams?.let { ", $it" } ?: ""})"
 

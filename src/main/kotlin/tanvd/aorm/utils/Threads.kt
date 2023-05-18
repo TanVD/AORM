@@ -37,7 +37,7 @@ private fun <T> ExecutorService.executeAndAwait(timeout: Long, logger: Logger, e
     exec(this)
     awaitTermination(timeout, TimeUnit.MILLISECONDS)
     if (!isTerminated) {
-        logger.warn("ExecutorService ${this} was asked to shutdown gracefully, but was not stopped in $timeout ms.")
+        logger.warn("ExecutorService $this was asked to shutdown gracefully, but was not stopped in $timeout ms.")
         println(Thread.currentThread().stackTrace.joinToString("\n\t") { it.toString() })
     }
 }

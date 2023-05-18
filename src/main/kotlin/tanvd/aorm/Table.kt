@@ -1,15 +1,15 @@
 package tanvd.aorm
 
-import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import tanvd.aorm.query.Query
+import tanvd.aorm.utils.escapeQuotes
 import java.util.*
 import kotlin.reflect.KClass
 
 
 abstract class Table(name: String) {
-    var name: String = ClickHouseUtil.escape(name)
+    var name: String = name.escapeQuotes()
 
     //todo: encapsulate this
     val columns: LinkedHashSet<Column<*, DbType<*>>> = linkedSetOf()

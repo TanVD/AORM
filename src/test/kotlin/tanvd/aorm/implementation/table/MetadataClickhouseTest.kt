@@ -31,7 +31,7 @@ class MetadataClickhouseTest : AormTestBase() {
         TableClickhouse.create(database, ExampleTable)
 
         Assertions.assertEquals(MetadataClickhouse.columnsOfTable(database, ExampleTable),
-                ExampleTable.columns.map { it.name to it.type.toSqlName() }.toMap())
+            ExampleTable.columns.associate { it.name to it.type.toSqlName() })
     }
 
     @Test

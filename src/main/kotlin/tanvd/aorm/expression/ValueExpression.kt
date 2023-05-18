@@ -1,12 +1,12 @@
 package tanvd.aorm.expression
 
-import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.DbType
+import tanvd.aorm.utils.escapeQuotes
 
 class ValueExpression<E : Any, out T : DbType<E>>(val name: String, type: T) : Expression<E, T>(type) {
-    override fun toSelectListDef(): String = ClickHouseUtil.escape(name)
+    override fun toSelectListDef(): String = name.escapeQuotes()
 
-    override fun toQueryQualifier(): String = ClickHouseUtil.escape(name)
+    override fun toQueryQualifier(): String = name.escapeQuotes()
 }
 
 class SqlValueExpression<E : Any, out T : DbType<E>>(val value: String, type: T) : Expression<E, T>(type) {

@@ -1,16 +1,16 @@
 package tanvd.aorm.expression
 
-import ru.yandex.clickhouse.ClickHouseUtil
 import tanvd.aorm.DbType
 import tanvd.aorm.Table
+import tanvd.aorm.utils.escapeQuotes
 
 class Column<E : Any, out T : DbType<E>>(val name: String, type: T, val table: Table,
                                          default: (() -> E)? = null) : Expression<E, T>(type) {
-    override fun toQueryQualifier(): String = ClickHouseUtil.escape(name)
+    override fun toQueryQualifier(): String = name.escapeQuotes()
 
-    override fun toSelectListDef(): String = ClickHouseUtil.escape(name)
+    override fun toSelectListDef(): String = name.escapeQuotes()
 
-    fun toSqlDef(): String = "${ClickHouseUtil.escape(name)} ${type.toSqlName()}"
+    fun toSqlDef(): String = "${name.escapeQuotes()} ${type.toSqlName()}"
 
     var defaultFunction: (() -> E)? = default
 
