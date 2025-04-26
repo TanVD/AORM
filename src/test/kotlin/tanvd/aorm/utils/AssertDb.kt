@@ -2,8 +2,10 @@ package tanvd.aorm.utils
 
 import org.junit.jupiter.api.Assertions
 import tanvd.aorm.*
+import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
 import java.math.BigDecimal
+import java.sql.Date
 
 object AssertDb {
     fun syncedWithDb(database: Database, table: Table) {
@@ -32,7 +34,7 @@ object AssertDb {
         Assertions.assertEquals(insertRow.map { it.values }, selectRow.map { it.values })
     }
 
-    private fun deepMapEqualsWithBigDecimalSupport(expected: Map<*, *>, actual: Map<*, *>) {
+    private fun deepMapEqualsWithBigDecimalSupport(expected: Map<Column<*,*>, *>, actual: Map<*, *>) {
         Assertions.assertEquals(expected.size, actual.size) {
             "Size of maps is different: ${expected.size} != ${actual.size}"
         }
@@ -43,18 +45,28 @@ object AssertDb {
             when (v1) {
                 is Collection<*> -> {
                     val v2AsCollection = v2 as? Collection<*>
-                    Assertions.assertNotNull(v2AsCollection) { "Actual value is ${v2!!::class.simpleName} type while ${v1::class.simpleName} expected" }
+                    Assertions.assertNotNull(v2AsCollection) { "Actual value is ${v2!!::class.simpleName} type while ${v1::class.simpleName} expected for ${k.name}" }
                     Assertions.assertEquals(v1.size, v2AsCollection!!.size)
-                    if (v1.firstOrNull() is BigDecimal) {
-                        v1.zip(v2).forEach { (expected, actual) ->
-                            assertBigDecimalEquals(expected, actual)
+                    val element = v1.firstOrNull()
+                    when (element) {
+                        is BigDecimal -> {
+                            v1.zip(v2).forEach { (expected, actual) ->
+                                assertBigDecimalEquals(expected, actual)
+                            }
                         }
-                    } else {
-                        Assertions.assertEquals(v1, v2)
+                        is Date -> {
+                            v1.zip(v2).forEach { (expected, actual) ->
+                                Assertions.assertEquals("$expected", "$actual", "Values for key ${k.name} are different")
+                            }
+                        }
+
+                        else -> {
+                            Assertions.assertEquals(v1, v2, "Collection elements are different for key ${k.name}")
+                        }
                     }
                 }
                 !is BigDecimal -> {
-                    Assertions.assertEquals(v1, v2)
+                    Assertions.assertEquals(v1, v2, "Values for key ${k.name} are different")
                 }
                 else -> {
                     assertBigDecimalEquals(v1, v2)

@@ -45,23 +45,23 @@ class TypesTest : AormTestBase() {
 
                     AllTypesTable.int8Col to 1.toByte(),
                     AllTypesTable.arrayInt8Col to listOf(1.toByte(), 2.toByte()),
-                    AllTypesTable.uint8Col to 1.toByte(),
-                    AllTypesTable.arrayUInt8Col to listOf(1.toByte(), 2.toByte()),
+                    AllTypesTable.uint8Col to 1.toShort(),
+                    AllTypesTable.arrayUInt8Col to listOf(1.toShort(), 2.toShort()),
 
                     AllTypesTable.int16Col to 1.toShort(),
                     AllTypesTable.arrayInt16Col to listOf(1.toShort(), 2.toShort()),
-                    AllTypesTable.uint16Col to 1.toShort(),
-                    AllTypesTable.arrayUInt16Col to listOf(1.toShort(), 2.toShort()),
+                    AllTypesTable.uint16Col to 1,
+                    AllTypesTable.arrayUInt16Col to listOf(1, 2),
 
                     AllTypesTable.int32Col to 1,
                     AllTypesTable.arrayInt32Col to listOf(1, 2),
-                    AllTypesTable.uint32Col to 1,
-                    AllTypesTable.arrayUInt32Col to listOf(1, 2),
+                    AllTypesTable.uint32Col to 1L,
+                    AllTypesTable.arrayUInt32Col to listOf(1L, 2L),
 
                     AllTypesTable.int64Col to 1L,
                     AllTypesTable.arrayInt64Col to listOf(1L, 2L),
-                    AllTypesTable.uint64Col to 1L,
-                    AllTypesTable.arrayUInt64Col to listOf(1L, 2L),
+                    AllTypesTable.uint64Col to 1.toBigInteger(),
+                    AllTypesTable.arrayUInt64Col to listOf(1.toBigInteger(), 2.toBigInteger()),
 
                     AllTypesTable.float32Col to 1f,
                     AllTypesTable.arrayFloat32Col to listOf(1f, 2f),
@@ -93,16 +93,16 @@ class TypesTest : AormTestBase() {
                     (AllTypesTable.int8Col eq 1.toByte()) and
                     (AllTypesTable.arrayInt8Col has 1.toByte()) and
                     (AllTypesTable.arrayInt8Col has 2.toByte()) and
-                    (AllTypesTable.uint8Col eq 1.toByte()) and
-                    (AllTypesTable.arrayUInt8Col has 1.toByte()) and
-                    (AllTypesTable.arrayUInt8Col has 2.toByte()) and
+                    (AllTypesTable.uint8Col eq 1.toShort()) and
+                    (AllTypesTable.arrayUInt8Col has 1.toShort()) and
+                    (AllTypesTable.arrayUInt8Col has 2.toShort()) and
 
                     (AllTypesTable.int16Col eq 1.toShort()) and
                     (AllTypesTable.arrayInt16Col has 1.toShort()) and
                     (AllTypesTable.arrayInt16Col has 2.toShort()) and
-                    (AllTypesTable.uint16Col eq 1.toShort()) and
-                    (AllTypesTable.arrayUInt16Col has 1.toShort()) and
-                    (AllTypesTable.arrayUInt16Col has 2.toShort()) and
+                    (AllTypesTable.uint16Col eq 1) and
+                    (AllTypesTable.arrayUInt16Col has 1) and
+                    (AllTypesTable.arrayUInt16Col has 2) and
 
                     (AllTypesTable.int32Col eq 1) and
                     (AllTypesTable.arrayInt32Col has 1) and
@@ -114,9 +114,9 @@ class TypesTest : AormTestBase() {
                     (AllTypesTable.int64Col eq 1L) and
                     (AllTypesTable.arrayInt64Col has 1L) and
                     (AllTypesTable.arrayInt64Col has 2L) and
-                    (AllTypesTable.uint64Col eq 1L) and
-                    (AllTypesTable.arrayUInt64Col has 1L) and
-                    (AllTypesTable.arrayUInt64Col has 2L) and
+                    (AllTypesTable.uint64Col eq 1.toBigInteger()) and
+                    (AllTypesTable.arrayUInt64Col has 1.toBigInteger()) and
+                    (AllTypesTable.arrayUInt64Col has 2.toBigInteger()) and
 
                     (AllTypesTable.float32Col eq 1f) and
                     (AllTypesTable.arrayFloat32Col has 1f) and
@@ -218,16 +218,16 @@ class TypesTest : AormTestBase() {
                     (AllTypesTable.int8Col eq 1.toByte()) and
                     (AllTypesTable.arrayInt8Col has 1.toByte()) and
                     (AllTypesTable.arrayInt8Col has 2.toByte()) and
-                    (AllTypesTable.uint8Col eq 1.toByte()) and
-                    (AllTypesTable.arrayUInt8Col has 1.toByte()) and
-                    (AllTypesTable.arrayUInt8Col has 2.toByte()) and
+                    (AllTypesTable.uint8Col eq 1.toShort()) and
+                    (AllTypesTable.arrayUInt8Col has 1.toShort()) and
+                    (AllTypesTable.arrayUInt8Col has 2.toShort()) and
 
                     (AllTypesTable.int16Col eq 1.toShort()) and
                     (AllTypesTable.arrayInt16Col has 1.toShort()) and
                     (AllTypesTable.arrayInt16Col has 2.toShort()) and
-                    (AllTypesTable.uint16Col eq 1.toShort()) and
-                    (AllTypesTable.arrayUInt16Col has 1.toShort()) and
-                    (AllTypesTable.arrayUInt16Col has 2.toShort()) and
+                    (AllTypesTable.uint16Col eq 1) and
+                    (AllTypesTable.arrayUInt16Col has 1) and
+                    (AllTypesTable.arrayUInt16Col has 2) and
 
                     (AllTypesTable.int32Col eq 1) and
                     (AllTypesTable.arrayInt32Col has 1) and
@@ -239,9 +239,9 @@ class TypesTest : AormTestBase() {
                     (AllTypesTable.int64Col eq 1L) and
                     (AllTypesTable.arrayInt64Col has 1L) and
                     (AllTypesTable.arrayInt64Col has 2L) and
-                    (AllTypesTable.uint64Col eq 1L) and
-                    (AllTypesTable.arrayUInt64Col has 1L) and
-                    (AllTypesTable.arrayUInt64Col has 2L) and
+                    (AllTypesTable.uint64Col eq 1.toBigInteger()) and
+                    (AllTypesTable.arrayUInt64Col has 1.toBigInteger()) and
+                    (AllTypesTable.arrayUInt64Col has 2.toBigInteger()) and
 
                     (AllTypesTable.float32Col eq 1f) and
                     (AllTypesTable.arrayFloat32Col has 1f) and

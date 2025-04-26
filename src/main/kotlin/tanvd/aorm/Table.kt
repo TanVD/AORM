@@ -7,7 +7,6 @@ import tanvd.aorm.utils.escapeQuotes
 import java.util.*
 import kotlin.reflect.KClass
 
-
 abstract class Table(name: String) {
     var name: String = name.escapeQuotes()
 

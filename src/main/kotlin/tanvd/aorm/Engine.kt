@@ -2,7 +2,8 @@ package tanvd.aorm
 
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
-import java.util.*
+import java.math.BigInteger
+import java.sql.Date
 
 sealed class Engine {
     abstract fun toSqlDef(): String
@@ -53,7 +54,7 @@ sealed class Engine {
 
     class ReplacingMergeTree(dateColumn: Expression<Date, DbPrimitiveType<Date>>,
                              primaryKey: List<Expression<*, DbPrimitiveType<*>>>,
-                             versionColumn: Column<Long, DbUInt64>,
+                             versionColumn: Column<BigInteger, DbUInt64>,
                              indexGranularity: Long = 8192,
                              zookeeperPath: String? = null)
         : MergeTreeFamily(dateColumn, primaryKey, indexGranularity, zookeeperPath) {

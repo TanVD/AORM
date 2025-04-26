@@ -5,11 +5,14 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import tanvd.aorm.utils.escapeQuotes
 import java.math.BigDecimal
-import java.sql.*
-import java.text.SimpleDateFormat
-import java.time.LocalDate
+import java.math.BigInteger
+import java.sql.Date
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.Types
 import java.time.LocalDateTime
-import java.util.Date
+import java.time.ZonedDateTime
+import java.util.Collection
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
@@ -33,9 +36,7 @@ sealed class DbType<T> {
 
         other as DbType<*>
 
-        if (toSqlName() != other.toSqlName()) return false
-
-        return true
+        return toSqlName() == other.toSqlName()
     }
 
     override fun hashCode(): Int = toSqlName().hashCode()
@@ -45,8 +46,17 @@ sealed class DbPrimitiveType<T> : DbType<T>() {
     abstract fun toArray(): DbArrayType<T>
 }
 
+
+@Suppress("UNCHECKED_CAST")
+private fun <R> Any.asTypedList() = (this as Array<*>).toList() as List<R>
+private fun <R> ResultSet.getTypedList(index: Int) = getArray(index).array.asTypedList<R>()
+private fun <R> ResultSet.getTypedList(name: String) = getArray(name).array.asTypedList<R>()
+
 sealed class DbArrayType<T> : DbType<List<T>>() {
     override val defaultValue = emptyList<T>()
+
+    override fun getValue(name: String, result: ResultSet): List<T> = result.getTypedList(name)
+    override fun getValue(index: Int, result: ResultSet): List<T> = result.getTypedList(index)
 
     abstract fun toPrimitive(): DbPrimitiveType<T>
 }
@@ -97,21 +107,16 @@ class DbEnum16<T : Enum<*>>(enumMapping: LinkedHashMap<String, Int>, enumType: K
 //Date and DateTime
 
 class DbDate : DbPrimitiveType<Date>() {
-    companion object {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        private val defaultDate = Date(0)
-    }
-
-    override val defaultValue: Date = defaultDate
+    override val defaultValue: Date = Date(0)
 
     override fun toSqlName(): String = "Date"
     override fun getValue(name: String, result: ResultSet): Date = result.getDate(name)
     override fun getValue(index: Int, result: ResultSet): Date = result.getDate(index)
     override fun setValue(index: Int, statement: PreparedStatement, value: Date) {
-        statement.setDate(index, java.sql.Date(value.time))
+        statement.setObject(index, value)
     }
 
-    override fun toStringValue(value: Date): String = "'${dateFormat.format(value)}'"
+    override fun toStringValue(value: Date): String = "'$value'"
 
     override fun toArray(): DbArrayType<Date> = DbArrayDate()
 }
@@ -121,28 +126,28 @@ class DbArrayDate : DbArrayType<Date>() {
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(name: String, result: ResultSet): List<Date> =
-        (result.getArray(name).array as Array<LocalDate>).map {
-            java.sql.Date.valueOf(it)
+        result.getTypedList<ZonedDateTime>(name).map {
+            Date(it.toInstant().toEpochMilli())
         }
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(index: Int, result: ResultSet): List<Date> =
-        (result.getArray(index).array as Array<LocalDate>).map {
-            java.sql.Date.valueOf(it)
+        result.getTypedList<ZonedDateTime>(index).map {
+            Date(it.toInstant().toEpochMilli())
         }
 
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Date>) {
         if (value.isNotEmpty()) {
-            val array = value.map { java.sql.Date(it.time) }.toTypedArray()
-            statement.setArray(index, statement.connection.createArrayOf(toSqlName(), array))
+            val array = value.toTypedArray()
+            statement.setArray(index, statement.connection.createArrayOf(toPrimitive().toSqlName(), array))
         } else {
             statement.setNull(index, Types.ARRAY)
         }
     }
 
     override fun toStringValue(value: List<Date>): String =
-            value.joinToString(prefix = "[", postfix = "]") { "'${DbDate.dateFormat.format(it)}'" }
+            value.joinToString(prefix = "[", postfix = "]") { "'$it'" }
 
     override fun toPrimitive(): DbPrimitiveType<Date> = DbDate()
 }
@@ -241,19 +246,19 @@ abstract class DbNumericPrimitiveType<T : Number>(val sqlName: String,
 
 class DbInt8 : DbNumericPrimitiveType<Byte>("Int8", 0, ResultSet::getByte, ResultSet::getByte, PreparedStatement::setByte, { DbArrayInt8() })
 
-class DbUInt8 : DbNumericPrimitiveType<Byte>("UInt8", 0, ResultSet::getByte, ResultSet::getByte, PreparedStatement::setByte, { DbArrayUInt8() })
+class DbUInt8 : DbNumericPrimitiveType<Short>("UInt8", 0, ResultSet::getShort, ResultSet::getShort, PreparedStatement::setShort, { DbArrayUInt8() })
 
 class DbInt16 : DbNumericPrimitiveType<Short>("Int16", 0, ResultSet::getShort, ResultSet::getShort, PreparedStatement::setShort, { DbArrayInt16() })
 
-class DbUInt16 : DbNumericPrimitiveType<Short>("UInt16", 0, ResultSet::getShort, ResultSet::getShort, PreparedStatement::setShort, { DbArrayInt16() })
+class DbUInt16 : DbNumericPrimitiveType<Int>("UInt16", 0, ResultSet::getInt, ResultSet::getInt, PreparedStatement::setInt, { DbArrayUInt16() })
 
-class DbInt32 : DbNumericPrimitiveType<Int>("Int32", 0, ResultSet::getInt,ResultSet::getInt, PreparedStatement::setInt, { DbArrayInt32() })
+class DbInt32 : DbNumericPrimitiveType<Int>("Int32", 0, ResultSet::getInt, ResultSet::getInt, PreparedStatement::setInt, { DbArrayInt32() })
 
-class DbUInt32 : DbNumericPrimitiveType<Int>("UInt32", 0, ResultSet::getInt,ResultSet::getInt, PreparedStatement::setInt, { DbArrayInt32() })
+class DbUInt32 : DbNumericPrimitiveType<Long>("UInt32", 0, ResultSet::getLong, ResultSet::getLong, PreparedStatement::setLong, { DbArrayUInt32() })
 
 class DbInt64 : DbNumericPrimitiveType<Long>("Int64", 0, ResultSet::getLong, ResultSet::getLong, PreparedStatement::setLong, { DbArrayInt64() })
 
-class DbUInt64 : DbNumericPrimitiveType<Long>("UInt64", 0, ResultSet::getLong, ResultSet::getLong, PreparedStatement::setLong, { DbArrayInt64() })
+class DbUInt64 : DbNumericPrimitiveType<BigInteger>("UInt64", BigInteger.ZERO, ResultSet::getBigInteger, ResultSet::getBigInteger, PreparedStatement::setBigInteger, { DbArrayUInt64() })
 
 class DbFloat32 : DbNumericPrimitiveType<Float>("Float32", 0f, ResultSet::getFloat, ResultSet::getFloat, PreparedStatement::setFloat, { DbArrayFloat32() })
 
@@ -263,20 +268,29 @@ class DbDecimal(val bit: Int, val scale: Int) : DbNumericPrimitiveType<BigDecima
     "Decimal$bit($scale)", BigDecimal.ZERO, ResultSet::getBigDecimal, ResultSet::getBigDecimal, PreparedStatement::setBigDecimal, { DbArrayDecimal(bit, scale) }
 )
 
+private fun ResultSet.getBigInteger(columnIndex: Int): BigInteger = getBigDecimal(columnIndex).unscaledValue()
+private fun ResultSet.getBigInteger(columnLabel: String): BigInteger = getBigDecimal(columnLabel).unscaledValue()
+private fun PreparedStatement.setBigInteger(index: Int, x: BigInteger) = setBigDecimal(index, BigDecimal(x))
+
 //Int array types
 
-abstract class DbNumericArrayType<T : Number>(val sqlName: String,
-                                              val getByNameFunc: (ResultSet, String) -> List<T>,
-                                              val getByIndexFunc: (ResultSet, Int) -> List<T>,
-                                              val getPrimitiveType: () -> DbPrimitiveType<T>,
-                                              @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-                                              val setByIndexFunc: (PreparedStatement, Int, List<T>) -> Unit = { statement, index, value ->
-                                                   if (value.isNotEmpty()) {
-                                                       statement.setArray(index, statement.connection.createArrayOf(sqlName, (value as java.util.Collection<*>).toArray()))
-                                                   } else {
-                                                       statement.setNull(index, Types.ARRAY)
-                                                   }
-                                              }) : DbArrayType<T>() {
+abstract class DbNumericArrayType<T : Number>(
+    val sqlName: String,
+    val getPrimitiveType: () -> DbPrimitiveType<T>,
+    val arraySqlTypeName: String = getPrimitiveType().toSqlName(),
+    val getByNameFunc: (ResultSet, String) -> List<T> = { resultSet, name -> resultSet.getTypedList(name) },
+    val getByIndexFunc: (ResultSet, Int) -> List<T> = { resultSet, index -> resultSet.getTypedList(index) },
+    val setByIndexFunc: (PreparedStatement, Int, List<T>) -> Unit = { statement, index, value ->
+        if (value.isNotEmpty()) {
+            statement.setArray(
+                index,
+                statement.connection.createArrayOf(arraySqlTypeName, (value as Collection<*>).toArray())
+            )
+        } else {
+            statement.setNull(index, Types.ARRAY)
+        }
+    },
+) : DbArrayType<T>() {
     override fun toSqlName(): String = sqlName
 
     override fun getValue(name: String, result: ResultSet) = getByNameFunc(result, name)
@@ -290,66 +304,38 @@ abstract class DbNumericArrayType<T : Number>(val sqlName: String,
         }
     }
 
-    override fun toStringValue(value: List<T>): String = value.joinToString(prefix = "[", postfix = "]") { it.toString() }
+    override fun toStringValue(value: List<T>): String =
+        value.joinToString(prefix = "[", postfix = "]") { it.toString() }
 
     override fun toPrimitive(): DbPrimitiveType<T> = getPrimitiveType()
 }
 
-class DbArrayInt8 : DbNumericArrayType<Byte>("Array(Int8)",
-        { resultSet, name -> (resultSet.getArray(name).array as ByteArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as ByteArray).toList() },
-        { DbInt8() })
+class DbArrayInt8 : DbNumericArrayType<Byte>("Array(Int8)", { DbInt8() })
 
-class DbArrayUInt8 : DbNumericArrayType<Byte>("Array(UInt8)",
-        { resultSet, name -> (resultSet.getArray(name).array as ByteArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as ByteArray).toList() },
-        { DbUInt8() })
+class DbArrayUInt8 : DbNumericArrayType<Short>("Array(UInt8)", { DbUInt8() })
 
-class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)",
-        { resultSet, name -> (resultSet.getArray(name).array as ShortArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as ShortArray).toList() },
-        { DbInt16() })
+class DbArrayInt16 : DbNumericArrayType<Short>("Array(Int16)", { DbInt16() })
 
-class DbArrayUInt16 : DbNumericArrayType<Short>("Array(UInt16)",
-        { resultSet, name -> (resultSet.getArray(name).array as ShortArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as ShortArray).toList() },
-        { DbUInt16() })
+class DbArrayUInt16 : DbNumericArrayType<Int>("Array(UInt16)", { DbUInt16() })
 
-class DbArrayInt32 : DbNumericArrayType<Int>("Array(Int32)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).toList() },
-        { DbInt32() })
+class DbArrayInt32 : DbNumericArrayType<Int>("Array(Int32)", { DbInt32() })
 
-class DbArrayUInt32 : DbNumericArrayType<Int>("Array(UInt32)",
-        { resultSet, name -> (resultSet.getArray(name).array as IntArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as IntArray).toList() },
-        { DbUInt32() })
+class DbArrayUInt32 : DbNumericArrayType<Long>("Array(UInt32)", { DbUInt32() })
 
-class DbArrayInt64 : DbNumericArrayType<Long>("Array(Int64)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).toList() },
-        { DbInt64() })
+class DbArrayInt64 : DbNumericArrayType<Long>("Array(Int64)", { DbInt64() })
 
-class DbArrayUInt64 : DbNumericArrayType<Long>("Array(UInt64)",
-        { resultSet, name -> (resultSet.getArray(name).array as LongArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as LongArray).toList() },
-        { DbUInt64() })
+class DbArrayUInt64 : DbNumericArrayType<BigInteger>("Array(UInt64)", { DbUInt64() })
 
-class DbArrayFloat32 : DbNumericArrayType<Float>("Array(Float32)",
-        { resultSet, name -> (resultSet.getArray(name).array as FloatArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as FloatArray).toList() },
-        { DbFloat32() })
+class DbArrayFloat32 : DbNumericArrayType<Float>("Array(Float32)", { DbFloat32() })
 
-class DbArrayFloat64 : DbNumericArrayType<Double>("Array(Float64)",
-        { resultSet, name -> (resultSet.getArray(name).array as DoubleArray).toList() },
-        { resultSet, index -> (resultSet.getArray(index).array as DoubleArray).toList() },
-        { DbFloat64() })
+class DbArrayFloat64 : DbNumericArrayType<Double>("Array(Float64)", { DbFloat64() })
 
 @Suppress("UNCHECKED_CAST")
-class DbArrayDecimal(private val bit: Int, val scale: Int) : DbNumericArrayType<BigDecimal>("Array(Decimal$bit($scale))",
-    { resultSet, name -> (resultSet.getArray(name).array as Array<BigDecimal>).toList() },
-    { resultSet, index -> (resultSet.getArray(index).array as Array<BigDecimal>).toList() },
-    { DbDecimal(bit, scale) })
+class DbArrayDecimal(private val bit: Int, val scale: Int) : DbNumericArrayType<BigDecimal>(
+    sqlName = "Array(Decimal$bit($scale))",
+    getPrimitiveType = { DbDecimal(bit, scale) },
+    arraySqlTypeName = "Decimal$bit"
+)
 
 //Boolean
 
@@ -380,17 +366,17 @@ class DbArrayBoolean : DbArrayType<Boolean>() {
     override fun toSqlName(): String = "Array(UInt8)"
 
     override fun getValue(name: String, result: ResultSet): List<Boolean> {
-        return (result.getArray(name).array as ByteArray).map { it == 1.toByte() }
+        return result.getTypedList<Short>(name).map { it == 1.toShort() }
     }
 
     override fun getValue(index: Int, result: ResultSet): List<Boolean> {
-        return (result.getArray(index).array as ByteArray).map { it == 1.toByte() }
+        return result.getTypedList<Short>(index).map { it == 1.toShort() }
     }
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Boolean>) {
         if (value.isNotEmpty()) {
             val array = value.map { if (it) 1 else 0 }.toTypedArray()
-            statement.setArray(index, statement.connection.createArrayOf(toSqlName(), array))
+            statement.setArray(index, statement.connection.createArrayOf(toPrimitive().toSqlName(), array))
         } else {
             statement.setNull(index, Types.ARRAY)
         }
@@ -426,19 +412,10 @@ class DbString : DbPrimitiveType<String>() {
 class DbArrayString : DbArrayType<String>() {
     override fun toSqlName(): String = "Array(String)"
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getValue(name: String, result: ResultSet): List<String> =
-            (result.getArray(name).array as Array<String>).toList()
-
-    @Suppress("UNCHECKED_CAST")
-    override fun getValue(index: Int, result: ResultSet): List<String> =
-            (result.getArray(index).array as Array<String>).toList()
-
-
     override fun setValue(index: Int, statement: PreparedStatement, value: List<String>) {
         if (value.isNotEmpty()) {
             statement.setArray(index,
-                statement.connection.createArrayOf(toSqlName(), value.toTypedArray()))
+                statement.connection.createArrayOf(toPrimitive().toSqlName(), value.toTypedArray()))
         } else {
             statement.setNull(index, Types.ARRAY)
         }

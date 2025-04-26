@@ -1,11 +1,12 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.17"
+version = "1.1.18-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.8.21" apply true
+    kotlin("jvm") version "2.1.10" apply true
     id("tanvd.kosogor") version "1.0.18"
 }
 
@@ -19,29 +20,31 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.clickhouse", "clickhouse-jdbc", "0.4.6")
-    api("joda-time", "joda-time", "2.12.2")
-    api("org.slf4j", "slf4j-api", "1.7.36")
+    api("com.clickhouse", "clickhouse-jdbc", "0.8.5")
+    api("joda-time", "joda-time", "2.14.0")
+    api("org.slf4j", "slf4j-api", "2.0.17")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
 
-    testImplementation("org.testcontainers", "clickhouse", "1.18.1")
-    testImplementation("org.lz4", "lz4-java", "1.8.0")
+    testImplementation("org.testcontainers", "clickhouse", "1.21.0")
 }
 
-tasks.withType<JavaCompile> {
-    targetCompatibility = "11"
-    sourceCompatibility = "11"
+kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        apiVersion.set(KotlinVersion.KOTLIN_2_1)
+        languageVersion.set(KotlinVersion.KOTLIN_2_1)
+        // https://jakewharton.com/kotlins-jdk-release-compatibility-flag/
+        // https://youtrack.jetbrains.com/issue/KT-49746/Support-Xjdk-release-in-gradle-toolchain#focus=Comments-27-8935065.0-0
+        freeCompilerArgs.addAll("-Xjdk-release=17")
+    }
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
-        apiVersion = "1.8"
-        languageVersion = "1.8"
-        freeCompilerArgs += "-Xuse-ir"
-        freeCompilerArgs += "-Xbackend-threads=3"
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of("17"))
     }
 }
 

@@ -6,6 +6,7 @@ import tanvd.aorm.*
 import tanvd.aorm.expression.default
 import tanvd.aorm.implementation.TableClickhouse
 import tanvd.aorm.utils.*
+import java.math.BigInteger
 
 class EngineClickhouseTest : AormTestBase() {
 
@@ -71,7 +72,7 @@ object MergeTreeTable : Table("MergeTreeTable") {
 
 object CustomMergeTreeTable : Table("CustomMergeTreeTable") {
     val date = date("date")
-    val id = uint64("id").default { 1L }
+    val id = uint64("id").default { BigInteger.ONE }
 
     override val engine: Engine.MergeTree = Engine.MergeTree(date, listOf(id), 8192).partitionBy(date).sampleBy(id).orderBy(id)
 }
@@ -79,7 +80,7 @@ object CustomMergeTreeTable : Table("CustomMergeTreeTable") {
 object ReplacingMergeTreeTable : Table("ReplacingMergeTreeTable") {
     val date = date("date")
     val id = int64("id").default { 1L }
-    val version = uint64("version").default { 0L }
+    val version = uint64("version").default { BigInteger.ZERO }
 
     override val engine: Engine = Engine.ReplacingMergeTree(date, listOf(id), version, 8192)
 }
