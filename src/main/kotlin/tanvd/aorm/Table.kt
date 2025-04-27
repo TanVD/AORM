@@ -45,41 +45,41 @@ abstract class Table(name: String) {
     fun <T : Enum<*>> enum16(name: String, enumType: KClass<T>, enumMapping: LinkedHashMap<String, Int>) = registerColumn(Column(name, DbEnum16(enumMapping, enumType), this))
 
     //int8
-    fun int8(name: String) = registerColumn(Column(name, DbInt8(), this))
+    fun int8(name: String) = registerColumn(Column(name, DbInt8, this))
 
-    fun arrayInt8(name: String) = registerColumn(Column(name, DbArrayInt8(), this))
+    fun arrayInt8(name: String) = registerColumn(Column(name, DbArrayInt8, this))
 
-    fun uint8(name: String) = registerColumn(Column(name, DbUInt8(), this))
-    fun arrayUInt8(name: String) = registerColumn(Column(name, DbArrayUInt8(), this))
+    fun uint8(name: String) = registerColumn(Column(name, DbUInt8, this))
+    fun arrayUInt8(name: String) = registerColumn(Column(name, DbArrayUInt8, this))
 
     //int16
-    fun int16(name: String) = registerColumn(Column(name, DbInt16(), this))
+    fun int16(name: String) = registerColumn(Column(name, DbInt16, this))
 
-    fun arrayInt16(name: String) = registerColumn(Column(name, DbArrayInt16(), this))
+    fun arrayInt16(name: String) = registerColumn(Column(name, DbArrayInt16, this))
 
-    fun uint16(name: String) = registerColumn(Column(name, DbUInt16(), this))
-    fun arrayUInt16(name: String) = registerColumn(Column(name, DbArrayUInt16(), this))
+    fun uint16(name: String) = registerColumn(Column(name, DbUInt16, this))
+    fun arrayUInt16(name: String) = registerColumn(Column(name, DbArrayUInt16, this))
 
     //int32
-    fun int32(name: String) = registerColumn(Column(name, DbInt32(), this))
+    fun int32(name: String) = registerColumn(Column(name, DbInt32, this))
 
-    fun arrayInt32(name: String) = registerColumn(Column(name, DbArrayInt32(), this))
+    fun arrayInt32(name: String) = registerColumn(Column(name, DbArrayInt32, this))
 
-    fun uint32(name: String) = registerColumn(Column(name, DbUInt32(), this))
-    fun arrayUInt32(name: String) = registerColumn(Column(name, DbArrayUInt32(), this))
+    fun uint32(name: String) = registerColumn(Column(name, DbUInt32, this))
+    fun arrayUInt32(name: String) = registerColumn(Column(name, DbArrayUInt32, this))
 
     //int64
-    fun int64(name: String) = registerColumn(Column(name, DbInt64(), this))
-    fun arrayInt64(name: String) = registerColumn(Column(name, DbArrayInt64(), this))
+    fun int64(name: String) = registerColumn(Column(name, DbInt64, this))
+    fun arrayInt64(name: String) = registerColumn(Column(name, DbArrayInt64, this))
 
-    fun uint64(name: String) = registerColumn(Column(name, DbUInt64(), this))
-    fun arrayUInt64(name: String) = registerColumn(Column(name, DbArrayUInt64(), this))
+    fun uint64(name: String) = registerColumn(Column(name, DbUInt64, this))
+    fun arrayUInt64(name: String) = registerColumn(Column(name, DbArrayUInt64, this))
 
     //float
-    fun float32(name: String) = registerColumn(Column(name, DbFloat32(), this))
-    fun arrayFloat32(name: String) = registerColumn(Column(name, DbArrayFloat32(), this))
-    fun float64(name: String) = registerColumn(Column(name, DbFloat64(), this))
-    fun arrayFloat64(name: String) = registerColumn(Column(name, DbArrayFloat64(), this))
+    fun float32(name: String) = registerColumn(Column(name, DbFloat32, this))
+    fun arrayFloat32(name: String) = registerColumn(Column(name, DbArrayFloat32, this))
+    fun float64(name: String) = registerColumn(Column(name, DbFloat64, this))
+    fun arrayFloat64(name: String) = registerColumn(Column(name, DbArrayFloat64, this))
 
     //decimal
     fun decimal64(name: String, scale: Int) = registerColumn(Column(name, DbDecimal(64, scale), this))

@@ -72,7 +72,7 @@ object MergeTreeTable : Table("MergeTreeTable") {
 
 object CustomMergeTreeTable : Table("CustomMergeTreeTable") {
     val date = date("date")
-    val id = uint64("id").default { BigInteger.ONE }
+    val id = uint64("id").default { 1 }
 
     override val engine: Engine.MergeTree = Engine.MergeTree(date, listOf(id), 8192).partitionBy(date).sampleBy(id).orderBy(id)
 }
@@ -80,7 +80,7 @@ object CustomMergeTreeTable : Table("CustomMergeTreeTable") {
 object ReplacingMergeTreeTable : Table("ReplacingMergeTreeTable") {
     val date = date("date")
     val id = int64("id").default { 1L }
-    val version = uint64("version").default { BigInteger.ZERO }
+    val version = uint64("version").default { 0 }
 
     override val engine: Engine = Engine.ReplacingMergeTree(date, listOf(id), version, 8192)
 }

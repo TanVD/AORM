@@ -55,16 +55,16 @@ class TableClickhouseTest : AormTestBase() {
     fun addColumn_tableExists_columnAddedInMetadata() {
         TableClickhouse.create(database, ExampleTable)
 
-        TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
+        TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64, ExampleTable))
 
         val metadataColumns = MetadataClickhouse.columnsOfTable(database, ExampleTable)
-        Assertions.assertEquals(metadataColumns["new_column"]?.lowercase(), DbInt64().toSqlName().lowercase())
+        Assertions.assertEquals(metadataColumns["new_column"]?.lowercase(), DbInt64.toSqlName().lowercase())
     }
 
     @Test
     fun addColumn_tableNotExists_gotBasicDbException() {
         try {
-            TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64(), ExampleTable))
+            TableClickhouse.addColumn(database, ExampleTable, Column("new_column", DbInt64, ExampleTable))
         } catch (e: BasicDbException) {
             return
         }

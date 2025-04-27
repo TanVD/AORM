@@ -44,7 +44,7 @@ class MetadataClickhouseTest : AormTestBase() {
     @Test
     fun syncScheme_tableExistsNewColumn_columnAdded() {
         TableClickhouse.create(database, ExampleTable)
-        val newColumn = Column("new_column", DbInt64(), ExampleTable)
+        val newColumn = Column("new_column", DbInt64, ExampleTable)
         ExampleTable.columns.add(newColumn)
 
         MetadataClickhouse.syncScheme(database, ExampleTable)

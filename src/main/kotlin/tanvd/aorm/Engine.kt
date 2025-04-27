@@ -54,7 +54,7 @@ sealed class Engine {
 
     class ReplacingMergeTree(dateColumn: Expression<Date, DbPrimitiveType<Date>>,
                              primaryKey: List<Expression<*, DbPrimitiveType<*>>>,
-                             versionColumn: Column<BigInteger, DbUInt64>,
+                             versionColumn: Column<Long, DbUInt64>,
                              indexGranularity: Long = 8192,
                              zookeeperPath: String? = null)
         : MergeTreeFamily(dateColumn, primaryKey, indexGranularity, zookeeperPath) {
