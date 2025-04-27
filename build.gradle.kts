@@ -6,7 +6,7 @@ group = "tanvd.aorm"
 version = "1.1.18-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "2.1.10" apply true
+    kotlin("jvm") version "2.1.20" apply true
     id("tanvd.kosogor") version "1.0.18"
 }
 
