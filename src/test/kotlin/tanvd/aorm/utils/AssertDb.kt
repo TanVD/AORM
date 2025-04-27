@@ -5,7 +5,8 @@ import tanvd.aorm.*
 import tanvd.aorm.expression.Column
 import tanvd.aorm.implementation.MetadataClickhouse
 import java.math.BigDecimal
-import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Date
 
 object AssertDb {
     fun syncedWithDb(database: Database, table: Table) {
@@ -34,6 +35,8 @@ object AssertDb {
         Assertions.assertEquals(insertRow.map { it.values }, selectRow.map { it.values })
     }
 
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+
     private fun deepMapEqualsWithBigDecimalSupport(expected: Map<Column<*,*>, *>, actual: Map<*, *>) {
         Assertions.assertEquals(expected.size, actual.size) {
             "Size of maps is different: ${expected.size} != ${actual.size}"
@@ -56,7 +59,7 @@ object AssertDb {
                         }
                         is Date -> {
                             v1.zip(v2).forEach { (expected, actual) ->
-                                Assertions.assertEquals("$expected", "$actual", "Values for key ${k.name} are different")
+                                Assertions.assertEquals(dateFormat.format(expected), dateFormat.format(actual), "Values for key ${k.name} are different")
                             }
                         }
 

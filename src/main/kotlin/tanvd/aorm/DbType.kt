@@ -6,13 +6,13 @@ import org.joda.time.format.DateTimeFormatter
 import tanvd.aorm.utils.escapeQuotes
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.sql.Date
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.Collection
+import java.util.Date
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction2
 import kotlin.reflect.KFunction3
@@ -105,18 +105,18 @@ class DbEnum16<T : Enum<*>>(enumMapping: LinkedHashMap<String, Int>, enumType: K
 }
 
 //Date and DateTime
+private fun Date.asSQLDate() = java.sql.Date(time)
 
 class DbDate : DbPrimitiveType<Date>() {
     override val defaultValue: Date = Date(0)
-
     override fun toSqlName(): String = "Date"
     override fun getValue(name: String, result: ResultSet): Date = result.getDate(name)
     override fun getValue(index: Int, result: ResultSet): Date = result.getDate(index)
     override fun setValue(index: Int, statement: PreparedStatement, value: Date) {
-        statement.setObject(index, value)
+        statement.setObject(index, value.asSQLDate())
     }
 
-    override fun toStringValue(value: Date): String = "'$value'"
+    override fun toStringValue(value: Date): String = "'${value.asSQLDate()}'"
 
     override fun toArray(): DbArrayType<Date> = DbArrayDate()
 }
@@ -139,7 +139,7 @@ class DbArrayDate : DbArrayType<Date>() {
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Date>) {
         if (value.isNotEmpty()) {
-            val array = value.toTypedArray()
+            val array = value.map { it.asSQLDate() }.toTypedArray()
             statement.setArray(index, statement.connection.createArrayOf(toPrimitive().toSqlName(), array))
         } else {
             statement.setNull(index, Types.ARRAY)
@@ -147,7 +147,7 @@ class DbArrayDate : DbArrayType<Date>() {
     }
 
     override fun toStringValue(value: List<Date>): String =
-            value.joinToString(prefix = "[", postfix = "]") { "'$it'" }
+            value.joinToString(prefix = "[", postfix = "]") { "'${it.asSQLDate()}'" }
 
     override fun toPrimitive(): DbPrimitiveType<Date> = DbDate()
 }

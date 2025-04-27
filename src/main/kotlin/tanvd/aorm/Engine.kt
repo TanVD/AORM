@@ -3,7 +3,7 @@ package tanvd.aorm
 import tanvd.aorm.expression.Column
 import tanvd.aorm.expression.Expression
 import java.math.BigInteger
-import java.sql.Date
+import java.util.Date
 
 sealed class Engine {
     abstract fun toSqlDef(): String
