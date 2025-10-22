@@ -7,7 +7,7 @@ version = "1.1.20"
 
 plugins {
     kotlin("jvm") version "2.1.21" apply true
-    id("tanvd.kosogor") version "1.0.23"
+    id("tanvd.kosogor") version "1.0.18"
 }
 
 val artifactoryUploadEnabled = System.getenv("artifactory_url") != null
