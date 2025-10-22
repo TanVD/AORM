@@ -8,9 +8,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.Types
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.util.Date
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction2
@@ -58,7 +56,8 @@ sealed class DbArrayType<T> : DbType<List<T>>() {
     override fun getValue(index: Int, result: ResultSet): List<T> = result.getTypedList(index)
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<T>) {
-        statement.setObject(index, value, Types.ARRAY)
+        // Let the ClickHouse JDBC driver infer the array element type from the destination column
+        statement.setObject(index, value)
     }
 
     abstract fun toPrimitive(): DbPrimitiveType<T>
@@ -129,19 +128,20 @@ class DbArrayDate : DbArrayType<Date>() {
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(name: String, result: ResultSet): List<Date> =
-        result.getTypedList<ZonedDateTime>(name).map {
-            Date(it.toInstant().toEpochMilli())
+        result.getTypedList<java.sql.Date>(name).map { sqlDate ->
+            Date(sqlDate.time)
         }
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(index: Int, result: ResultSet): List<Date> =
-        result.getTypedList<ZonedDateTime>(index).map {
-            Date(it.toInstant().toEpochMilli())
+        result.getTypedList<java.sql.Date>(index).map { sqlDate ->
+            Date(sqlDate.time)
         }
 
 
     override fun setValue(index: Int, statement: PreparedStatement, value: List<Date>) {
-        statement.setObject(index, value.map { it.asSQLDate() }, Types.ARRAY)
+        // Let the driver infer array type; convert individual items to SQL Date
+        statement.setObject(index, value.map { it.asSQLDate() })
     }
 
     override fun toStringValue(value: List<Date>): String =
@@ -227,7 +227,7 @@ object DbInt64 : DbNumericPrimitiveType<Long, Long>("Int64", 0, ResultSet::getLo
 
 object DbUInt64 : DbNumericPrimitiveType<BigInteger, Long>("UInt64", 0L, ResultSet::getBigInteger, ResultSet::getBigInteger, PreparedStatement::setBigInteger, { DbArrayUInt64 }, BigInteger::toLong, Long::toBigInteger)
 
-object DbFloat32 : DbNumericPrimitiveType<Float, Float>("Float32", 0f, ResultSet::getFloat, ResultSet::getFloat, PreparedStatement::setFloat, { DbArrayFloat32 })
+object DbFloat32 : DbNumericPrimitiveType<Double, Float>("Float32", 0f, ResultSet::getDouble, ResultSet::getDouble, PreparedStatement::setDouble, { DbArrayFloat32 }, Double::toFloat, Float::toDouble)
 
 object DbFloat64 : DbNumericPrimitiveType<Double, Double>("Float64", 0.0, ResultSet::getDouble, ResultSet::getDouble, PreparedStatement::setDouble, { DbArrayFloat64 })
 
@@ -274,7 +274,7 @@ object DbArrayInt64 : DbNumericArrayType<Long, Long>("Array(Int64)", { DbInt64 }
 
 object DbArrayUInt64 : DbNumericArrayType<BigInteger, Long>("Array(UInt64)", { DbUInt64 })
 
-object DbArrayFloat32 : DbNumericArrayType<Float, Float>("Array(Float32)", { DbFloat32 })
+object DbArrayFloat32 : DbNumericArrayType<Double, Float>("Array(Float32)", { DbFloat32 })
 
 object DbArrayFloat64 : DbNumericArrayType<Double, Double>("Array(Float64)", { DbFloat64 })
 

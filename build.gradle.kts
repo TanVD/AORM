@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import tanvd.kosogor.proxy.publishJar
 
 group = "tanvd.aorm"
-version = "1.1.19"
+version = "1.1.20"
 
 plugins {
-    kotlin("jvm") version "2.1.20" apply true
-    id("tanvd.kosogor") version "1.0.18"
+    kotlin("jvm") version "2.1.21" apply true
+    id("tanvd.kosogor") version "1.0.23"
 }
 
 val artifactoryUploadEnabled = System.getenv("artifactory_url") != null
@@ -20,14 +20,16 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("com.clickhouse", "clickhouse-jdbc", "0.8.5")
+    api("com.clickhouse", "clickhouse-jdbc", "0.9.2")
     api("joda-time", "joda-time", "2.14.0")
     api("org.slf4j", "slf4j-api", "2.0.17")
 
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.8.2")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.8.2")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "6.0.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "6.0.0")
+    testRuntimeOnly("org.junit.platform", "junit-platform-engine")
+    testRuntimeOnly("org.junit.platform", "junit-platform-launcher")
 
-    testImplementation("org.testcontainers", "clickhouse", "1.21.0")
+    testImplementation("org.testcontainers", "testcontainers-clickhouse", "2.0.1")
 }
 
 kotlin {

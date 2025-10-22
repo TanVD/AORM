@@ -80,7 +80,7 @@ object AssertDb {
 
     private fun assertBigDecimalEquals(expected: Any?, actual: Any?) {
         val actualAsBigDecimal = actual as? BigDecimal
-        val expectedAsBigDecimal = actual as? BigDecimal
+        val expectedAsBigDecimal = expected as? BigDecimal
         Assertions.assertNotNull(actualAsBigDecimal) { "Actual value is ${actual!!::class.simpleName} type while BigDecimal expected" }
         Assertions.assertNotNull(expectedAsBigDecimal) { "Expected value is ${expected!!::class.simpleName} type while BigDecimal expected" }
         Assertions.assertTrue(actualAsBigDecimal!!.compareTo(expectedAsBigDecimal) == 0)
