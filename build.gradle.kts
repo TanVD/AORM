@@ -14,6 +14,7 @@ val artifactoryUploadEnabled = System.getenv("artifactory_url") != null
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
     if (artifactoryUploadEnabled)
         maven(System.getenv("artifactory_url")!!)
 }
